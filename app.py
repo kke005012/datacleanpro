@@ -40,8 +40,8 @@ if page == "Welcome":
     - Optional Pro features: fill missing data, download enhanced logs
 
     ### 💸 Pricing
-    - First 100 rows: **Free**
     st.markdown("""
+    - First 100 rows: **Free**    
     - After that: <br>
     &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.01 per 1,000 rows up to 5,000</strong><br>
     &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.008 per 1,000 rows from 5,001 to 25,000</strong><br>
