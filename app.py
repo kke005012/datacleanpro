@@ -31,35 +31,34 @@ page = st.sidebar.selectbox("📂 Choose a page", ["Welcome", "Clean My Data"])
 if page == "Welcome":
     st.title("✨ Welcome to DataCleanPro")
     st.markdown("""
-    **Clean data shouldn’t come with a dirty price tag.**  
-    Pay only for what you clean — no subscriptions, no upsells, no tricks.
+**Clean data shouldn’t come with a dirty price tag.**  
+Pay only for what you clean — no subscriptions, no upsells, no tricks.
 
-    ### ✅ What We Offer
-    • Upload your messy CSV  
-    • Strip whitespace, fix formats, remove duplicates   
-    • Optional Pro features: fill missing data, download enhanced logs  
+### ✅ What We Offer
+• Upload your messy CSV  
+• Strip whitespace, fix formats, remove duplicates  
+• Optional Pro features: fill missing data, download enhanced logs  
 
-    ### 💸 Pricing  
-    <strong>First 100 rows: Free</strong><br>
-    <strong>After that:</strong><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.01 per 1,000 rows up to 5,000</strong><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.008 per 1,000 rows from 5,001 to 25,000</strong><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.005 per 1,000 rows from 25,001 to 100,000</strong><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>Please contact us for custom pricing beyond 100,000 rows.</strong><br>
-    No commitments. No hidden fees.
+### 💸 Pricing  
+<strong>First 100 rows: Free</strong><br>
+<strong>After that:</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.01 per 1,000 rows up to 5,000</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.008 per 1,000 rows from 5,001 to 25,000</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.005 per 1,000 rows from 25,001 to 100,000</strong><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<strong>Please contact us for custom pricing beyond 100,000 rows.</strong><br>
+No commitments. No hidden fees.
 
-    ### 📨 Need Help?  
-    Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com)
+### 📨 Need Help?  
+Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com)
 
-    👉 Use the sidebar to switch to **Clean My Data**
-    """, unsafe_allow_html=True)
-
+👉 Use the sidebar to switch to **Clean My Data**
+""", unsafe_allow_html=True)
 elif page == "Clean My Data":
     st.title("🧼 DataCleanPro: Clean Your CSV with Ease")
 
     st.markdown("""
-    > :gear: **Before uploading a file, be sure to review the options in the sidebar to tailor how missing values are handled.**
-    """)
+> :gear: **Before uploading a file, be sure to review the options in the sidebar to tailor how missing values are handled.**
+""")
 
 
 
