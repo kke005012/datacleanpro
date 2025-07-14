@@ -41,8 +41,13 @@ if page == "Welcome":
 
     ### 💸 Pricing
     - First 100 rows: **Free**
-    - After that: **$0.01 per 1,000 rows**
+    - After that:  
+    &nbsp;&nbsp;&nbsp;&nbsp;**$0.01 per 1,000 rows up to 5,000**  \\
+    &nbsp;&nbsp;&nbsp;&nbsp;**$0.008 per 1,000 rows from 5,001 to 25,000**  \\
+    &nbsp;&nbsp;&nbsp;&nbsp;**$0.005 per 1,000 rows from 25,001 to 100,000**  \\
+    &nbsp;&nbsp;&nbsp;&nbsp;**Please contact us for custom pricing beyond 100,000 rows.**  
     - No commitments. No hidden fees.
+    """)
 
     ### 📨 Need Help?
     Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com)
@@ -132,11 +137,16 @@ elif page == "Clean My Data":
         else:
             st.markdown("⚠️ Upgrade to Pro to handle missing values.", unsafe_allow_html=True)
 
-        with st.expander("💸 Pricing Plans"):
+        with st.expander("💸 Pricing Details"):
             st.markdown("""
-            - **Free**: Normalize & preview CSV  
-            - **Pro ($5)**: Fill missing values, download enhanced reports  
+            - First 100 rows: **Free**  
+            - After that:  
+            &nbsp;&nbsp;&nbsp;&nbsp;**$0.01 per 1,000 rows up to 5,000**  \\
+            &nbsp;&nbsp;&nbsp;&nbsp;**$0.008 per 1,000 rows from 5,001 to 25,000**  \\
+            &nbsp;&nbsp;&nbsp;&nbsp;**$0.005 per 1,000 rows from 25,001 to 100,000**  \\
+            &nbsp;&nbsp;&nbsp;&nbsp;**Custom pricing beyond 100,000 rows**  
             """)
+
 
         st.markdown("<hr><small>Need help? Contact us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com)</small>", unsafe_allow_html=True)
 
@@ -205,4 +215,3 @@ elif page == "Clean My Data":
 
         except Exception as e:
             st.error(f"❌ Cleaning failed: {e}")
-
