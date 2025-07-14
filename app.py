@@ -40,7 +40,7 @@ if page == "Welcome":
     - Optional Pro features: fill missing data, download enhanced logs
 
     ### 💸 Pricing
-    - First 100 rows: <strong>Free</strong><br>
+    - First 100 rows:<strong>Free</strong><br>
     - After that:<br>
     &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.01 per 1,000 rows up to 5,000</strong><br>
     &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.008 per 1,000 rows from 5,001 to 25,000</strong><br>
@@ -53,7 +53,7 @@ if page == "Welcome":
     Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com)
 
     :point_right: Use the sidebar to switch to **Clean My Data**
-    """)
+    """, unsafe_allow_html=True)
 
 elif page == "Clean My Data":
     st.title("🧼 DataCleanPro: Clean Your CSV with Ease")
