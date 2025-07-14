@@ -40,7 +40,7 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 • Optional Pro features: fill missing data, download enhanced logs  
 
 ### 💸 Pricing  
-<strong>First 100 rows: Free</strong><br>
+<strong>First 100 rows: Free ✔</strong><br>
 <strong>After that:</strong><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.01 per 1,000 rows up to 5,000</strong><br>
 &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.008 per 1,000 rows from 5,001 to 25,000</strong><br>
@@ -57,8 +57,8 @@ elif page == "Clean My Data":
     st.title("🧼 DataCleanPro: Clean Your CSV with Ease")
 
     st.markdown("""
-> :gear: **Before uploading a file, be sure to review the options in the sidebar to tailor how missing values are handled.**
-""")
+    > :gear: **Before uploading a file, be sure to review the options in the sidebar to tailor how missing values are handled.**
+    """)
 
 
 
