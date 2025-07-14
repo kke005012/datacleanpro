@@ -52,7 +52,7 @@ if page == "Welcome":
     ### 📨 Need Help?
     Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com)
 
-    ":point_right: Use the sidebar to switch to **Clean My Data**"
+    :point_right: Use the sidebar to switch to **Clean My Data**
     """)
 
 elif page == "Clean My Data":
