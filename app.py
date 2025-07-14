@@ -40,14 +40,16 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 """)
 
     st.markdown("""
-### 💸 Pricing  
-<strong>First 100 rows: Free</strong><br>
-<strong>After that:</strong><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.01 per 1,000 rows up to 5,000</strong><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.008 per 1,000 rows from 5,001 to 25,000</strong><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.005 per 1,000 rows from 25,001 to 100,000</strong><br>
-&nbsp;&nbsp;&nbsp;&nbsp;<strong>Please contact us for custom pricing beyond 100,000 rows.</strong><br>
-No commitments. No hidden fees.
+<h3>💸 Pricing</h3>
+<p><strong>First 100 rows: Free</strong></p>
+<p><strong>After that:</strong></p>
+<ul style="list-style-type: none; padding-left: 1em;">
+  <li><strong>$0.01 per 1,000 rows up to 5,000</strong></li>
+  <li><strong>$0.008 per 1,000 rows from 5,001 to 25,000</strong></li>
+  <li><strong>$0.005 per 1,000 rows from 25,001 to 100,000</strong></li>
+  <li><strong>Please contact us for custom pricing beyond 100,000 rows.</strong></li>
+</ul>
+<p>No commitments. No hidden fees.</p>
 """, unsafe_allow_html=True)
 
     st.markdown("""
