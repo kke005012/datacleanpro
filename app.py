@@ -53,6 +53,7 @@ Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com
 
 👉 Use the sidebar to switch to **Clean My Data**
 """, unsafe_allow_html=True)
+    print("📢 Pricing block loaded at:", datetime.now())
 elif page == "Clean My Data":
     st.title("🧼 DataCleanPro: Clean Your CSV with Ease")
 
