@@ -12,9 +12,7 @@ from cleaner import (
     strip_whitespace,
     drop_empty_rows,
     deduplicate,
-    write_log
-)
-from cleaner import (
+    write_log,
     standardize_column_names,
     clean_currency_columns,
     normalize_dates,
@@ -30,7 +28,7 @@ page = st.sidebar.selectbox("📂 Choose a page", ["Welcome", "Clean My Data"])
 
 if page == "Welcome":
     st.title("✨ Welcome to DataCleanPro")
-    
+
     st.markdown("""
 **Clean data shouldn’t come with a dirty price tag.**  
 Pay only for what you clean — no subscriptions, no upsells, no tricks.
@@ -59,8 +57,7 @@ Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com
 👉 Use the sidebar to switch to **Clean My Data**
 """)
 
-elif page == "Clean My Data":
-    st.title("🧼 DataCleanPro: Clean Your CSV with Ease")
+elif page == "Clean My Data":    st.title("🧼 DataCleanPro: Clean Your CSV with Ease")
 
     st.markdown("""
     > :gear: **Before uploading a file, be sure to review the options in the sidebar to tailor how missing values are handled.**
