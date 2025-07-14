@@ -42,10 +42,10 @@ if page == "Welcome":
     ### 💸 Pricing
     - First 100 rows: **Free**
     - After that:  
-    &nbsp;&nbsp;&nbsp;&nbsp;**$0.01 per 1,000 rows up to 5,000**  \\
-    &nbsp;&nbsp;&nbsp;&nbsp;**$0.008 per 1,000 rows from 5,001 to 25,000**  \\
-    &nbsp;&nbsp;&nbsp;&nbsp;**$0.005 per 1,000 rows from 25,001 to 100,000**  \\
-    &nbsp;&nbsp;&nbsp;&nbsp;**Please contact us for custom pricing beyond 100,000 rows.**  
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>**$0.01 per 1,000 rows up to 5,000**</strong></br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>**$0.008 per 1,000 rows from 5,001 to 25,000**  </strong></br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>**$0.005 per 1,000 rows from 25,001 to 100,000**  </strong></br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>**Please contact us for custom pricing beyond 100,000 rows.  </strong></br> 
     - No commitments. No hidden fees.
     
 
