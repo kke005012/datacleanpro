@@ -47,7 +47,7 @@ if page == "Welcome":
     &nbsp;&nbsp;&nbsp;&nbsp;**$0.005 per 1,000 rows from 25,001 to 100,000**  \\
     &nbsp;&nbsp;&nbsp;&nbsp;**Please contact us for custom pricing beyond 100,000 rows.**  
     - No commitments. No hidden fees.
-    """)
+    
 
     ### 📨 Need Help?
     Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com)
