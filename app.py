@@ -41,11 +41,14 @@ if page == "Welcome":
 
     ### 💸 Pricing
     - First 100 rows: **Free**
-    - After that:  
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>**$0.01 per 1,000 rows up to 5,000**</strong></br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>**$0.008 per 1,000 rows from 5,001 to 25,000**  </strong></br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>**$0.005 per 1,000 rows from 25,001 to 100,000**  </strong></br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>**Please contact us for custom pricing beyond 100,000 rows.  </strong></br> 
+    st.markdown("""
+    - After that: <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.01 per 1,000 rows up to 5,000</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.008 per 1,000 rows from 5,001 to 25,000</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.005 per 1,000 rows from 25,001 to 100,000</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>Please contact us for custom pricing beyond 100,000 rows.</strong>
+    """, unsafe_allow_html=True)
+
     - No commitments. No hidden fees.
     
 
