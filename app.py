@@ -59,8 +59,10 @@ elif page == "Clean My Data":
     st.title("🧼 DataCleanPro: Clean Your CSV with Ease")
 
     st.markdown("""
-    > ⚙️ **Before uploading a file, be sure to review the options in the sidebar to tailor how missing values are handled.**
+    > :gear: **Before uploading a file, be sure to review the options in the sidebar to tailor how missing values are handled.**
     """)
+
+
 
     uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
 
