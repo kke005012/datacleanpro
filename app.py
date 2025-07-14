@@ -35,24 +35,23 @@ if page == "Welcome":
     Pay only for what you clean — no subscriptions, no upsells, no tricks.
 
     ### ✅ What We Offer
-    - Upload your messy CSV
-    - Strip whitespace, fix formats, remove duplicates
-    - Optional Pro features: fill missing data, download enhanced logs
+    • Upload your messy CSV  
+    • Strip whitespace, fix formats, remove duplicates   
+    • Optional Pro features: fill missing data, download enhanced logs  
 
-    ### 💸 Pricing
-    - First 100 rows:<strong>Free</strong><br>
-    - After that:<br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.01 per 1000 rows up to 5000</strong><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.008 per 1000 rows from 5001 to 25000</strong><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.005 per 1000 rows from 25001 to 100000</strong><br>
-    &nbsp;&nbsp;&nbsp;&nbsp;<strong>Please contact us for custom pricing beyond 100000 rows.</strong><br>
-    - No commitments. No hidden fees.
-    
+    ### 💸 Pricing  
+    <strong>First 100 rows: Free</strong><br>
+    <strong>After that:</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.01 per 1,000 rows up to 5,000</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.008 per 1,000 rows from 5,001 to 25,000</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>$0.005 per 1,000 rows from 25,001 to 100,000</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;<strong>Please contact us for custom pricing beyond 100,000 rows.</strong><br>
+    No commitments. No hidden fees.
 
-    ### 📨 Need Help?
+    ### 📨 Need Help?  
     Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com)
 
-    :point_right: Use the sidebar to switch to **Clean My Data**
+    👉 Use the sidebar to switch to **Clean My Data**
     """, unsafe_allow_html=True)
 
 elif page == "Clean My Data":
