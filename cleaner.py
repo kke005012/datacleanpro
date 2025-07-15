@@ -1,14 +1,45 @@
-import pandas as pd
-import numpy as np
-from datetime import datetime
+# --- cleaner.py ---
+def clean_data(df, handle_missing=False):
+    log_lines = []
 
+    # 1. Strip whitespace
+    df = strip_whitespace(df)
+    log_lines.append(✔️ Stripped leading/trailing whitespace")
+
+    # 2. Drop empty rows
+    original_len = len(df)
+    df = drop_empty_rows(df)
+    log_lines.append(f"✔️ Dropped {original_len - len(df)} completely empty rows")
+
+    # 3. Deduplicate
+    before_dedup = len(df)
+    df = deduplicate(df)
+    log_lines.append(f"✔️ Removed {before_dedup - len(df)} duplicate rows")
+
+    # 4. Standardize column names
+    df = standardize_column_names(df)
+    log_lines.append("✔️ Standardized column names")
+
+    # 5. Normalize currency and date columns
+    df = clean_currency_columns(df)
+    df = normalize_dates(df)
+    log_lines.append("✔️ Normalized currency and date formats")
+
+    # 6. Handle missing values (if selected)
+    if handle_missing:
+        df = handle_missing_values(df)
+        log_lines.append("✔️ Filled missing values")
+
+    # 7. Final sanity check
+    df = final_sanity_check(df)
+    log_lines.append("✔️ Performed final sanity checks")
+
+    df.attrs['log'] = log_lines
+    return df
 
 
 def strip_whitespace(df):
-    df.columns = df.columns.str.strip()
-    for col in df.select_dtypes(include='object').columns:
-        df[col] = df[col].str.strip()
-    return df
+    return df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
 
 
 def drop_empty_rows(df):
@@ -19,75 +50,35 @@ def deduplicate(df):
     return df.drop_duplicates()
 
 
+def write_log(original_df, cleaned_df):
+    return cleaned_df.attrs.get('log', ["No log information available."])
+
+
 def standardize_column_names(df):
-    df.columns = df.columns.str.lower().str.strip().str.replace(" ", "_").str.replace(r'[^a-zA-Z0-9_]', '', regex=True)
+    df.columns = [col.strip().lower().replace(' ', '_') for col in df.columns]
     return df
 
 
-def clean_currency_columns(df, log_lines):
+def clean_currency_columns(df):
     for col in df.columns:
-        if df[col].dtype == object and df[col].str.contains(r'\$|\,').any():
-            try:
-                df[col] = df[col].replace({r'\$': '', ',': ''}, regex=True).astype(float)
-                log_lines.append(f"Converted currency strings in column '{col}' to float.")
-            except:
-                log_lines.append(f"Failed to convert column '{col}' to float.")
+        if df[col].dtype == object and df[col].str.contains("$").any():
+            df[col] = df[col].replace('[\$,]', '', regex=True).astype(float)
     return df
 
 
-def normalize_dates(df, log_lines):
+def normalize_dates(df):
     for col in df.columns:
         if df[col].dtype == object:
             try:
-                parsed_dates = pd.to_datetime(df[col], errors='coerce')
-                if parsed_dates.notnull().sum() > 0:
-                    df[col] = parsed_dates
-                    log_lines.append(f"Normalized date values in column '{col}'.")
-            except:
+                df[col] = pd.to_datetime(df[col], errors='ignore')
+            except Exception:
                 continue
     return df
 
 
-def handle_missing_values(df, fill_with_mode=False, log_lines=None):
-    for col in df.columns:
-        if df[col].dtype == object:
-            if fill_with_mode:
-                mode_val = df[col].mode()[0] if not df[col].mode().empty else 'Unknown'
-                df[col].fillna(mode_val, inplace=True)
-                if log_lines is not None:
-                    log_lines.append(f"Filled missing values in '{col}' with mode: {mode_val}")
-            else:
-                df[col].fillna('Unknown', inplace=True)
-                if log_lines is not None:
-                    log_lines.append(f"Filled missing values in '{col}' with 'Unknown'")
-        else:
-            df[col].fillna(df[col].mean(), inplace=True)
-            if log_lines is not None:
-                log_lines.append(f"Filled missing values in '{col}' with column mean")
-    return df
+def handle_missing_values(df):
+    return df.fillna("[Missing]")
 
 
-def final_sanity_check(df, log_lines):
-    initial_cols = df.columns.tolist()
-    df = df.loc[:, ~df.columns.duplicated()]
-    if len(df.columns) != len(initial_cols):
-        log_lines.append("Removed duplicate column names during final sanity check.")
-    return df
-
-
-def clean_data(df, log_lines=None):
-    if log_lines is None:
-        log_lines = []
-    df = strip_whitespace(df)
-    df = drop_empty_rows(df)
-    df = deduplicate(df)
-    log_lines.append("Stripped whitespace, dropped empty rows, and removed duplicates.")
-    return df
-
-
-def write_log(log_lines, log_filename="cleaning_log.txt"):
-    with open(log_filename, "w") as f:
-        f.write("Cleaning Summary:\n")
-        for line in log_lines:
-            f.write(f"- {line}\n")
-    return log_filename
+def final_sanity_check(df):
+    return df.dropna(axis=1, how='all')

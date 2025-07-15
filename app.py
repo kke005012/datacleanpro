@@ -64,7 +64,7 @@ elif page == "Clean My Data":
 
     uploaded_file = st.file_uploader("Upload your CSV file", type="csv")
 
-    handle_missing = st.sidebar.checkbox("Handle missing values")
+    handle_missing_flag = st.sidebar.checkbox("Handle missing values")
     show_log = st.sidebar.checkbox("Show cleaning log")
 
     try:
@@ -73,7 +73,7 @@ elif page == "Clean My Data":
             st.subheader("🔍 Preview of Uploaded Data")
             st.dataframe(df.head())
 
-            cleaned_df = clean_data(df, handle_missing)
+            cleaned_df = clean_data(df, handle_missing_flag)
 
             st.subheader("✅ Cleaned Data Preview")
             st.dataframe(cleaned_df.head())
