@@ -33,14 +33,14 @@ if page == "Welcome":
 **Clean data shouldn’t come with a dirty price tag.**  
 Pay only for what you clean — no subscriptions, no upsells, no tricks.
 
-### ✅ What We Offer  
+#### ✅ What We Offer  
 • Upload your messy CSV  
 • Strip whitespace, fix formats, remove duplicates  
 • Optional Pro features: fill missing data, download enhanced logs  
 """)
 
     st.markdown("""
-<h3>💸 Pricing</h3>
+<h4>💸 Pricing</h4>
 <p><strong>First 100 rows: Free</strong></p>
 <p><strong>After that:</strong></p>
 <ul style="list-style-type: none; padding-left: 1em;">
@@ -53,16 +53,16 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 """, unsafe_allow_html=True)
 
     st.markdown("""
-### 📨 Need Help?  
+#### 📨 Need Help?  
 Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com)
 
-### 👉 Use the sidebar to switch to **Clean My Data**
+#### 👉 Use the sidebar to switch to **Clean My Data**
 """, unsafe_allow_html=True)
 
 elif page == "Clean My Data":    
     st.title("🧼 DataCleanPro: Clean Your CSV with Ease")
     st.markdown("""
-### ⚙️ **Before uploading a file, review the options in the sidebar to tailor how missing values are to be handled.**
+#### ⚙️ **Before uploading a file, review the options in the sidebar to tailor how missing values are to be handled.**
 """, unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
 
