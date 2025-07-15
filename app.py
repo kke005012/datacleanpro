@@ -126,12 +126,15 @@ elif page == "Clean My Data":
 
         if st.checkbox("Show cleaning log"):
             st.write("### 📋 Cleaning Log")
-            log_lines = write_log(st.session_state.raw_df, st.session_state.cleaned_df)
-            if log_lines:
-                for line in log_lines:
-                    st.markdown(f"- {line}")
+            if st.session_state.raw_df is not None and st.session_state.cleaned_df is not None:
+                log_lines = write_log(st.session_state.raw_df, st.session_state.cleaned_df)
+                if log_lines:
+                    for line in log_lines:
+                        st.markdown(f"- {line}")
+                else:
+                    st.info("No cleaning actions were logged.")
             else:
-                st.info("No cleaning actions were logged.")
+                st.warning("No data available for generating a log.")
 
         st.download_button(f" 📥 Download Cleaned CSV", data=st.session_state.cleaned_df.to_csv(index=False), file_name="cleaned_data.csv")
 
