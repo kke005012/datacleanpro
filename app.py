@@ -114,22 +114,26 @@ elif page == "Clean My Data":
 
             if st.button("Clean My Data"):
                 cleaned_df = clean_data(df, numeric_map[numeric_strategy], non_numeric_map[non_numeric_strategy])
-                st.write("### ✅ Cleaned Data Preview")
-                st.dataframe(cleaned_df.head())
-
-                if st.checkbox("Show cleaning log"):
-                    st.write("### 📋 Cleaning Log")
-                    log_lines = write_log(df, cleaned_df)
-                    if log_lines:
-                        for line in log_lines:
-                            st.markdown(f"- {line}")
-                    else:
-                        st.info("No cleaning actions were logged.")
-
-                st.download_button("📥 Download Cleaned CSV", data=cleaned_df.to_csv(index=False), file_name="cleaned_data.csv")
+                st.session_state.cleaned_df = cleaned_df
 
         except Exception as e:
-            st.error(f"⚠️ An error occurred while processing the file: {e}")
+            st.error(f⚠️ An error occurred while processing the file: {e}")
+
+    # Show results if data is available in session state
+    if st.session_state.cleaned_df is not None:
+        st.write("### ✅ Cleaned Data Preview")
+        st.dataframe(st.session_state.cleaned_df.head())
+
+        if st.checkbox("Show cleaning log"):
+            st.write("### 📋 Cleaning Log")
+            log_lines = write_log(st.session_state.raw_df, st.session_state.cleaned_df)
+            if log_lines:
+                for line in log_lines:
+                    st.markdown(f"- {line}")
+            else:
+                st.info("No cleaning actions were logged.")
+
+        st.download_button("📥 Download Cleaned CSV", data=st.session_state.cleaned_df.to_csv(index=False), file_name="cleaned_data.csv")
 
     # Footer contact info
     st.markdown("""
