@@ -4,7 +4,7 @@ def clean_data(df, handle_missing=False):
 
     # 1. Strip whitespace
     df = strip_whitespace(df)
-    log_lines.append(✔️ Stripped leading/trailing whitespace")
+    log_lines.append(f"✔️ Stripped leading/trailing whitespace")
 
     # 2. Drop empty rows
     original_len = len(df)
@@ -18,21 +18,21 @@ def clean_data(df, handle_missing=False):
 
     # 4. Standardize column names
     df = standardize_column_names(df)
-    log_lines.append("✔️ Standardized column names")
+    log_lines.append(f"✔️ Standardized column names")
 
     # 5. Normalize currency and date columns
     df = clean_currency_columns(df)
     df = normalize_dates(df)
-    log_lines.append("✔️ Normalized currency and date formats")
+    log_lines.append(f"✔️ Normalized currency and date formats")
 
     # 6. Handle missing values (if selected)
     if handle_missing:
         df = handle_missing_values(df)
-        log_lines.append("✔️ Filled missing values")
+        log_lines.append(f"✔️ Filled missing values")
 
     # 7. Final sanity check
     df = final_sanity_check(df)
-    log_lines.append("✔️ Performed final sanity checks")
+    log_lines.append(f"✔️ Performed final sanity checks")
 
     df.attrs['log'] = log_lines
     return df
