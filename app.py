@@ -80,7 +80,10 @@ elif page == "Clean My Data":
             </div>
             """, unsafe_allow_html=True)
             # Radio buttons for missing value handling
-            st.container():
+                st.markdown("""
+                    <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
+                """, unsafe_allow_html=True)
+
                 numeric_strategy = st.radio(
                     "Missing Numeric Values:",
                     ["Ignore", "Replace with Unknown", "Use Average"],
