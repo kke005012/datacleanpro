@@ -77,28 +77,28 @@ elif page == "Clean My Data":
             st.write("### 🛠️ Missing Value Handling")
             numeric_strategy = st.radio(
                 "Missing Numeric Values:",
-                ["Ignore", "Replace with Unknown", "Use Average ℹ️"],
+                ["Ignore", "Replace with Unknown", "Use Average"],
                 index=0,
-                help="Choose how to handle missing numeric values."
+                help="Use the column’s average to fill missing numeric values.."
             )
 
             non_numeric_strategy = st.radio(
                 "Missing Non-Numeric Values:",
-                ["Ignore", "Replace with Unknown", "Use Mode ℹ️"],
+                ["Ignore", "Replace with Unknown", "Use Mode"],
                 index=0,
-                help="Choose how to handle missing text or categorical values."
+                help="Use the most frequent value in the column to fill missing non-numeric entries."
             )
 
             # Map choices to internal codes
             numeric_map = {
                 "Ignore": "ignore",
                 "Replace with Unknown": "unknown",
-                "Use Average ℹ️": "average"
+                "Use Average": "average"
             }
             non_numeric_map = {
                 "Ignore": "ignore",
                 "Replace with Unknown": "unknown",
-                "Use Mode ℹ️": "mode"
+                "Use Mode": "mode"
             }
 
 
