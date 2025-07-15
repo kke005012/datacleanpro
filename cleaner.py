@@ -1,4 +1,7 @@
+import pandas as pd
+
 # --- cleaner.py ---
+
 def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore"):
     log_lines = []
 
@@ -37,8 +40,9 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore"):
 
 
 def strip_whitespace(df):
-    return df.applymap(lambda x: x.strip() if isinstance(x, str) else x)
-
+    for col in df.select_dtypes(include='object'):
+        df[col] = df[col].map(lambda x: x.strip() if isinstance(x, str) else x)
+    return df
 
 def drop_empty_rows(df):
     return df.dropna(how='all')

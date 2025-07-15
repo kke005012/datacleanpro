@@ -64,34 +64,6 @@ Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com
 elif page == "Clean My Data":
     st.title("🧹 Clean My Data")
 
-    # Radio buttons for missing value handling
-    st.write("### 🛠️ Missing Value Handling")
-    numeric_strategy = st.radio(
-         "Missing Numeric Values:",
-         ["Ignore", "Replace with Unknown", "Use Average ℹ️"],
-         index=0,
-         help="Choose how to handle missing numeric values."
-    )
-
-    non_numeric_strategy = st.radio(
-        "Missing Non-Numeric Values:",
-        ["Ignore", "Replace with Unknown", "Use Mode ℹ️"],
-        index=0,
-        help="Choose how to handle missing text or categorical values."
-    )
-
-    # Map choices to internal codes
-    numeric_map = {
-        "Ignore": "ignore",
-        "Replace with Unknown": "unknown",
-        "Use Average ℹ️": "average"
-    }
-    non_numeric_map = {
-        "Ignore": "ignore",
-        "Replace with Unknown": "unknown",
-        "Use Mode ℹ️": "mode"
-    }
-    
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
     if uploaded_file is not None:
@@ -100,6 +72,35 @@ elif page == "Clean My Data":
             st.success("File uploaded successfully!")
             st.write("### 📊 Preview of Uploaded Data")
             st.dataframe(df.head())
+
+            # Radio buttons for missing value handling
+            st.write("### 🛠️ Missing Value Handling")
+            numeric_strategy = st.radio(
+                "Missing Numeric Values:",
+                ["Ignore", "Replace with Unknown", "Use Average ℹ️"],
+                index=0,
+                help="Choose how to handle missing numeric values."
+            )
+
+            non_numeric_strategy = st.radio(
+                "Missing Non-Numeric Values:",
+                ["Ignore", "Replace with Unknown", "Use Mode ℹ️"],
+                index=0,
+                help="Choose how to handle missing text or categorical values."
+            )
+
+            # Map choices to internal codes
+            numeric_map = {
+                "Ignore": "ignore",
+                "Replace with Unknown": "unknown",
+                "Use Average ℹ️": "average"
+            }
+            non_numeric_map = {
+                "Ignore": "ignore",
+                "Replace with Unknown": "unknown",
+                "Use Mode ℹ️": "mode"
+            }
+
 
             if st.button("Clean My Data"):
                 cleaned_df = clean_data(df, numeric_map[numeric_strategy], non_numeric_map[non_numeric_strategy])
