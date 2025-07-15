@@ -39,7 +39,7 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 • Replace missing non-numeric values using Mode or Unknown
 
     st.markdown("""
-<h4>💸 Pricing</h4>
+<h4> 💸 Pricing</h4>
 <p><strong>First 100 rows: Free</strong></p>
 <p><strong>After that:</strong></p>
 <ul style="list-style-type: none; padding-left: 1em;">
