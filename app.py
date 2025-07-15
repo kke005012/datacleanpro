@@ -120,8 +120,8 @@ elif page == "Clean My Data":
 
             # Replace empty/whitespace-only strings with NaN for non-numeric columns
             for col in df.columns:
-                if df[col].dtype == object:
-                    df[col] = df[col].replace(r'^\s*$', pd.NA, regex=True)
+                df[col] = df[col].replace(r'^\s*$', pd.NA, regex=True)
+
 
             if st.button("Clean My Data"):
                 cleaned_df = clean_data(

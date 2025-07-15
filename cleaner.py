@@ -82,27 +82,28 @@ def normalize_dates(df):
 
 def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines):
     for col in df.columns:
-        if df[col].isnull().any():  # Only apply if the column actually has missing values
+        if df[col].isnull().any():
             if pd.api.types.is_numeric_dtype(df[col]):
                 if numeric_strategy == "unknown":
-                    df[col] = df[col].fillna("Unknown")
-                    log_lines.append(f"⚠️ Filled missing values in numeric column '{col}' with 'Unknown'")
+                    df[col] = df[col].fillna(-1)
+                    log_lines.append(f"⚠️ Filled numeric column '{col}' with -1")
                 elif numeric_strategy == "average":
                     df[col] = df[col].fillna(df[col].mean())
-                    log_lines.append(f"Filled missing values in numeric column '{col}' with average")
+                    log_lines.append(f"Filled numeric column '{col}' with average")
                 else:
-                    log_lines.append(f"Missing values in numeric column '{col}' left unchanged (ignored)")
+                    log_lines.append(f"Numeric column '{col}' left unchanged (ignored)")
             else:
                 if non_numeric_strategy == "unknown":
-                    df[col] = df[col].fillna("Unknown")
-                    log_lines.append(f"Filled missing values in non-numeric column '{col}' with 'Unknown'")
+                    # This will replace only the missing (NaN) values
+                    df[col] = df[col].apply(lambda x: "Unknown" if pd.isna(x) else x)
+                    log_lines.append(f"Filled non-numeric column '{col}' with 'Unknown'")
                 elif non_numeric_strategy == "mode":
                     mode = df[col].mode()
                     if not mode.empty:
                         df[col] = df[col].fillna(mode[0])
-                        log_lines.append(f"Filled missing values in non-numeric column '{col}' with mode value '{mode[0]}'")
+                        log_lines.append(f"Filled non-numeric column '{col}' with mode value '{mode[0]}'")
                 else:
-                    log_lines.append(f"Missing values in non-numeric column '{col}' left unchanged (ignored)")
+                    log_lines.append(f"Non-numeric column '{col}' left unchanged (ignored)")
     return df
 
 
