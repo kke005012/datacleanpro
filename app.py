@@ -36,8 +36,7 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 #### ✅ What We Offer  
 • Upload your messy CSV  
 • Strip whitespace, fix formats, remove duplicates  
-• Optional Pro features: fill missing data, download enhanced logs  
-""")
+• Replace missing non-numeric values using Mode or Unknown
 
     st.markdown("""
 <h4>💸 Pricing</h4>
