@@ -62,7 +62,7 @@ Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com
 elif page == "Clean My Data":    st.title("🧼 DataCleanPro: Clean Your CSV with Ease")
 
     st.markdown("""
-    > :gear: **Before uploading a file, be sure to review the options in the sidebar to tailor how missing values are handled.**
+> :gear: **Before uploading a file, be sure to review the options in the sidebar to tailor how missing values are handled.**
     """)
 
 
