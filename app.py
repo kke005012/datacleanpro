@@ -112,4 +112,4 @@ elif page == "Clean My Data":
                     mime='text/plain'
                 )
     except Exception as e:
-        st.error(f⚠️ An error occurred while processing the file: {str(e)}")
+        st.error(f"⚠️ An error occurred while processing the file: {str(e)}")
