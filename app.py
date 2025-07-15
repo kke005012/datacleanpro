@@ -80,23 +80,23 @@ elif page == "Clean My Data":
             </div>
             """, unsafe_allow_html=True)
             # Radio buttons for missing value handling
-                st.markdown("""
-                    <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
-                """, unsafe_allow_html=True)
+            st.markdown("""
+                <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
+            """, unsafe_allow_html=True)
 
-                numeric_strategy = st.radio(
-                    "Missing Numeric Values:",
-                    ["Ignore", "Replace with Unknown", "Use Average"],
-                    index=0,
-                    help="Choose Ignore (no change), replace with Unknown or Average (use the most frequent value in the column to fill missing numeric entries)."
-                )
+            numeric_strategy = st.radio(
+                "Missing Numeric Values:",
+                ["Ignore", "Replace with Unknown", "Use Average"],
+                index=0,
+                help="Choose Ignore (no change), replace with Unknown or Average (use the most frequent value in the column to fill missing numeric entries)."
+            )
 
-                non_numeric_strategy = st.radio(
-                    "Missing Non-Numeric Values:",
-                    ["Ignore", "Replace with Unknown", "Use Mode"],
-                    index=0,
-                    help="Choose Ignore (no change), replace with Unknown or Mode (use the most frequent value in the column to fill missing non-numeric entries)."
-                )
+            non_numeric_strategy = st.radio(
+                "Missing Non-Numeric Values:",
+                ["Ignore", "Replace with Unknown", "Use Mode"],
+                index=0,
+                help="Choose Ignore (no change), replace with Unknown or Mode (use the most frequent value in the column to fill missing non-numeric entries)."
+            )
 
             # Map choices to internal codes
             numeric_map = {
@@ -110,6 +110,7 @@ elif page == "Clean My Data":
                 "Use Mode": "mode"
             }
 
+            st.markdown("</div>", unsafe_allow_html=True)
 
             if st.button("Clean My Data"):
                 cleaned_df = clean_data(df, numeric_map[numeric_strategy], non_numeric_map[non_numeric_strategy])
