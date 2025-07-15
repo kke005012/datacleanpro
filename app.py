@@ -117,7 +117,7 @@ elif page == "Clean My Data":
                 st.session_state.cleaned_df = cleaned_df
 
         except Exception as e:
-            st.error(f⚠️ An error occurred while processing the file: {e}")
+            st.error(f" ⚠️ An error occurred while processing the file: {e}")
 
     # Show results if data is available in session state
     if st.session_state.cleaned_df is not None:
@@ -133,7 +133,7 @@ elif page == "Clean My Data":
             else:
                 st.info("No cleaning actions were logged.")
 
-        st.download_button("📥 Download Cleaned CSV", data=st.session_state.cleaned_df.to_csv(index=False), file_name="cleaned_data.csv")
+        st.download_button(f" 📥 Download Cleaned CSV", data=st.session_state.cleaned_df.to_csv(index=False), file_name="cleaned_data.csv")
 
     # Footer contact info
     st.markdown("""
