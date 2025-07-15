@@ -63,7 +63,7 @@ elif page == "Clean My Data":    st.title("🧼 DataCleanPro: Clean Your CSV wit
 
     st.markdown("""
 > :gear: **Before uploading a file, be sure to review the options in the sidebar to tailor how missing values are handled.**
-    """)
+""")
 
 
 
