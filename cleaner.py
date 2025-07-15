@@ -1,10 +1,10 @@
 # --- cleaner.py ---
-def clean_data(df, handle_missing=False):
+def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore"):
     log_lines = []
 
     # 1. Strip whitespace
     df = strip_whitespace(df)
-    log_lines.append(f"✔️ Stripped leading/trailing whitespace")
+    log_lines.append(✔️ Stripped leading/trailing whitespace")
 
     # 2. Drop empty rows
     original_len = len(df)
@@ -18,21 +18,19 @@ def clean_data(df, handle_missing=False):
 
     # 4. Standardize column names
     df = standardize_column_names(df)
-    log_lines.append(f"✔️ Standardized column names")
+    log_lines.append("✔️ Standardized column names")
 
     # 5. Normalize currency and date columns
     df = clean_currency_columns(df)
     df = normalize_dates(df)
-    log_lines.append(f"✔️ Normalized currency and date formats")
+    log_lines.append("✔️ Normalized currency and date formats")
 
-    # 6. Handle missing values (if selected)
-    if handle_missing:
-        df = handle_missing_values(df)
-        log_lines.append(f"✔️ Filled missing values")
+    # 6. Handle missing values (based on strategy)
+    df = handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
 
     # 7. Final sanity check
     df = final_sanity_check(df)
-    log_lines.append(f"✔️ Performed final sanity checks")
+    log_lines.append("✔️ Performed final sanity checks")
 
     df.attrs['log'] = log_lines
     return df
@@ -62,7 +60,7 @@ def standardize_column_names(df):
 def clean_currency_columns(df):
     import re
     for col in df.columns:
-        if df[col].dtype == object and df[col].str.contains(r"\$").any():
+        if df[col].dtype == object and df[col].str.contains("\$").any():
             cleaned = df[col].replace('[\$,]', '', regex=True)
             df[col] = cleaned.apply(lambda x: float(x) if re.fullmatch(r"-?\d+(\.\d+)?", str(x).strip()) else x)
     return df
@@ -78,8 +76,30 @@ def normalize_dates(df):
     return df
 
 
-def handle_missing_values(df):
-    return df.fillna("[Missing]")
+def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines):
+    for col in df.columns:
+        if df[col].isnull().any():
+            if pd.api.types.is_numeric_dtype(df[col]):
+                if numeric_strategy == "unknown":
+                    df[col] = df[col].fillna("[Unknown]")
+                    log_lines.append(f"⚠️ Filled numeric column '{col}' with '[Unknown]'")
+                elif numeric_strategy == "average":
+                    df[col] = df[col].fillna(df[col].mean())
+                    log_lines.append(f"✔️ Filled numeric column '{col}' with average")
+                else:
+                    log_lines.append(f"ℹ️ Numeric column '{col}' left unchanged (ignored)")
+            else:
+                if non_numeric_strategy == "unknown":
+                    df[col] = df[col].fillna("[Unknown]")
+                    log_lines.append(f"⚠️ Filled non-numeric column '{col}' with '[Unknown]'")
+                elif non_numeric_strategy == "mode":
+                    mode = df[col].mode()
+                    if not mode.empty:
+                        df[col] = df[col].fillna(mode[0])
+                        log_lines.append(f"✔️ Filled non-numeric column '{col}' with mode value '{mode[0]}'")
+                else:
+                    log_lines.append(f"ℹ️ Non-numeric column '{col}' left unchanged (ignored)")
+    return df
 
 
 def final_sanity_check(df):

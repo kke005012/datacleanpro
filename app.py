@@ -44,9 +44,11 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 <p><strong>First 100 rows: Free</strong></p>
 <p><strong>After that:</strong></p>
 <ul style="list-style-type: none; padding-left: 1em;">
-  <li><strong>$0.01 per "1,000" rows up to "5,000"</strong></li>
-  <li><strong>$0.008 per "1,000" rows from "5,001" to "25,000"</strong></li>
-  <li><strong>$0.005 per 1,000 rows from "25,001" to "100,000"</strong></li>
+  <li><strong>$0.02 per row from 101 to 500</strong></li>
+  <li><strong>$0.015 per row from 501 to 1500</strong></li>
+  <li><strong>$0.01 per row from 1501 to 10,000</strong></li>
+  <li><strong>$0.008 per row from 10001 to 25000</strong></li>
+  <li><strong>$0.007 per row from 25001 to 100,000</strong></li>
   <li><strong>Please contact us for custom pricing beyond "100,000" rows.</strong></li>
 </ul>
 <p>No commitments. No hidden fees.</p>
@@ -62,54 +64,61 @@ Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com
 elif page == "Clean My Data":
     st.title("🧹 Clean My Data")
 
-    uploaded_file = st.file_uploader("Upload your CSV file", type="csv")
+    uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
-    handle_missing_flag = st.sidebar.checkbox("Handle missing values")
-    show_log = st.sidebar.checkbox("Show cleaning log")
-
-    try:
-        if uploaded_file is not None:
+    if uploaded_file is not None:
+        try:
             df = pd.read_csv(uploaded_file)
-            st.subheader("🔍 Preview of Uploaded Data")
+            st.success("File uploaded successfully!")
+            st.write("### 📊 Preview of Uploaded Data")
             st.dataframe(df.head())
 
-            cleaned_df = clean_data(df, handle_missing_flag)
-
-            st.subheader("✅ Cleaned Data Preview")
-            st.dataframe(cleaned_df.head())
-
-            cost, total_rows, billable_rows = calculate_price(len(df))
-
-            st.markdown(f"**Total Rows:** {total_rows}")
-            st.markdown(f"**Billable Rows:** {billable_rows}")
-
-            if cost == 'custom':
-                st.warning("For more than 100,000 rows, please contact us for a custom quote.")
-            elif total_rows <= 100:
-                st.success("🎉 This one's on us! Your file is under 100 rows.")
-            else:
-                st.success(f"💰 Your total cost is: **${cost:.2f}**")
-
-            csv = cleaned_df.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="📥 Download Cleaned CSV",
-                data=csv,
-                file_name='cleaned_data.csv',
-                mime='text/csv'
+            # Radio buttons for missing value handling
+            st.write("### 🛠️ Missing Value Handling")
+            numeric_strategy = st.radio(
+                "Missing Numeric Values:",
+                ["Ignore", "Replace with Unknown", "Use Average ℹ️"],
+                index=0,
+                help="Choose how to handle missing numeric values."
             )
 
-            if show_log:
-                st.subheader("🧾 Cleaning Log")
-                log_lines = write_log(df, cleaned_df)
-                for line in log_lines:
-                    st.text(line)
+            non_numeric_strategy = st.radio(
+                "Missing Non-Numeric Values:",
+                ["Ignore", "Replace with Unknown", "Use Mode ℹ️"],
+                index=0,
+                help="Choose how to handle missing text or categorical values."
+            )
 
-                log_txt = "\n".join(log_lines).encode("utf-8")
-                st.download_button(
-                    label="📥 Download Cleaning Log",
-                    data=log_txt,
-                    file_name='cleaning_log.txt',
-                    mime='text/plain'
-                )
-    except Exception as e:
-        st.error(f"⚠️ An error occurred while processing the file: {str(e)}")
+            # Map choices to internal codes
+            numeric_map = {
+                "Ignore": "ignore",
+                "Replace with Unknown": "unknown",
+                "Use Average ℹ️": "average"
+            }
+            non_numeric_map = {
+                "Ignore": "ignore",
+                "Replace with Unknown": "unknown",
+                "Use Mode ℹ️": "mode"
+            }
+
+            if st.button("Clean My Data"):
+                cleaned_df = clean_data(df, numeric_map[numeric_strategy], non_numeric_map[non_numeric_strategy])
+                st.write("### ✅ Cleaned Data Preview")
+                st.dataframe(cleaned_df.head())
+
+                if st.checkbox("Show cleaning log"):
+                    st.write("### 📋 Cleaning Log")
+                    for line in write_log(df, cleaned_df):
+                        st.markdown(f"- {line}")
+
+                st.download_button("📥 Download Cleaned CSV", data=cleaned_df.to_csv(index=False), file_name="cleaned_data.csv")
+
+        except Exception as e:
+            st.error(f"⚠️ An error occurred while processing the file: {e}")
+
+    # Footer contact info
+    st.markdown("""
+        <div style='text-align: center; padding-top: 2em;'>
+            📩 Contact us: <a href='mailto:datacleanpro2025@gmail.com'>datacleanpro2025@gmail.com</a>
+        </div>
+    """, unsafe_allow_html=True)
