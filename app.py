@@ -66,6 +66,12 @@ elif page == "Clean My Data":
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
+        # Initialize session state
+    if "cleaned_df" not in st.session_state:
+        st.session_state.cleaned_df = None
+    if "raw_df" not in st.session_state:
+        st.session_state.raw_df = None
+
     if uploaded_file is not None:
         try:
             df = pd.read_csv(uploaded_file)
