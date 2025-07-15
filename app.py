@@ -118,6 +118,11 @@ elif page == "Clean My Data":
 
             st.markdown("</div>", unsafe_allow_html=True)
 
+            # Replace empty/whitespace-only strings with NaN for non-numeric columns
+            for col in df.columns:
+                if df[col].dtype == object:
+                    df[col] = df[col].replace(r'^\s*$', pd.NA, regex=True)
+
             if st.button("Clean My Data"):
                 cleaned_df = clean_data(
                     df.copy(),
