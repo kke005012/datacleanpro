@@ -53,7 +53,7 @@ def deduplicate(df):
 
 
 def write_log(original_df, cleaned_df):
-    return cleaned_df.attrs.get('log', ["No log information available."])
+    return cleaned_df.attrs.get('log', ["No cleaning log available."])
 
 
 def standardize_column_names(df):
@@ -86,24 +86,26 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
             if pd.api.types.is_numeric_dtype(df[col]):
                 if numeric_strategy == "unknown":
                     df[col] = df[col].fillna("Unknown")
-                    log_lines.append(f"⚠️ Filled numeric column '{col}' with 'Unknown'")
+                    log_lines.append(f"⚠️ Filled missing numeric values in '{col}' with 'Unknown'")
                 elif numeric_strategy == "average":
-                    df[col] = df[col].fillna(df[col].mean())
-                    log_lines.append(f"Filled numeric column '{col}' with average")
+                    mean_val = df[col].mean()
+                    df[col] = df[col].fillna(mean_val)
+                    log_lines.append(f"✅ Filled missing numeric values in '{col}' with average ({mean_val:.2f})")
                 else:
-                    log_lines.append(f"Numeric column '{col}' left unchanged (ignored)")
+                    log_lines.append(f"ℹ️ Missing numeric values in '{col}' left unchanged (ignored)")
             else:
                 if non_numeric_strategy == "unknown":
                     df[col] = df[col].fillna("Unknown")
-                    log_lines.append(f"Filled non-numeric column '{col}' with 'Unknown'")
+                    log_lines.append(f"⚠️ Filled missing non-numeric values in '{col}' with 'Unknown'")
                 elif non_numeric_strategy == "mode":
                     mode = df[col].mode()
                     if not mode.empty:
                         df[col] = df[col].fillna(mode[0])
-                        log_lines.append(f"Filled non-numeric column '{col}' with mode value '{mode[0]}'")
+                        log_lines.append(f"✅ Filled missing non-numeric values in '{col}' with mode value '{mode[0]}'")
                 else:
-                    log_lines.append(f"Non-numeric column '{col}' left unchanged (ignored)")
+                    log_lines.append(f"ℹ️ Missing non-numeric values in '{col}' left unchanged (ignored)")
     return df
+
 
 
 def final_sanity_check(df):
