@@ -60,9 +60,11 @@ def standardize_column_names(df):
 
 
 def clean_currency_columns(df):
+    import re
     for col in df.columns:
-        if df[col].dtype == object and df[col].str.contains("$").any():
-            df[col] = df[col].replace('[\$,]', '', regex=True).astype(float)
+        if df[col].dtype == object and df[col].str.contains(r"\$").any():
+            cleaned = df[col].replace('[\$,]', '', regex=True)
+            df[col] = cleaned.apply(lambda x: float(x) if re.fullmatch(r"-?\d+(\.\d+)?", str(x).strip()) else x)
     return df
 
 
