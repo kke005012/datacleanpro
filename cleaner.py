@@ -74,7 +74,7 @@ def normalize_dates(df):
     for col in df.columns:
         if df[col].dtype == object:
             try:
-                df[col] = pd.to_datetime(df[col], errors='ignore')
+                df[col] = pd.to_datetime(df[col], format="%Y-%m-%d", errors='coerce'))
             except Exception:
                 continue
     return df
