@@ -43,8 +43,8 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 <p><strong>First 100 rows: Free</strong></p>
 <p><strong>After that:</strong></p>
 <ul style="list-style-type: none; padding-left: 1em;">
-  <li><strong>$0.01 per 1,000 rows up to 5,000</strong></li>
-  <li><strong>$0.008 per 1,000 rows from 5,001 to 25,000</strong></li>
+  <li><strong>$0.01 per "1,000" rows up to "5,000"</strong></li>
+  <li><strong>$0.008 per "1,000" rows from "5,001" to "25,000"</strong></li>
   <li><strong>$0.005 per 1,000 rows from 25,001 to 100,000</strong></li>
   <li><strong>Please contact us for custom pricing beyond 100,000 rows.</strong></li>
 </ul>
