@@ -56,13 +56,13 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 ### 📨 Need Help?  
 Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com)
 
-##👉 Use the sidebar to switch to **Clean My Data**
+## 👉 Use the sidebar to switch to **Clean My Data**
 """, unsafe_allow_html=True)
 
 elif page == "Clean My Data":    
     st.title("🧼 DataCleanPro: Clean Your CSV with Ease")
     st.markdown("""
-##⚙️ **Before uploading a file, review the options in the sidebar to tailor how missing values are to be handled.**
+## ⚙️ **Before uploading a file, review the options in the sidebar to tailor how missing values are to be handled.**
 """, unsafe_allow_html=True)
     uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
 
