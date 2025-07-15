@@ -119,7 +119,11 @@ elif page == "Clean My Data":
             st.markdown("</div>", unsafe_allow_html=True)
 
             if st.button("Clean My Data"):
-                cleaned_df = clean_data(df, numeric_map[numeric_strategy], non_numeric_map[non_numeric_strategy])
+                cleaned_df = clean_data(
+                    df.copy(),
+                    numeric_strategy=numeric_map[numeric_strategy],
+                    non_numeric_strategy=non_numeric_map[non_numeric_strategy]
+                )
                 st.session_state.cleaned_df = cleaned_df
 
         except Exception as e:
