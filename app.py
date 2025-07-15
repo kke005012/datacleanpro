@@ -37,6 +37,7 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 • Upload your messy CSV  
 • Strip whitespace, fix formats, remove duplicates  
 • Replace missing non-numeric values using Mode or Unknown
+""", unsafe_allow_html=True)
 
     st.markdown("""
 <h4><span>&#x1F4B8;</span> Pricing</h4>
