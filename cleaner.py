@@ -85,8 +85,8 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
         if df[col].isnull().any():
             if pd.api.types.is_numeric_dtype(df[col]):
                 if numeric_strategy == "unknown":
-                    df[col] = df[col].fillna("[Unknown]")
-                    log_lines.append(f"⚠️ Filled numeric column '{col}' with '[Unknown]'")
+                    df[col] = df[col].fillna("Unknown")
+                    log_lines.append(f"⚠️ Filled numeric column '{col}' with 'Unknown'")
                 elif numeric_strategy == "average":
                     df[col] = df[col].fillna(df[col].mean())
                     log_lines.append(f"Filled numeric column '{col}' with average")
@@ -94,8 +94,8 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
                     log_lines.append(f"Numeric column '{col}' left unchanged (ignored)")
             else:
                 if non_numeric_strategy == "unknown":
-                    df[col] = df[col].fillna("[Unknown]")
-                    log_lines.append(f"Filled non-numeric column '{col}' with '[Unknown]'")
+                    df[col] = df[col].fillna("Unknown")
+                    log_lines.append(f"Filled non-numeric column '{col}' with 'Unknown'")
                 elif non_numeric_strategy == "mode":
                     mode = df[col].mode()
                     if not mode.empty:

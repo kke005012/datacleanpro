@@ -73,21 +73,27 @@ elif page == "Clean My Data":
             st.write("### 📊 Preview of Uploaded Data")
             st.dataframe(df.head())
 
-            # Radio buttons for missing value handling
-            st.write("### 🛠️ Missing Value Handling")
-            numeric_strategy = st.radio(
-                "Missing Numeric Values:",
-                ["Ignore", "Replace with Unknown", "Use Average"],
-                index=0,
-                help="Use the column’s average to fill missing numeric values.."
-            )
 
-            non_numeric_strategy = st.radio(
-                "Missing Non-Numeric Values:",
-                ["Ignore", "Replace with Unknown", "Use Mode"],
-                index=0,
-                help="Use the most frequent value in the column to fill missing non-numeric entries."
-            )
+            st.markdown("""
+            <div style='margin-top: 2em; text-align: center;'>
+                <h4> 🛠️ Handle Missing Values</h4>
+            </div>
+            """, unsafe_allow_html=True)
+            # Radio buttons for missing value handling
+            st.container():
+                numeric_strategy = st.radio(
+                    "Missing Numeric Values:",
+                    ["Ignore", "Replace with Unknown", "Use Average"],
+                    index=0,
+                    help="Choose Ignore (no change), replace with Unknown or Average (use the most frequent value in the column to fill missing numeric entries)."
+                )
+
+                non_numeric_strategy = st.radio(
+                    "Missing Non-Numeric Values:",
+                    ["Ignore", "Replace with Unknown", "Use Mode"],
+                    index=0,
+                    help="Choose Ignore (no change), replace with Unknown or Mode (use the most frequent value in the column to fill missing non-numeric entries)."
+                )
 
             # Map choices to internal codes
             numeric_map = {
@@ -109,8 +115,12 @@ elif page == "Clean My Data":
 
                 if st.checkbox("Show cleaning log"):
                     st.write("### 📋 Cleaning Log")
-                    for line in write_log(df, cleaned_df):
-                        st.markdown(f"- {line}")
+                    log_lines = write_log(df, cleaned_df)
+                    if log_lines:
+                        for line in log_lines:
+                            st.markdown(f"- {line}")
+                    else:
+                        st.info("No cleaning actions were logged.")
 
                 st.download_button("📥 Download Cleaned CSV", data=cleaned_df.to_csv(index=False), file_name="cleaned_data.csv")
 
