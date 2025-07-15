@@ -36,7 +36,7 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 #### ✅ What We Offer  
 • Upload your messy CSV  
 • Strip whitespace, fix formats, remove duplicates  
-• Replace missing non-numeric values using Mode or Unknown
+• Replace missing numeric/non-numeric values or leave as-is...your choice! 
 """, unsafe_allow_html=True)
 
     st.markdown("""
@@ -49,7 +49,7 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
   <li><strong>$0.01 per row from 1501 to 10,000</strong></li>
   <li><strong>$0.008 per row from 10001 to 25000</strong></li>
   <li><strong>$0.007 per row from 25001 to 100,000</strong></li>
-  <li><strong>Please contact us for custom pricing beyond "100,000" rows.</strong></li>
+  <li><strong>Please contact us for custom pricing beyond 100,000 rows.</strong></li>
 </ul>
 <p>No commitments. No hidden fees.</p>
 """, unsafe_allow_html=True)
