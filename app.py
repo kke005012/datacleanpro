@@ -126,7 +126,7 @@ elif page == "Clean My Data":
             st.error(f" ⚠️ An error occurred while processing the file: {e}")
 
     # Show results if data is available in session state
-      if st.session_state.cleaned_df is not None:
+    if st.session_state.cleaned_df is not None:
         st.write("### ✅ Cleaned Data Preview")
         st.dataframe(st.session_state.cleaned_df.head())
 
