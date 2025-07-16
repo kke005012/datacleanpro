@@ -73,7 +73,7 @@ elif page == "Clean My Data":
     # --- Safe session state initialization ---
     for key in ["raw_df", "cleaned_df", "file_hash", "upload_attempted"]:
         if key not in st.session_state:
-            st.session_state[key] = False
+            st.session_state["key"] = False
 
     def get_file_hash(file):
         return hashlib.md5(file.getvalue()).hexdigest()
@@ -163,6 +163,7 @@ elif page == "Clean My Data":
     # --- Show cleaned data ---
     if st.session_state.cleaned_df is not None:
         st.write("### ✅ Cleaned Data Preview")
+        st.write(f"Type of raw_df: {type(st.session_state.raw_df)}")
         st.dataframe(st.session_state.cleaned_df.head())
 
         if st.checkbox("Show cleaning log"):
@@ -183,7 +184,7 @@ elif page == "Clean My Data":
     # --- Reset button for dev use ---
     if st.button("🔄 Reset Session"):
         for key in ["raw_df", "cleaned_df", "file_hash"]:
-            st.session_state[key] = None
+            st.session_state[key] = None if key in ["raw_df", "cleaned_df"] else False
         st.experimental_rerun()
 
     # --- Footer ---
