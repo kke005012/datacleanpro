@@ -97,7 +97,7 @@ elif page == "Clean My Data":
             df = pd.read_csv(uploaded_file)
             num_rows3 = df.shape[0]
             st.write(f"##DEBUG 3: file uploaded has {num_rows3} rows.")
-	    st.dataframe(df.head())
+            st.dataframe(df.head())
             st.session_state.raw_df = df.copy()
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
