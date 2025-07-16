@@ -92,7 +92,7 @@ elif page == "Clean My Data":
 
         if st.session_state.file_hash != file_hash:
            
-            st.write(##Debug Entered file_hash if statement line 95)
+            st.write("##Debug Entered file_hash if statement line 95")
             df = pd.read_csv(uploaded_file)
             st.session_state.raw_df = df.copy()
             st.session_state.cleaned_df = None
