@@ -155,7 +155,7 @@ elif page == "Clean My Data":
         st.write(st.session_state.raw_df['Alley'].unique())
         if st.button("Clean My Data"):
             cleaned_df = clean_data(
-                st.session_state.raw_df.copy(),
+                df.copy(),
                 numeric_strategy=numeric_map[numeric_strategy],
                 non_numeric_strategy=non_numeric_map[non_numeric_strategy]
             )
@@ -165,7 +165,7 @@ elif page == "Clean My Data":
             st.write(st.session_state.cleaned_df.isna().sum())
             st.write(cleaned_df.isna().sum())
             st.write("🧪 Sample non-numeric column:")
-            st.write(st.session_state.raw_df['alley'].unique())
+            st.write(st.session_state.raw_df['Alley'].unique())
             st.write(st.session_state.cleaned_df['alley'].unique())
             st.write(cleaned_df['alley'].unique())
 
