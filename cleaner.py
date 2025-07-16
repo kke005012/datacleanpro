@@ -106,11 +106,15 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
                     #DEBUG df[col] = df[col].apply(lambda x: "Unknown" if (pd.isna(x) or (isinstance(x, str) and x.strip() == "")) else x)
                     #DEBUG log_lines.append(f"⚠️ Filled {num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
                 if non_numeric_strategy == "unknown":
-                    # Replace empty strings with NaN for consistency
-                    df[col] = df[col].replace("", np.nan)
+                    # Replace only if actual missing values exist
                     num_missing = df[col].isnull().sum()
-                    df[col] = df[col].fillna("Unknown")
+                    df[col] = df[col].replace(r"^\s*$", np.nan, regex=True)
+ 
+                    #if num_missing > 0:
+                        #df[col] = df[col].fillna("Unknown")
                     log_lines.append(f"⚠️ Filled {num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
+                    #else:
+                        #log_lines.append(f"✅ No missing values found in non-numeric column '{col}' — no replacements made")
 
                 elif non_numeric_strategy == "mode":
                     mode = df[col][df[col] != ""].mode()
