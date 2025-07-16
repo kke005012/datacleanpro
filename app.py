@@ -70,9 +70,9 @@ elif page == "Clean My Data":
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
     # --- Safe session state initialization ---
-    for key in ["raw_df", "cleaned_df", "file_hash"]:
+    for key in ["raw_df", "cleaned_df", "file_hash", "upload_attempted"]:
         if key not in st.session_state:
-            st.session_state[key] = None
+            st.session_state[key] = False
 
     def get_file_hash(file):
         return hashlib.md5(file.getvalue()).hexdigest()
@@ -86,6 +86,7 @@ elif page == "Clean My Data":
             st.session_state.raw_df = df.copy()
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
+            st.session_state.upload_attempted = True
             st.success("File uploaded and loaded fresh!")
         else:
             st.info("Same file detected — using cached version.")
