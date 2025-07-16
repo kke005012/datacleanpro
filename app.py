@@ -68,8 +68,8 @@ elif page == "Clean My Data":
     st.title("🧹 Clean My Data")
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
-    bytes_data1 = uploaded_file.size
-    st.write(f"# DEBUG 1: file uploaded has {bytes_data1}")
+    #bytes_data1 = uploaded_file.size
+    #st.write(f"# DEBUG 1: file uploaded has {bytes_data1}")
     # --- Safe session state initialization ---
     for key in ["raw_df", "cleaned_df", "file_hash", "upload_attempted"]:
         if key not in st.session_state:
@@ -83,8 +83,8 @@ elif page == "Clean My Data":
         st.session_state.upload_attempted = True
 
         file_hash = get_file_hash(uploaded_file)
-        bytes_data2 = uploaded_file.size
-        st.write(f"# DEBUG 2: file uploaded has {bytes_data2}")
+        #bytes_data2 = uploaded_file.size
+        #st.write(f"# DEBUG 2: file uploaded has {bytes_data2}")
         if st.session_state.file_hash != file_hash:
         
             df = pd.read_csv(uploaded_file)
