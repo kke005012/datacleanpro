@@ -91,9 +91,8 @@ elif page == "Clean My Data":
         file_hash = get_file_hash(uploaded_file)
 
         if st.session_state.file_hash != file_hash:
-            df = pd.DataFrame()
             st.write("##Debug Entered file_hash if statement line 95")
-            df = pd.read_csv(uploaded_file)
+            df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""])
             st.session_state.raw_df = df.copy()
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
@@ -156,7 +155,7 @@ elif page == "Clean My Data":
         st.write(st.session_state.raw_df['Alley'].unique())
         if st.button("Clean My Data"):
             cleaned_df = clean_data(
-                df.copy(),
+                st.session_state.raw_df.copy(),
                 numeric_strategy=numeric_map[numeric_strategy],
                 non_numeric_strategy=non_numeric_map[non_numeric_strategy]
             )
