@@ -68,7 +68,8 @@ elif page == "Clean My Data":
     st.title("🧹 Clean My Data")
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
-
+    bytes_data1 = uploaded_file.getvalue()
+    st.write(f"# DEBUG 1: file uploaded has {bytes_data1}")
     # --- Safe session state initialization ---
     for key in ["raw_df", "cleaned_df", "file_hash", "upload_attempted"]:
         if key not in st.session_state:
@@ -82,21 +83,26 @@ elif page == "Clean My Data":
         st.session_state.upload_attempted = True
 
         file_hash = get_file_hash(uploaded_file)
-
+        bytes_data2 = uploaded_file.getvalue()
+        st.write(f"# DEBUG 2: file uploaded has {bytes_data2}")
         if st.session_state.file_hash != file_hash:
+        
             df = pd.read_csv(uploaded_file)
+            num_rows3 = df.shape[0]
+            st.write(f"# DEBUG 3: file uploaded has {num_rows3}")
             st.session_state.raw_df = df.copy()
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
             st.success("File uploaded and loaded fresh!")
         else:
             st.info("Same file detected — using cached version.")
-
+        
     # --- Show raw data preview if available ---
     if st.session_state.raw_df is not None:
         st.write("### 📊 Preview of Uploaded Data")
         st.dataframe(st.session_state.raw_df.head())
-
+        num_rows4 = st.session_state.raw_df.shape[0]
+        st.write(f"# DEBUG 4: file uploaded has {num_rows4}")
         # --- Cleaning Options ---
         st.markdown("""
         <div style='margin-top: 2em; text-align: center;'>
@@ -134,6 +140,8 @@ elif page == "Clean My Data":
         }
 
         # --- Clean button only appears if data is ready ---
+        num_rows5 = st.session_state.raw_df.shape[0]
+        st.write(f"# DEBUG 5: file uploaded has {num_rows5}")
         if st.button("Clean My Data"):
             cleaned_df = clean_data(
                 st.session_state.raw_df.copy(),
@@ -141,13 +149,16 @@ elif page == "Clean My Data":
                 non_numeric_strategy=non_numeric_map[non_numeric_strategy]
             )
             st.session_state.cleaned_df = cleaned_df
-
+            num_rows6 = cleaned_df.shape[0]
+            st.write(f"# DEBUG 6: file uploaded has {num_rows6}")
             row_count = len(cleaned_df)
             cost = calculate_price(row_count)
             st.markdown(f"**Estimated Cost: ${cost:.2f}**")
 
     elif st.session_state.upload_attempted:
         st.warning(" ⚠️ No raw data available to clean. Please upload a file.")
+    num_rows7 = st.session_state.raw_df.shape[0]
+    st.write(f"# DEBUG 7: file uploaded has {num_rows7}")
 
     # --- Show cleaned data ---
     if st.session_state.cleaned_df is not None:
