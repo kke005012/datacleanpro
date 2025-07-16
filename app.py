@@ -71,9 +71,14 @@ elif page == "Clean My Data":
     #bytes_data1 = uploaded_file.size
     #st.write(f"# DEBUG 1: file uploaded has {bytes_data1}")
     # --- Safe session state initialization ---
-    for key in ["raw_df", "cleaned_df", "file_hash", "upload_attempted"]:
-        if key not in st.session_state:
-            st.session_state["key"] = False
+    if "raw_df" not in st.session_state:
+        st.session_state.raw_df = None
+    if "cleaned_df" not in st.session_state:
+        st.session_state.cleaned_df = None
+    if "file_hash" not in st.session_state:
+        st.session_state.file_hash = ""
+    if "upload_attempted" not in st.session_state:
+        st.session_state.upload_attempted = False
 
     def get_file_hash(file):
         return hashlib.md5(file.getvalue()).hexdigest()
