@@ -166,8 +166,8 @@ elif page == "Clean My Data":
             st.write(cleaned_df.isna().sum())
             st.write("🧪 Sample non-numeric column:")
             st.write(st.session_state.raw_df['Alley'].unique())
-            st.write(st.session_state.cleaned_df['alley'].unique())
-            st.write(cleaned_df['alley'].unique())
+            #st.write(st.session_state.cleaned_df['alley'].unique())
+            #st.write(cleaned_df['alley'].unique())
 
             num_rows6 = cleaned_df.shape[0]
             st.write(f"## DEBUG 6: file uploaded has {num_rows6} rows.")
