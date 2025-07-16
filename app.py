@@ -67,16 +67,16 @@ elif page == "Clean My Data":
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
-    # --- Safe session state initialization ---
+    # Safe session state initialization 
     for key in ["raw_df", "cleaned_df", "file_hash"]:
         if key not in st.session_state:
             st.session_state[key] = None
 
-
-    # Initialize session state
+    # Helper to hash file content
     def get_file_hash(file):
         return hashlib.md5(file.getvalue()).hexdigest()
 
+    # Load Uploaded fiel if new
     if uploaded_file is not None:
         file_hash = get_file_hash(uploaded_file)
 
@@ -92,19 +92,18 @@ elif page == "Clean My Data":
             st.success("File uploaded and loaded fresh!")
             st.write("### 📊 Preview of Uploaded Data")
             st.dataframe(df.head())
-        else:
-            df = st.session_state.raw_df
-            st.info("Same file detected — using cached version.")
 
 
+        # Show Cleaning Options if Raw Data is Loaded
+        if st.session_state.raw_df is not None:
             st.markdown("""
             <div style='margin-top: 2em; text-align: center;'>
                 <h4> 🛠️ Handle Missing Values</h4>
             </div>
             """, unsafe_allow_html=True)
-            # Radio buttons for missing value handling
+
             st.markdown("""
-                <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
+            <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
             """, unsafe_allow_html=True)
 
             numeric_strategy = st.radio(
@@ -120,6 +119,8 @@ elif page == "Clean My Data":
                 index=0,
                 help="Choose Ignore (no change), replace with Unknown or Mode (use the most frequent value in the column to fill missing non-numeric entries)."
             )
+            
+            st.markdown("</div>", unsafe_allow_html=True)
 
             # Map choices to internal codes
             numeric_map = {
@@ -133,23 +134,19 @@ elif page == "Clean My Data":
                 "Use Mode": "mode"
             }
 
-            st.markdown("</div>", unsafe_allow_html=True)
-
-
             if st.button("Clean My Data"):
-                if st.session_state.raw_df is not None:
-                    cleaned_df = clean_data(
+                cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     numeric_strategy=numeric_map[numeric_strategy],
                     non_numeric_strategy=non_numeric_map[non_numeric_strategy]
-                    )
-                    st.session_state.cleaned_df = cleaned_df
+                )
+                st.session_state.cleaned_df = cleaned_df
 
-                    # Pricing output
-                    row_count = len(cleaned_df)
-                    cost = calculate_price(row_count)
-                    st.markdown(f"**Estimated Cost: ${cost:.2f}**")
-                else:
+                # Pricing output
+                row_count = len(cleaned_df)
+                cost = calculate_price(row_count)
+                st.markdown(f"**Estimated Cost: ${cost:.2f}**")
+            else:
                     st.warning("No raw data available to clean. Please upload a file first.")
 
             #except Exception as e:
