@@ -80,18 +80,14 @@ elif page == "Clean My Data":
     if uploaded_file is not None:
         file_hash = get_file_hash(uploaded_file)
 
-        if (
-            "file_hash" not in st.session_state or
-            st.session_state.file_hash != file_hash
-        ):
-            df = pd.read_csv(uploaded_file)
-            st.session_state.raw_df = df.copy()
-            st.session_state.cleaned_df = None
-            st.session_state.file_hash = file_hash
+        # Always parse and store the file
+        df = pd.read_csv(uploaded_file)
+        st.session_state.raw_df = df.copy()
+        st.session_state.file_hash = file_hash
 
-            st.success("File uploaded and loaded fresh!")
-            st.write("### 📊 Preview of Uploaded Data")
-            st.dataframe(df.head())
+        st.success("File uploaded and loaded!")
+        st.write("### 📊 Preview of Uploaded Data")
+        st.dataframe(df.head())
 
 
         # Show Cleaning Options if Raw Data is Loaded
