@@ -124,7 +124,7 @@ elif page == "Clean My Data":
             if st.button("Clean My Data"):
                 if st.session_state.raw_df is not None:
                     cleaned_df = clean_data(
-                        st.session_state.raw_df,
+                        st.session_state.raw_df.copy(),
                         numeric_strategy=numeric_map[numeric_strategy],
                         non_numeric_strategy=non_numeric_map[non_numeric_strategy]
                     )
