@@ -157,7 +157,10 @@ elif page == "Clean My Data":
             st.session_state.cleaned_df = cleaned_df
             num_rows6 = cleaned_df.shape[0]
             st.write(f"## DEBUG 6: file uploaded has {num_rows6} rows.")
+            st.write(f"cleaned_df")
             st.dataframe(cleaned_df.head())
+            st.write(f"session df")
+            st.dataframe(st.session_state.raw_df.head())
             row_count = len(cleaned_df)
             cost, rows, rows_minus_free = calculate_price(row_count)
             st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}")
