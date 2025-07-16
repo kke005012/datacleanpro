@@ -100,11 +100,18 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
                 else:
                     log_lines.append(f"Numeric column '{col}' left unchanged (ignored)")
             else:
+                #if non_numeric_strategy == "unknown":
+                    #DEBUG Count how many were replaced (either NaN or empty strings)
+                    #DEBUG num_missing = df[col].apply(lambda x: pd.isna(x) or x == "").sum()
+                    #DEBUG df[col] = df[col].apply(lambda x: "Unknown" if (pd.isna(x) or (isinstance(x, str) and x.strip() == "")) else x)
+                    #DEBUG log_lines.append(f"⚠️ Filled {num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
                 if non_numeric_strategy == "unknown":
-                    # Count how many were replaced (either NaN or empty strings)
-                    num_missing = df[col].apply(lambda x: pd.isna(x) or x == "").sum()
-                    df[col] = df[col].apply(lambda x: "Unknown" if pd.isna(x) or x == "" else x)
+                    # Replace empty strings with NaN for consistency
+                    df[col] = df[col].replace("", np.nan)
+                    num_missing = df[col].isnull().sum()
+                    df[col] = df[col].fillna("Unknown")
                     log_lines.append(f"⚠️ Filled {num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
+
                 elif non_numeric_strategy == "mode":
                     mode = df[col][df[col] != ""].mode()
                     if not mode.empty:
