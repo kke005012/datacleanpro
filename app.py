@@ -148,12 +148,22 @@ elif page == "Clean My Data":
         num_rows5 = st.session_state.raw_df.shape[0]
         st.write(f"##DEBUG 5: file uploaded has {num_rows5} rows.")
         st.dataframe(st.session_state.raw_df.head())
+        st.write("🔍 NA counts before cleaning:")
+        st.write(df.isna().sum())
+
+        st.write("🧪 Sample non-numeric column:")
+        st.write(df['alley'].unique())
         if st.button("Clean My Data"):
             cleaned_df = clean_data(
                 st.session_state.raw_df.copy(),
                 numeric_strategy=numeric_map[numeric_strategy],
                 non_numeric_strategy=non_numeric_map[non_numeric_strategy]
             )
+            st.write("🔍 NA counts before cleaning:")
+            st.write(df.isna().sum())
+
+            st.write("🧪 Sample non-numeric column:")
+            st.write(df['alley'].unique())
             st.session_state.cleaned_df = cleaned_df
             num_rows6 = cleaned_df.shape[0]
             st.write(f"## DEBUG 6: file uploaded has {num_rows6} rows.")
