@@ -87,11 +87,11 @@ elif page == "Clean My Data":
     # --- Load file into session state ---
     if uploaded_file is not None:
         st.session_state.upload_attempted = True
-
+        
         file_hash = get_file_hash(uploaded_file)
 
         if st.session_state.file_hash != file_hash:
-           
+            df = pd.DataFrame()
             st.write("##Debug Entered file_hash if statement line 95")
             df = pd.read_csv(uploaded_file)
             st.session_state.raw_df = df.copy()
