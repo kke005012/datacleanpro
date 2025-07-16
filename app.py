@@ -66,7 +66,8 @@ elif page == "Clean My Data":
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
-        # Initialize session state
+
+    # Initialize session state
     if "cleaned_df" not in st.session_state:
         st.session_state.cleaned_df = None
     if "raw_df" not in st.session_state:
@@ -75,6 +76,7 @@ elif page == "Clean My Data":
     if uploaded_file is not None:
         try:
             df = pd.read_csv(uploaded_file)
+            st.session_state.raw_df = df.copy()
             st.success("File uploaded successfully!")
             st.write("### 📊 Preview of Uploaded Data")
             st.dataframe(df.head())
@@ -120,16 +122,19 @@ elif page == "Clean My Data":
 
 
             if st.button("Clean My Data"):
-                cleaned_df = clean_data(
-                    df.copy(),
-                    numeric_strategy=numeric_map[numeric_strategy],
-                    non_numeric_strategy=non_numeric_map[non_numeric_strategy]
-                )
+                if st.session_state.raw_df is not None:
+                    cleaned_df = clean_data(
+                        st.session_state.raw_df,
+                        numeric_strategy=numeric_map[numeric_strategy],
+                        non_numeric_strategy=non_numeric_map[non_numeric_strategy]
+                    )
                 st.session_state.cleaned_df = cleaned_df
+            else:
+                st.warning("No raw data available to clean. Please upload a file first.")
 
                 # Pricing output
                 row_count = len(cleaned_df)
-                cost = calculate_pricing(row_count)
+                cost = calculate_price(row_count)
                 st.markdown(f"**Estimated Cost: ${cost:.2f}**")
 
         except Exception as e:
