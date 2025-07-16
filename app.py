@@ -109,7 +109,7 @@ elif page == "Clean My Data":
         st.write("### 📊 Preview of Uploaded Data")
         st.dataframe(st.session_state.raw_df.head())
         num_rows4 = st.session_state.raw_df.shape[0]
-        st.write(f"DEBUG 4: file uploaded has {num_rows4} rows and {df.head()")
+        st.write(f"DEBUG 4: file uploaded has {num_rows4} rows and {df.head()}")
         # --- Cleaning Options ---
         st.markdown("""
         <div style='margin-top: 2em; text-align: center;'>
@@ -148,7 +148,7 @@ elif page == "Clean My Data":
 
         # --- Clean button only appears if data is ready ---
         num_rows5 = st.session_state.raw_df.shape[0]
-        st.write(f"DEBUG 5: file uploaded has {num_rows5} rows and {df.head()")
+        st.write(f"DEBUG 5: file uploaded has {num_rows5} rows and {df.head()}")
         if st.button("Clean My Data"):
             cleaned_df = clean_data(
                 st.session_state.raw_df.copy(),
@@ -157,7 +157,7 @@ elif page == "Clean My Data":
             )
             st.session_state.cleaned_df = cleaned_df
             num_rows6 = cleaned_df.shape[0]
-            st.write(f"# DEBUG 6: file uploaded has {num_rows6} rows and {df.head()")
+            st.write(f"# DEBUG 6: file uploaded has {num_rows6} rows and {df.head()}")
             row_count = len(cleaned_df)
             cost, rows, rows_minus_free = calculate_price(row_count)
             st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}")
@@ -165,7 +165,7 @@ elif page == "Clean My Data":
     elif st.session_state.upload_attempted:
         st.warning(" ⚠️ No raw data available to clean. Please upload a file.")
     num_rows7 = st.session_state.raw_df.shape[0]
-    st.write(f"DEBUG 7: file uploaded has {num_rows7} rows and {df.head()")
+    st.write(f"DEBUG 7: file uploaded has {num_rows7} rows and {df.head()}")
 
     # --- Show cleaned data ---
     if st.session_state.cleaned_df is not None:
