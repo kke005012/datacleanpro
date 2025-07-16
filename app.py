@@ -118,10 +118,6 @@ elif page == "Clean My Data":
 
             st.markdown("</div>", unsafe_allow_html=True)
 
-            # Replace empty/whitespace-only strings with NaN for non-numeric columns
-            for col in df.columns:
-                df[col] = df[col].replace(r'^\s*$', pd.NA, regex=True)
-
 
             if st.button("Clean My Data"):
                 cleaned_df = clean_data(
@@ -130,6 +126,11 @@ elif page == "Clean My Data":
                     non_numeric_strategy=non_numeric_map[non_numeric_strategy]
                 )
                 st.session_state.cleaned_df = cleaned_df
+
+                # Pricing output
+                row_count = len(cleaned_df)
+                cost = calculate_pricing(row_count)
+                st.markdown(f"**Estimated Cost: ${cost:.2f}**")
 
         except Exception as e:
             st.error(f" ⚠️ An error occurred while processing the file: {e}")

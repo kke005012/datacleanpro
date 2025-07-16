@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 # --- cleaner.py ---
 
@@ -82,26 +83,35 @@ def normalize_dates(df):
 
 def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines):
     for col in df.columns:
-        if df[col].isnull().any():
-            if pd.api.types.is_numeric_dtype(df[col]):
+        is_numeric = pd.api.types.is_numeric_dtype(df[col])
+        has_nulls = df[col].isnull().any()
+        has_empty = (df[col] == "").any() if not is_numeric else False
+
+        if has_nulls or has_empty:
+            if is_numeric:
                 if numeric_strategy == "unknown":
+                    num_missing = df[col].isnull().sum()
                     df[col] = df[col].fillna(-1)
-                    log_lines.append(f"⚠️ Filled numeric column '{col}' with -1")
+                    log_lines.append(f"⚠️ Filled {num_missing} missing values in numeric column '{col}' with -1")
                 elif numeric_strategy == "average":
+                    num_missing = df[col].isnull().sum()
                     df[col] = df[col].fillna(df[col].mean())
-                    log_lines.append(f"Filled numeric column '{col}' with average")
+                    log_lines.append(f"Filled {num_missing} missing values in numeric column '{col}' with average")
                 else:
                     log_lines.append(f"Numeric column '{col}' left unchanged (ignored)")
             else:
                 if non_numeric_strategy == "unknown":
-                    # This will replace only the missing (NaN) values
-                    df[col] = df[col].apply(lambda x: "Unknown" if pd.isna(x) else x)
-                    log_lines.append(f"Filled non-numeric column '{col}' with 'Unknown'")
+                    # Count how many were replaced (either NaN or empty strings)
+                    num_missing = df[col].apply(lambda x: pd.isna(x) or x == "").sum()
+                    df[col] = df[col].apply(lambda x: "Unknown" if pd.isna(x) or x == "" else x)
+                    log_lines.append(f"⚠️ Filled {num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
                 elif non_numeric_strategy == "mode":
-                    mode = df[col].mode()
+                    mode = df[col][df[col] != ""].mode()
                     if not mode.empty:
+                        df[col] = df[col].replace("", np.nan)
+                        num_missing = df[col].isnull().sum()
                         df[col] = df[col].fillna(mode[0])
-                        log_lines.append(f"Filled non-numeric column '{col}' with mode value '{mode[0]}'")
+                        log_lines.append(f"Filled {num_missing} missing values in non-numeric column '{col}' with mode value '{mode[0]}'")
                 else:
                     log_lines.append(f"Non-numeric column '{col}' left unchanged (ignored)")
     return df
