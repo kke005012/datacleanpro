@@ -145,7 +145,7 @@ elif page == "Clean My Data":
             st.markdown(f"**Estimated Cost: ${cost:.2f}**")
 
     elif st.session_state.upload_attempted:
-        st.warning(⚠️ No raw data available to clean. Please upload a file.")
+        st.warning(f" ⚠️ No raw data available to clean. Please upload a file.")
 
     # --- Show cleaned data ---
     if st.session_state.cleaned_df is not None:
