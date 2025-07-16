@@ -74,9 +74,9 @@ elif page == "Clean My Data":
     
     # Initialize session variables
     #if "raw_df" not in st.session_state:
-    st.session_state.raw_df = pd.dataframe()
+    st.session_state.raw_df = pd.DataFrame()
     #if "cleaned_df" not in st.session_state:
-    st.session_state.cleaned_df = pd.dataframe()
+    st.session_state.cleaned_df = pd.DataFrame()
     #if "file_hash" not in st.session_state:
     st.session_state.file_hash = ""
     #if "upload_attempted" not in st.session_state:
