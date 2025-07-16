@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from io import BytesIO
+import hashlib
 
 from cleaner import (
     clean_data,
@@ -68,18 +69,27 @@ elif page == "Clean My Data":
 
 
     # Initialize session state
-    if "cleaned_df" not in st.session_state:
-        st.session_state.cleaned_df = None
-    if "raw_df" not in st.session_state:
-        st.session_state.raw_df = None
+    def get_file_hash(file):
+    return hashlib.md5(file.getvalue()).hexdigest()
 
     if uploaded_file is not None:
-        try:
+        file_hash = get_file_hash(uploaded_file)
+
+        if (
+            "file_hash" not in st.session_state or
+            st.session_state.file_hash != file_hash
+        ):
             df = pd.read_csv(uploaded_file)
             st.session_state.raw_df = df.copy()
-            st.success("File uploaded successfully!")
+            st.session_state.cleaned_df = None
+            st.session_state.file_hash = file_hash
+
+            st.success("File uploaded and loaded fresh!")
             st.write("### 📊 Preview of Uploaded Data")
             st.dataframe(df.head())
+        else:
+            df = st.session_state.raw_df
+            st.info("Same file detected — using cached version.")
 
 
             st.markdown("""
@@ -124,21 +134,21 @@ elif page == "Clean My Data":
             if st.button("Clean My Data"):
                 if st.session_state.raw_df is not None:
                     cleaned_df = clean_data(
-                        st.session_state.raw_df.copy(),
-                        numeric_strategy=numeric_map[numeric_strategy],
-                        non_numeric_strategy=non_numeric_map[non_numeric_strategy]
+                    st.session_state.raw_df.copy(),
+                    numeric_strategy=numeric_map[numeric_strategy],
+                    non_numeric_strategy=non_numeric_map[non_numeric_strategy]
                     )
-                st.session_state.cleaned_df = cleaned_df
-            else:
-                st.warning("No raw data available to clean. Please upload a file first.")
+                    st.session_state.cleaned_df = cleaned_df
 
-                # Pricing output
-                row_count = len(cleaned_df)
-                cost = calculate_price(row_count)
-                st.markdown(f"**Estimated Cost: ${cost:.2f}**")
+                    # Pricing output
+                    row_count = len(cleaned_df)
+                    cost = calculate_price(row_count)
+                    st.markdown(f"**Estimated Cost: ${cost:.2f}**")
+                else:
+                    st.warning("No raw data available to clean. Please upload a file first.")
 
-        except Exception as e:
-            st.error(f" ⚠️ An error occurred while processing the file: {e}")
+            except Exception as e:
+                st.error(f" ⚠️ An error occurred while processing the file: {e}")
 
     # Show results if data is available in session state
     if st.session_state.cleaned_df is not None:
