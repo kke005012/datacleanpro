@@ -63,6 +63,10 @@ Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com
 """, unsafe_allow_html=True)
 
 elif page == "Clean My Data":
+    # --- Initialize session state variables ---
+    for key in ["raw_df", "cleaned_df", "file_hash"]:
+        if key not in st.session_state:
+            st.session_state[key] = None
     st.title("🧹 Clean My Data")
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
