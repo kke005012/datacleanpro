@@ -69,18 +69,18 @@ elif page == "Clean My Data":
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
     #bytes_data1 = uploaded_file.size
-    #st.write(f"# DEBUG 1: file uploaded has {bytes_data1}")
+    #st.write(f"DEBUG 1: file uploaded has {bytes_data1}")
     # --- Safe session state initialization ---
     
     # Initialize session variables
-    #if "raw_df" not in st.session_state:
-    st.session_state.raw_df = pd.DataFrame()
-    #if "cleaned_df" not in st.session_state:
-    st.session_state.cleaned_df = pd.DataFrame()
-    #if "file_hash" not in st.session_state:
-    st.session_state.file_hash = ""
-    #if "upload_attempted" not in st.session_state:
-    st.session_state.upload_attempted = False
+    if "raw_df" not in st.session_state:
+        st.session_state.raw_df = pd.DataFrame()
+    if "cleaned_df" not in st.session_state:
+        st.session_state.cleaned_df = pd.DataFrame()
+    if "file_hash" not in st.session_state:
+        st.session_state.file_hash = ""
+    if "upload_attempted" not in st.session_state:
+        st.session_state.upload_attempted = False
 
     def get_file_hash(file):
         return hashlib.md5(file.getvalue()).hexdigest()
@@ -91,12 +91,12 @@ elif page == "Clean My Data":
 
         file_hash = get_file_hash(uploaded_file)
         #bytes_data2 = uploaded_file.size
-        #st.write(f"# DEBUG 2: file uploaded has {bytes_data2}")
+        #st.write(f"DEBUG 2: file uploaded has {bytes_data2}")
         if st.session_state.file_hash != file_hash:
         
             df = pd.read_csv(uploaded_file)
             num_rows3 = df.shape[0]
-            st.write(f"# DEBUG 3: file uploaded has {num_rows3}")
+            st.write(f"DEBUG 3: file uploaded has {num_rows3} rows and {df.head()}")
             st.session_state.raw_df = df.copy()
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
@@ -109,7 +109,7 @@ elif page == "Clean My Data":
         st.write("### 📊 Preview of Uploaded Data")
         st.dataframe(st.session_state.raw_df.head())
         num_rows4 = st.session_state.raw_df.shape[0]
-        st.write(f"# DEBUG 4: file uploaded has {num_rows4}")
+        st.write(f"DEBUG 4: file uploaded has {num_rows4} rows and {df.head()")
         # --- Cleaning Options ---
         st.markdown("""
         <div style='margin-top: 2em; text-align: center;'>
@@ -148,7 +148,7 @@ elif page == "Clean My Data":
 
         # --- Clean button only appears if data is ready ---
         num_rows5 = st.session_state.raw_df.shape[0]
-        st.write(f"# DEBUG 5: file uploaded has {num_rows5}")
+        st.write(f"DEBUG 5: file uploaded has {num_rows5} rows and {df.head()")
         if st.button("Clean My Data"):
             cleaned_df = clean_data(
                 st.session_state.raw_df.copy(),
@@ -157,15 +157,15 @@ elif page == "Clean My Data":
             )
             st.session_state.cleaned_df = cleaned_df
             num_rows6 = cleaned_df.shape[0]
-            st.write(f"# DEBUG 6: file uploaded has {num_rows6}")
+            st.write(f"# DEBUG 6: file uploaded has {num_rows6} rows and {df.head()")
             row_count = len(cleaned_df)
-            cost = calculate_price(row_count)
-            st.markdown(f"**Estimated Cost: ${cost:.2f}**")
+            cost, rows, rows_minus_free = calculate_price(row_count)
+            st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}")
 
     elif st.session_state.upload_attempted:
         st.warning(" ⚠️ No raw data available to clean. Please upload a file.")
     num_rows7 = st.session_state.raw_df.shape[0]
-    st.write(f"# DEBUG 7: file uploaded has {num_rows7}")
+    st.write(f"DEBUG 7: file uploaded has {num_rows7} rows and {df.head()")
 
     # --- Show cleaned data ---
     if st.session_state.cleaned_df is not None:
