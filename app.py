@@ -147,8 +147,8 @@ elif page == "Clean My Data":
                 else:
                     st.warning("No raw data available to clean. Please upload a file first.")
 
-            except Exception as e:
-                st.error(f" ⚠️ An error occurred while processing the file: {e}")
+            #except Exception as e:
+                #st.error(f" ⚠️ An error occurred while processing the file: {e}")
 
     # Show results if data is available in session state
     if st.session_state.cleaned_df is not None:
