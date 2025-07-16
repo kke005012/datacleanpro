@@ -79,6 +79,8 @@ elif page == "Clean My Data":
 
     # --- Load file into session state ---
     if uploaded_file is not None:
+        st.session_state.upload_attempted = True
+
         file_hash = get_file_hash(uploaded_file)
 
         if st.session_state.file_hash != file_hash:
@@ -86,7 +88,6 @@ elif page == "Clean My Data":
             st.session_state.raw_df = df.copy()
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
-            st.session_state.upload_attempted = True
             st.success("File uploaded and loaded fresh!")
         else:
             st.info("Same file detected — using cached version.")
