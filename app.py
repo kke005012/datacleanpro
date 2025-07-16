@@ -72,8 +72,6 @@ elif page == "Clean My Data":
         if key not in st.session_state:
             st.session_state[key] = None
 
-    uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
-
 
     # Initialize session state
     def get_file_hash(file):
