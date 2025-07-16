@@ -63,92 +63,91 @@ Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com
 """, unsafe_allow_html=True)
 
 elif page == "Clean My Data":
+    import hashlib
+
     st.title("🧹 Clean My Data")
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
-    # Safe session state initialization 
+    # --- Safe session state initialization ---
     for key in ["raw_df", "cleaned_df", "file_hash"]:
         if key not in st.session_state:
             st.session_state[key] = None
 
-    # Helper to hash file content
     def get_file_hash(file):
         return hashlib.md5(file.getvalue()).hexdigest()
 
-    # Load Uploaded fiel if new
+    # --- Load file into session state ---
     if uploaded_file is not None:
         file_hash = get_file_hash(uploaded_file)
 
-        # Always parse and store the file
-        df = pd.read_csv(uploaded_file)
-        st.session_state.raw_df = df.copy()
-        st.session_state.file_hash = file_hash
+        if st.session_state.file_hash != file_hash:
+            df = pd.read_csv(uploaded_file)
+            st.session_state.raw_df = df.copy()
+            st.session_state.cleaned_df = None
+            st.session_state.file_hash = file_hash
+            st.success("File uploaded and loaded fresh!")
+        else:
+            st.info("Same file detected — using cached version.")
 
-        st.success("File uploaded and loaded!")
+    # --- Show raw data preview if available ---
+    if st.session_state.raw_df is not None:
         st.write("### 📊 Preview of Uploaded Data")
-        st.dataframe(df.head())
+        st.dataframe(st.session_state.raw_df.head())
 
+        # --- Cleaning Options ---
+        st.markdown("""
+        <div style='margin-top: 2em; text-align: center;'>
+            <h4> 🛠️ Handle Missing Values</h4>
+        </div>
+        """, unsafe_allow_html=True)
 
-        # Show Cleaning Options if Raw Data is Loaded
-        if st.session_state.raw_df is not None:
-            st.markdown("""
-            <div style='margin-top: 2em; text-align: center;'>
-                <h4> 🛠️ Handle Missing Values</h4>
-            </div>
-            """, unsafe_allow_html=True)
+        st.markdown("""
+        <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
+        """, unsafe_allow_html=True)
 
-            st.markdown("""
-            <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
-            """, unsafe_allow_html=True)
+        numeric_strategy = st.radio(
+            "Missing Numeric Values:",
+            ["Ignore", "Replace with Unknown", "Use Average"],
+            index=0
+        )
 
-            numeric_strategy = st.radio(
-                "Missing Numeric Values:",
-                ["Ignore", "Replace with Unknown", "Use Average"],
-                index=0,
-                help="Choose Ignore (no change), replace with Unknown or Average (use the most frequent value in the column to fill missing numeric entries)."
+        non_numeric_strategy = st.radio(
+            "Missing Non-Numeric Values:",
+            ["Ignore", "Replace with Unknown", "Use Mode"],
+            index=0
+        )
+
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        numeric_map = {
+            "Ignore": "ignore",
+            "Replace with Unknown": "unknown",
+            "Use Average": "average"
+        }
+        non_numeric_map = {
+            "Ignore": "ignore",
+            "Replace with Unknown": "unknown",
+            "Use Mode": "mode"
+        }
+
+        # --- Clean button only appears if data is ready ---
+        if st.button("Clean My Data"):
+            cleaned_df = clean_data(
+                st.session_state.raw_df.copy(),
+                numeric_strategy=numeric_map[numeric_strategy],
+                non_numeric_strategy=non_numeric_map[non_numeric_strategy]
             )
+            st.session_state.cleaned_df = cleaned_df
 
-            non_numeric_strategy = st.radio(
-                "Missing Non-Numeric Values:",
-                ["Ignore", "Replace with Unknown", "Use Mode"],
-                index=0,
-                help="Choose Ignore (no change), replace with Unknown or Mode (use the most frequent value in the column to fill missing non-numeric entries)."
-            )
-            
-            st.markdown("</div>", unsafe_allow_html=True)
+            row_count = len(cleaned_df)
+            cost = calculate_price(row_count)
+            st.markdown(f"**Estimated Cost: ${cost:.2f}**")
 
-            # Map choices to internal codes
-            numeric_map = {
-                "Ignore": "ignore",
-                "Replace with Unknown": "unknown",
-                "Use Average": "average"
-            }
-            non_numeric_map = {
-                "Ignore": "ignore",
-                "Replace with Unknown": "unknown",
-                "Use Mode": "mode"
-            }
+    else:
+        st.warning("⚠️ No raw data available to clean. Please upload a file.")
 
-            if st.button("Clean My Data"):
-                cleaned_df = clean_data(
-                    st.session_state.raw_df.copy(),
-                    numeric_strategy=numeric_map[numeric_strategy],
-                    non_numeric_strategy=non_numeric_map[non_numeric_strategy]
-                )
-                st.session_state.cleaned_df = cleaned_df
-
-                # Pricing output
-                row_count = len(cleaned_df)
-                cost = calculate_price(row_count)
-                st.markdown(f"**Estimated Cost: ${cost:.2f}**")
-            else:
-                    st.warning("No raw data available to clean. Please upload a file first.")
-
-            #except Exception as e:
-                #st.error(f" ⚠️ An error occurred while processing the file: {e}")
-
-    # Show results if data is available in session state
+    # --- Show cleaned data ---
     if st.session_state.cleaned_df is not None:
         st.write("### ✅ Cleaned Data Preview")
         st.dataframe(st.session_state.cleaned_df.head())
@@ -162,10 +161,19 @@ elif page == "Clean My Data":
             else:
                 st.info("No cleaning actions were logged.")
 
-        st.download_button("📥 Download Cleaned CSV", data=st.session_state.cleaned_df.to_csv(index=False), file_name="cleaned_data.csv")
+        st.download_button(
+            "📥 Download Cleaned CSV",
+            data=st.session_state.cleaned_df.to_csv(index=False),
+            file_name="cleaned_data.csv"
+        )
 
+    # --- Reset button for dev use ---
+    if st.button("🔄 Reset Session"):
+        for key in ["raw_df", "cleaned_df", "file_hash"]:
+            st.session_state[key] = None
+        st.experimental_rerun()
 
-    # Footer contact info
+    # --- Footer ---
     st.markdown("""
         <div style='text-align: center; padding-top: 2em;'>
             📩 Contact us: <a href='mailto:datacleanpro2025@gmail.com'>datacleanpro2025@gmail.com</a>
