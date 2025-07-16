@@ -70,7 +70,7 @@ elif page == "Clean My Data":
 
     # Initialize session state
     def get_file_hash(file):
-    return hashlib.md5(file.getvalue()).hexdigest()
+        return hashlib.md5(file.getvalue()).hexdigest()
 
     if uploaded_file is not None:
         file_hash = get_file_hash(uploaded_file)
