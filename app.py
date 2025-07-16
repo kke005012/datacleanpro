@@ -206,12 +206,6 @@ elif page == "Clean My Data":
             file_name="cleaned_data.csv"
         )
 
-    # --- Reset button for dev use ---
-    if st.button("🔄 Reset Session"):
-        for key in ["raw_df", "cleaned_df", "file_hash"]:
-            st.session_state[key] = None if key in ["raw_df", "cleaned_df"] else False
-        st.experimental_rerun()
-
     # --- Footer ---
     st.markdown("""
         <div style='text-align: center; padding-top: 2em;'>
