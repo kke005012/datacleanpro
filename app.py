@@ -91,21 +91,17 @@ elif page == "Clean My Data":
         file_hash = get_file_hash(uploaded_file)
 
         if st.session_state.file_hash != file_hash:
-            st.write("##Debug Entered file_hash if statement line 95")
             df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""])
             st.session_state.raw_df = df.copy()
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
-            st.success("File uploaded and loaded fresh!")
+            st.success("File uploaded!")
         else:
             st.info("Same file detected — using cached version.")
         
     # --- Show raw data preview if available ---
     if st.session_state.raw_df is not None:
         st.write("### 📊 Preview of Uploaded Data")
-        st.dataframe(st.session_state.raw_df.head())
-        num_rows4 = st.session_state.raw_df.shape[0]
-        st.write(f"##DEBUG 4: file uploaded has {num_rows4} rows.")
         st.dataframe(st.session_state.raw_df.head())
 
         # --- Cleaning Options ---
@@ -145,14 +141,7 @@ elif page == "Clean My Data":
         }
 
         # --- Clean button only appears if data is ready ---
-        num_rows5 = st.session_state.raw_df.shape[0]
-        st.write(f"##DEBUG 5: file uploaded has {num_rows5} rows.")
-        st.dataframe(st.session_state.raw_df.head())
-        st.write("🔍 NA counts before cleaning:")
-        st.write(st.session_state.raw_df.isna().sum())
 
-        st.write("🧪 Sample non-numeric column:")
-        st.write(st.session_state.raw_df['Alley'].unique())
         if st.button("Clean My Data"):
             cleaned_df = clean_data(
                 st.session_state.raw_df.copy(),
@@ -160,35 +149,16 @@ elif page == "Clean My Data":
                 non_numeric_strategy=non_numeric_map[non_numeric_strategy]
             )
             st.session_state.cleaned_df = cleaned_df
-            st.write("🔍 NA counts after cleaning:")
-            st.write(st.session_state.raw_df.isna().sum())
-            st.write(st.session_state.cleaned_df.isna().sum())
-            st.write(cleaned_df.isna().sum())
-            st.write("🧪 Sample non-numeric column:")
-            st.write(st.session_state.raw_df['Alley'].unique())
-            #st.write(st.session_state.cleaned_df['alley'].unique())
-            #st.write(cleaned_df['alley'].unique())
-
-            num_rows6 = cleaned_df.shape[0]
-            st.write(f"## DEBUG 6: file uploaded has {num_rows6} rows.")
-            st.write(f"cleaned_df")
-            st.dataframe(cleaned_df.head())
-            st.write(f"session df")
-            st.dataframe(st.session_state.raw_df.head())
             row_count = len(cleaned_df)
             cost, rows, rows_minus_free = calculate_price(row_count)
             st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}")
 
     elif st.session_state.upload_attempted:
         st.warning(" ⚠️ No raw data available to clean. Please upload a file.")
-    num_rows7 = st.session_state.raw_df.shape[0]
-    st.write(f"##DEBUG 7: file uploaded has {num_rows7} rows.")
-    st.dataframe(st.session_state.raw_df.head())
 
     # --- Show cleaned data ---
     if st.session_state.cleaned_df is not None:
         st.write("### ✅ Cleaned Data Preview")
-        st.write(f"Type of raw_df: {type(st.session_state.raw_df)}")
         st.dataframe(st.session_state.cleaned_df.head())
 
         if st.checkbox("Show cleaning log"):
