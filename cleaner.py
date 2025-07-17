@@ -57,7 +57,7 @@ def strip_whitespace(df):
     return df
 
 def drop_empty_rows(df):
-    return df.dropna(how='all')
+    return df.dropna(axis=1, how='all')
 
 
 def deduplicate(df):
