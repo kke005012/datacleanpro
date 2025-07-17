@@ -12,7 +12,10 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore"):
 
     # 2. Drop empty rows
     original_len = len(df)
+    st.write("DEBUG60: Before drop_empty_rows:", df.shape)
     df = drop_empty_rows(df)
+    st.write("DEBUG61: After drop_empty_rows:", df.shape)
+
     log_lines.append(f"Dropped {original_len - len(df)} completely empty rows")
 
     # 3. Deduplicate
