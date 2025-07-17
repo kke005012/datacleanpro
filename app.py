@@ -180,7 +180,7 @@ elif page == "Clean My Data":
 
         # --- Show cleaned data ---
         cleaned_df = st.session_state.get("cleaned_df", None)
-        st.write(f"##DEBUG: ✅ Cleaned {len(cleaned_df)} rows.")
+ #       st.write(f"##DEBUG: ✅ Cleaned {len(cleaned_df)} rows.")
 
         if cleaned_df is not None and not cleaned_df.empty:
             st.write(f"##DEBUG1: in first if")
