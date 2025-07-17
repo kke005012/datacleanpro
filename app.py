@@ -64,7 +64,28 @@ Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com
 
 elif page == "Clean My Data":
     import hashlib
-
+    
+    # Style the buttons
+    st.markdown("""
+        <style>
+        div.stButton > button {
+            background-color: #4CAF50; /* soft green */
+            color: white;
+            padding: 0.6em 1.5em;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: 0.3s ease;
+        }
+        div.stButton > button:hover {
+            background-color: #45a049;
+            box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+        }
+        </style>
+    """, unsafe_allow_html=True)
+ 
     st.title("🧹 Clean My Data")
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
@@ -151,7 +172,7 @@ elif page == "Clean My Data":
                 st.session_state.cleaned_df = cleaned_df
                 row_count = len(cleaned_df)
                 cost, rows, rows_minus_free = calculate_price(row_count)
-                st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}")
+                st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}.")
 
         elif st.session_state.upload_attempted:
             st.warning(" ⚠️ No raw data available to clean. Please upload a file.")
@@ -169,8 +190,8 @@ elif page == "Clean My Data":
                 if log_lines:
                     for line in log_lines:
                         st.markdown(f"- {line}")
-            else:
-                st.info("No cleaning actions were logged.")
+                else:
+                    st.info("No cleaning actions were logged.")
 
             st.download_button(
                 "📥 Download Cleaned CSV",
