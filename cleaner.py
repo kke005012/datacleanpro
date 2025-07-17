@@ -129,4 +129,5 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
 
 
 def final_sanity_check(df):
-    return df.dropna(axis=1, how='all')
+    #possibly add functionality later if customer wants to drop columns where all values are missing
+    return df.dropna()
