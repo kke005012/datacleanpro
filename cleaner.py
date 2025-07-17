@@ -33,8 +33,8 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore"):
     df = handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
 
     # 7. Final sanity check
-    df = final_sanity_check(df)
-    log_lines.append(f"Performed final sanity checks")
+    #df = final_sanity_check(df)
+    #log_lines.append(f"Performed final sanity checks")
 
     df.attrs['log'] = log_lines
     return df
@@ -100,22 +100,12 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
                 else:
                     log_lines.append(f"Numeric column '{col}' left unchanged (ignored)")
             else:
-                #if non_numeric_strategy == "unknown":
-                    #DEBUG Count how many were replaced (either NaN or empty strings)
-                    #DEBUG num_missing = df[col].apply(lambda x: pd.isna(x) or x == "").sum()
-                    #DEBUG df[col] = df[col].apply(lambda x: "Unknown" if (pd.isna(x) or (isinstance(x, str) and x.strip() == "")) else x)
-                    #DEBUG log_lines.append(f"⚠️ Filled {num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
                 if non_numeric_strategy == "unknown":
-                    # Replace only if actual missing values exist
-                    num_missing = df[col].isnull().sum()
-                    df[col] = df[col].replace(r"^\s*$", np.nan, regex=True)
- 
-                    #if num_missing > 0:
-                        #df[col] = df[col].fillna("Unknown")
+                    # Count how many were replaced (either NaN or empty strings)
+                    num_missing = df[col].apply(lambda x: pd.isna(x) or x == "").sum()
+                    df[col] = df[col].apply(lambda x: "Unknown" if (pd.isna(x) or (isinstance(x, str) and x.strip() == "")) else x)
                     log_lines.append(f"⚠️ Filled {num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
-                    #else:
-                        #log_lines.append(f"✅ No missing values found in non-numeric column '{col}' — no replacements made")
-
+                 
                 elif non_numeric_strategy == "mode":
                     mode = df[col][df[col] != ""].mode()
                     if not mode.empty:
@@ -130,4 +120,4 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
 
 def final_sanity_check(df):
     #possibly add functionality later if customer wants to drop columns where all values are missing
-    return df.dropna()
+    
