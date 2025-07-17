@@ -171,8 +171,10 @@ elif page == "Clean My Data":
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     numeric_strategy=numeric_map[numeric_strategy],
-                    non_numeric_strategy=non_numeric_map[non_numeric_strategy]
+                    non_numeric_strategy=non_numeric_map[non_numeric_strategy],
+                    logger = st.write
                 )
+                st.write(cleaned_df.logger)
                 st.write(f"##DEBUG10: ✅ Cleaned {len(cleaned_df)} rows.")
                 st.write(f"##DEBUG40: Type of cleaned_df: {type(cleaned_df)}")
                 st.session_state.cleaned_df = cleaned_df
