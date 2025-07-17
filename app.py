@@ -173,8 +173,17 @@ elif page == "Clean My Data":
                 st.write(f"##DEBUG40: Type of cleaned_df: {type(cleaned_df)}")
                 st.session_state.cleaned_df = cleaned_df
 
+                st.write(f"##DEBUG51: dataframes after clean call")
+                st.write(f"##DEBUG52: cleaned_df")
+                st.dataframe(cleaned_df.head())
+                st.write(f"##DEBUG53: session state cleaned_df")
+                st.dataframe(st.session_state.cleaned_df.head())
+                st.write(f"##DEBUG54: session state raw_df")
+                st.dataframe(st.session_state.raw_df.head())
+
                 row_count = len(cleaned_df)
                 cost, rows, rows_minus_free = calculate_price(row_count)
+                st.write(f"##DEBUG50: after pricing call, cost={cost} rows={rows}")
                 st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}.")
 
         elif st.session_state.upload_attempted:
