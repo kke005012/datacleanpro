@@ -63,8 +63,6 @@ Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com
 """, unsafe_allow_html=True)
 
 elif page == "Clean My Data":
-    import hashlib
-    
     # Style the buttons
     st.markdown("""
         <style>
@@ -108,12 +106,12 @@ elif page == "Clean My Data":
     # --- Load file into session state ---
     if uploaded_file is not None:
         st.session_state.upload_attempted = True
-        
         file_hash = get_file_hash(uploaded_file)
 
         if st.session_state.file_hash != file_hash:
             df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""])
             st.session_state.raw_df = df.copy()
+            st.write(f"##DEBUG20: ✅ Cleaned {len(st.session_state.raw_df)} rows.")
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
             st.success("File uploaded!")
@@ -121,7 +119,7 @@ elif page == "Clean My Data":
             st.info("Same file detected — using cached version.")
         
         # --- Show raw data preview if available ---
-        if st.session_state.raw_df is not None:
+        if not st.session_state.raw_df.empty:
             st.write("### 📊 Preview of Uploaded Data")
             st.dataframe(st.session_state.raw_df.head())
 
@@ -162,6 +160,7 @@ elif page == "Clean My Data":
             }
 
             # --- Clean button only appears if data is ready ---
+            st.write(f"##DEBUG11: ✅ Cleaned {len(st.session_state.raw_df)} rows.")
 
             if st.button("Clean My Data"):
                 cleaned_df = clean_data(
@@ -169,7 +168,9 @@ elif page == "Clean My Data":
                     numeric_strategy=numeric_map[numeric_strategy],
                     non_numeric_strategy=non_numeric_map[non_numeric_strategy]
                 )
+                st.write(f"##DEBUG10: ✅ Cleaned {len(cleaned_df)} rows.")
                 st.session_state.cleaned_df = cleaned_df
+
                 row_count = len(cleaned_df)
                 cost, rows, rows_minus_free = calculate_price(row_count)
                 st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}.")
@@ -179,15 +180,18 @@ elif page == "Clean My Data":
 
         # --- Show cleaned data ---
         cleaned_df = st.session_state.get("cleaned_df", None)
-
+        st.write(f"##DEBUG: ✅ Cleaned {len(cleaned_df)} rows.")
         if cleaned_df is not None and not cleaned_df.empty:
+            st.write(f"##DEBUG1: in first if")
             st.write("### ✅ Cleaned Data Preview")
             st.dataframe(cleaned_df.head())
 
             if st.checkbox("Show cleaning log"):
+                st.write(f"##DEBUG2: in second if")
                 st.write("### 📋 Cleaning Log")
                 log_lines = write_log(st.session_state.raw_df, cleaned_df)
                 if log_lines:
+		    st.write(f"##DEBUG3: in third if")
                     for line in log_lines:
                         st.markdown(f"- {line}")
                 else:
