@@ -178,7 +178,7 @@ elif page == "Clean My Data":
                 file_name="cleaned_data.csv"
             )
         else:
-        st.info("📂 Upload and clean a file to enable the download button.")
+            st.info("📂 Upload and clean a file to enable the download button.")
 
 
     # --- Footer ---
