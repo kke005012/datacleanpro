@@ -99,67 +99,67 @@ elif page == "Clean My Data":
         else:
             st.info("Same file detected — using cached version.")
         
-    # --- Show raw data preview if available ---
-    if st.session_state.raw_df is not None:
-        st.write("### 📊 Preview of Uploaded Data")
-        st.dataframe(st.session_state.raw_df.head())
+        # --- Show raw data preview if available ---
+        if st.session_state.raw_df is not None:
+            st.write("### 📊 Preview of Uploaded Data")
+            st.dataframe(st.session_state.raw_df.head())
 
-        # --- Cleaning Options ---
-        st.markdown("""
-        <div style='margin-top: 2em; text-align: center;'>
-            <h4> 🛠️ Handle Missing Values</h4>
-        </div>
-        """, unsafe_allow_html=True)
+            # --- Cleaning Options ---
+            st.markdown("""
+            <div style='margin-top: 2em; text-align: center;'>
+                <h4> 🛠️ Handle Missing Values</h4>
+            </div>
+            """, unsafe_allow_html=True)
 
-        st.markdown("""
-        <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
-        """, unsafe_allow_html=True)
+            st.markdown("""
+            <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
+            """, unsafe_allow_html=True)
 
-        numeric_strategy = st.radio(
-            "Missing Numeric Values:",
-            ["Ignore", "Replace with Unknown", "Use Average"],
-            index=0
-        )
-
-        non_numeric_strategy = st.radio(
-            "Missing Non-Numeric Values:",
-            ["Ignore", "Replace with Unknown", "Use Mode"],
-            index=0
-        )
-
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        numeric_map = {
-            "Ignore": "ignore",
-            "Replace with Unknown": "unknown",
-            "Use Average": "average"
-        }
-        non_numeric_map = {
-            "Ignore": "ignore",
-            "Replace with Unknown": "unknown",
-            "Use Mode": "mode"
-        }
-
-        # --- Clean button only appears if data is ready ---
-
-        if st.button("Clean My Data"):
-            cleaned_df = clean_data(
-                st.session_state.raw_df.copy(),
-                numeric_strategy=numeric_map[numeric_strategy],
-                non_numeric_strategy=non_numeric_map[non_numeric_strategy]
+            numeric_strategy = st.radio(
+                "Missing Numeric Values:",
+                ["Ignore", "Replace with Unknown", "Use Average"],
+                index=0
             )
-            st.session_state.cleaned_df = cleaned_df
-            row_count = len(cleaned_df)
-            cost, rows, rows_minus_free = calculate_price(row_count)
-            st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}")
 
-    elif st.session_state.upload_attempted:
-        st.warning(" ⚠️ No raw data available to clean. Please upload a file.")
+            non_numeric_strategy = st.radio(
+                "Missing Non-Numeric Values:",
+                 ["Ignore", "Replace with Unknown", "Use Mode"],
+                 index=0
+            )
 
-    # --- Show cleaned data ---
-    if st.session_state.cleaned_df is not None:
-        st.write("### ✅ Cleaned Data Preview")
-        st.dataframe(st.session_state.cleaned_df.head())
+            st.markdown("</div>", unsafe_allow_html=True)
+
+            numeric_map = {
+                "Ignore": "ignore",
+                "Replace with Unknown": "unknown",
+                "Use Average": "average"
+            }
+            non_numeric_map = {
+                "Ignore": "ignore",
+                "Replace with Unknown": "unknown",
+                "Use Mode": "mode"
+            }
+
+            # --- Clean button only appears if data is ready ---
+
+            if st.button("Clean My Data"):
+                cleaned_df = clean_data(
+                    st.session_state.raw_df.copy(),
+                    numeric_strategy=numeric_map[numeric_strategy],
+                    non_numeric_strategy=non_numeric_map[non_numeric_strategy]
+                )
+                st.session_state.cleaned_df = cleaned_df
+                row_count = len(cleaned_df)
+                cost, rows, rows_minus_free = calculate_price(row_count)
+                st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}")
+
+        elif st.session_state.upload_attempted:
+            st.warning(" ⚠️ No raw data available to clean. Please upload a file.")
+
+        # --- Show cleaned data ---
+        if st.session_state.cleaned_df is not None:
+            st.write("### ✅ Cleaned Data Preview")
+            st.dataframe(st.session_state.cleaned_df.head())
 
         if st.checkbox("Show cleaning log"):
             st.write("### 📋 Cleaning Log")
