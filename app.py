@@ -164,6 +164,9 @@ elif page == "Clean My Data":
 
             if st.button("Clean My Data"):
                 st.write(f"##DEBUG30: in clean my data if statement.")
+                st.dataframe(st.session_state.cleaned_df.head())
+                st.write(f"##DEBUG55: session state raw_df")
+
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     numeric_strategy=numeric_map[numeric_strategy],
