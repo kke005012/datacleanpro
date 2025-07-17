@@ -161,7 +161,7 @@ elif page == "Clean My Data":
 
             # --- Clean button only appears if data is ready ---
             st.write(f"##DEBUG11: ✅ Cleaned {len(st.session_state.raw_df)} rows.")
-            cleaned_df = DataFrame()
+            cleaned_df = pd.DataFrame()
 
             if st.button("Clean My Data"):
                 cleaned_df = clean_data(
