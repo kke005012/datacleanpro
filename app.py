@@ -198,8 +198,8 @@ elif page == "Clean My Data":
                 data=cleaned_df.to_csv(index=False),
                 file_name="cleaned_data.csv"
             )
-        else:
-            st.info("📂 Upload and clean a file to enable the download button.")
+    else:
+        st.info("📂 Upload and clean a file to enable the download button.")
 
 
     # --- Footer ---
