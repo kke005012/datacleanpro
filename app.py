@@ -17,8 +17,7 @@ from cleaner import (
     standardize_column_names,
     clean_currency_columns,
     normalize_dates,
-    handle_missing_values,
-    final_sanity_check
+    handle_missing_values
 )
 from pricing import calculate_price
 
