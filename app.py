@@ -191,7 +191,7 @@ elif page == "Clean My Data":
                 st.write("### 📋 Cleaning Log")
                 log_lines = write_log(st.session_state.raw_df, cleaned_df)
                 if log_lines:
-		    st.write(f"##DEBUG3: in third if")
+                    st.write(f"##DEBUG3: in third if")
                     for line in log_lines:
                         st.markdown(f"- {line}")
                 else:
