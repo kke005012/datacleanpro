@@ -117,6 +117,7 @@ elif page == "Clean My Data":
             st.success("File uploaded!")
         else:
             st.info("Same file detected — using cached version.")
+        st.write(f"##DEBUG41: Type of session cleaned_df: {type(st.session_state.cleaned_df)}")
         
         # --- Show raw data preview if available ---
         if not st.session_state.raw_df.empty:
@@ -160,16 +161,16 @@ elif page == "Clean My Data":
             }
 
             # --- Clean button only appears if data is ready ---
-            st.write(f"##DEBUG11: ✅ Cleaned {len(st.session_state.raw_df)} rows.")
-            cleaned_df = pd.DataFrame()
 
             if st.button("Clean My Data"):
+                st.write(f"##DEBUG30: in clean my data if statement)
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     numeric_strategy=numeric_map[numeric_strategy],
                     non_numeric_strategy=non_numeric_map[non_numeric_strategy]
                 )
                 st.write(f"##DEBUG10: ✅ Cleaned {len(cleaned_df)} rows.")
+                st.write(f"##DEBUG40: Type of cleaned_df: {type(cleaned_df)}")
                 st.session_state.cleaned_df = cleaned_df
 
                 row_count = len(cleaned_df)
@@ -181,7 +182,7 @@ elif page == "Clean My Data":
 
         # --- Show cleaned data ---
         cleaned_df = st.session_state.get("cleaned_df", None)
-        st.write(f"##DEBUG: ✅ Cleaned {cleaned_df.shape[0]} rows.")
+        #st.write(f"##DEBUG: ✅ Cleaned {cleaned_df.shape[0]} rows.")
 
         if cleaned_df is not None and not cleaned_df.empty:
             st.write(f"##DEBUG1: in first if")
