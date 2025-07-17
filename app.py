@@ -172,11 +172,11 @@ elif page == "Clean My Data":
             else:
                 st.info("No cleaning actions were logged.")
 
-        st.download_button(
-            "📥 Download Cleaned CSV",
-            data=cleaned_df.to_csv(index=False),
-            file_name="cleaned_data.csv"
-        )
+            st.download_button(
+                "📥 Download Cleaned CSV",
+                data=cleaned_df.to_csv(index=False),
+                file_name="cleaned_data.csv"
+            )
         else:
         st.info("📂 Upload and clean a file to enable the download button.")
 
