@@ -161,6 +161,7 @@ elif page == "Clean My Data":
 
             # --- Clean button only appears if data is ready ---
             st.write(f"##DEBUG11: ✅ Cleaned {len(st.session_state.raw_df)} rows.")
+            cleaned_df = DataFrame()
 
             if st.button("Clean My Data"):
                 cleaned_df = clean_data(
@@ -180,7 +181,7 @@ elif page == "Clean My Data":
 
         # --- Show cleaned data ---
         cleaned_df = st.session_state.get("cleaned_df", None)
- #       st.write(f"##DEBUG: ✅ Cleaned {len(cleaned_df)} rows.")
+        st.write(f"##DEBUG: ✅ Cleaned {cleaned_df.shape[0]} rows.")
 
         if cleaned_df is not None and not cleaned_df.empty:
             st.write(f"##DEBUG1: in first if")
