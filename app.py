@@ -111,7 +111,7 @@ elif page == "Clean My Data":
         if st.session_state.file_hash != file_hash:
             df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""])
             st.session_state.raw_df = df.copy()
-            st.write(f"##DEBUG20: ✅ Cleaned {len(st.session_state.raw_df)} rows.")
+            st.write(f"##DEBUG20: ✅ About to clean {len(st.session_state.raw_df)} rows.")
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
             st.success("File uploaded!")
@@ -164,9 +164,10 @@ elif page == "Clean My Data":
 
             if st.button("Clean My Data"):
                 st.write(f"##DEBUG30: in clean my data if statement.")
-                st.dataframe(st.session_state.cleaned_df.head())
+                
                 st.write(f"##DEBUG55: session state raw_df")
-
+                st.dataframe(st.session_state.raw_df.head())
+ 
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     numeric_strategy=numeric_map[numeric_strategy],
