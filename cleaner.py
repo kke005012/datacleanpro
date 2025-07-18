@@ -32,7 +32,9 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     logger(f"##DEBUG 4: After standardize_column_names:", df.head())
 
     # 5. Normalize currency and date columns
+    logger(f"##DEBUG 5: before clean_currency_columns and normalize dates:", df.head())
     df = clean_currency_columns(df)
+    logger(f"##DEBUG 5: After clean_currency_columns:", df.head())
     df = normalize_dates(df)
     log_lines.append(f"Normalized currency and date formats")
     logger(f"##DEBUG 5: After clean_currency_columns and normalize dates:", df.head())
