@@ -12,34 +12,34 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     # 1. Strip whitespace
     df = strip_whitespace(df)
     log_lines.append(f"Stripped leading/trailing whitespace")
-    logger(f"##DEBUG 1: After strip_whitespace:", df.shape)
+    logger(f"##DEBUG 1: After strip_whitespace:", df.shape, df.head())
 
     # 2. Drop empty rows
     original_len = len(df)
     df = drop_empty_rows(df)
     log_lines.append(f"Dropped {original_len - len(df)} completely empty rows")
-    logger(f"##DEBUG 2: After replace blank rows with NaN:", df.shape)
+    logger(f"##DEBUG 2: After replace blank rows with NaN:", df.shape, , df.head())
 
     # 3. Deduplicate
     before_dedup = len(df)
     df = deduplicate(df)
     log_lines.append(f"Removed {before_dedup - len(df)} duplicate rows")
-    logger(f"##DEBUG 3: After deduplicate:", df.shape)
+    logger(f"##DEBUG 3: After deduplicate:", df.shape, , df.head())
 
     # 4. Standardize column names
     df = standardize_column_names(df)
     log_lines.append(f"Standardized column names")
-    logger(f"##DEBUG 4: After standardize_column_names:", df.shape)
+    logger(f"##DEBUG 4: After standardize_column_names:", df.shape, df.head())
 
     # 5. Normalize currency and date columns
     df = clean_currency_columns(df)
     df = normalize_dates(df)
     log_lines.append(f"Normalized currency and date formats")
-    logger(f"##DEBUG 5: After clean_currency_columns and normalize dates:", df.shape)
+    logger(f"##DEBUG 5: After clean_currency_columns and normalize dates:", df.shape, df.head())
 
     # 6. Handle missing values (based on strategy)
     df = handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
-    logger(f"DEBUG 6: After handle_missing_values:", df.shape)
+    logger(f"DEBUG 6: After handle_missing_values:", df.shape, df.head())
 
     # 7. Final sanity check
     #df = final_sanity_check(df)
