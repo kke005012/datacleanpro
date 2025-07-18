@@ -85,6 +85,11 @@ elif page == "Clean My Data":
  
     st.title("🧹 Clean My Data")
 
+    # Debug cleaner.py toggle
+    debug_mode = st.checkbox("🛠️ Enable Debug Mode")
+    if debug_mode:
+    st.info("🔍 Debug Mode is ON — showing internal logs.")
+
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
     # --- Safe session state initialization ---
@@ -171,7 +176,7 @@ elif page == "Clean My Data":
                     st.session_state.raw_df.copy(),
                     numeric_strategy=numeric_map[numeric_strategy],
                     non_numeric_strategy=non_numeric_map[non_numeric_strategy],
-                    logger = st.write
+                    logger = st.write if debug_mode else None
                 )
 
                 st.write(f"##DEBUG10: ✅ Cleaned {len(cleaned_df)} rows.")
@@ -190,6 +195,20 @@ elif page == "Clean My Data":
                 cost, rows, rows_minus_free = calculate_price(row_count)
                 st.write(f"##DEBUG50: after pricing call, cost={cost} rows={rows}")
                 st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}.")
+
+                if row_count > 100:
+                    st.warning(f"Your file has {row_count} rows. The first 1000 are free.")
+
+                    user_email = st.text_input("📧 Enter your email to receive a receipt with cleaning details")
+
+                    if user_email:
+                        st.success("✅ Email captured. Proceed to payment below.")
+
+                    if user_email and st.button("💳 Proceed to Payment (Mock)"):
+                        st.session_state.payment_complete = True
+                        st.session_state.customer_email = user_email
+                        st.success("💰 Payment successful (mock)!")
+
 
         elif st.session_state.upload_attempted:
             st.warning(" ⚠️ No raw data available to clean. Please upload a file.")
@@ -214,11 +233,35 @@ elif page == "Clean My Data":
                 else:
                     st.info("No cleaning actions were logged.")
 
-            st.download_button(
-                "📥 Download Cleaned CSV",
-                data=cleaned_df.to_csv(index=False),
-                file_name="cleaned_data.csv"
-            )
+            #st.download_button(
+                #"📥 Download Cleaned CSV",
+                #data=cleaned_df.to_csv(index=False),
+                #file_name="cleaned_data.csv"
+            #)
+
+           if st.session_state.get("payment_complete", False):
+               cleaned_df = st.session_state.cleaned_df
+               if cleaned_df is not None:
+                   st.download_button(
+                   " 📥 Download Cleaned CSV",
+                   data=cleaned_df.to_csv(index=False),
+                   file_name="cleaned_data.csv"
+           )
+
+        if st.button("📧 View Simulated Email Receipt"):
+            cleaning_log = write_log(st.session_state.raw_df, cleaned_df)
+            receipt = f"""
+            **Receipt for {st.session_state.customer_email}**
+
+            ✅ Rows cleaned: {len(cleaned_df)}
+            💵 Amount Paid: ${cost:.2f}
+
+            🧹 Cleaning Actions:
+            """
+            for line in cleaning_log:
+                receipt += f"\n- {line}"
+
+            st.markdown(receipt)
 
 
     # --- Footer ---
