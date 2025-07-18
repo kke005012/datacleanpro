@@ -86,11 +86,11 @@ def clean_currency_columns(df):
 def normalize_dates(df):
     for col in df.columns:
         if df[col].dtype == object:
-            try:
+            sample = df[col].dropna().astype(str).head(10)
+            if sample.str.match(r"^\d{4}-\d{2}-\d{2}$").all():
                 df[col] = pd.to_datetime(df[col], format="%Y-%m-%d", errors='coerce')
-            except Exception:
-                continue
     return df
+
 
 
 def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines):
