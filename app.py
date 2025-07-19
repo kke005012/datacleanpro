@@ -239,14 +239,14 @@ elif page == "Clean My Data":
                 #file_name="cleaned_data.csv"
             #)
 
-           if st.session_state.get("payment_complete", False):
-               cleaned_df = st.session_state.cleaned_df
-               if cleaned_df is not None:
-                   st.download_button(
-                   " 📥 Download Cleaned CSV",
-                   data=cleaned_df.to_csv(index=False),
-                   file_name="cleaned_data.csv"
-           )
+            if st.session_state.get("payment_complete", False):
+                cleaned_df = st.session_state.cleaned_df
+                if cleaned_df is not None:
+                    st.download_button(
+                    " 📥 Download Cleaned CSV",
+                    data=cleaned_df.to_csv(index=False),
+                    file_name="cleaned_data.csv"
+            )
 
         if st.button("📧 View Simulated Email Receipt"):
             cleaning_log = write_log(st.session_state.raw_df, cleaned_df)
