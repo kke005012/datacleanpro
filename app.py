@@ -88,7 +88,7 @@ elif page == "Clean My Data":
     # Debug cleaner.py toggle
     debug_mode = st.checkbox("🛠️ Enable Debug Mode")
     if debug_mode:
-    st.info("🔍 Debug Mode is ON — showing internal logs.")
+        st.info("🔍 Debug Mode is ON — showing internal logs.")
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
