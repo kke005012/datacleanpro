@@ -192,9 +192,9 @@ elif page == "Clean My Data":
                 st.dataframe(st.session_state.raw_df.head())
 
                 row_count = len(cleaned_df)
-                cost, rows, rows_minus_free = calculate_price(row_count)
+                cost, rows = calculate_price(row_count)
                 st.write(f"##DEBUG50: after pricing call, cost={cost} rows={rows}")
-                st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}.")
+                st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.")
 
                 if row_count > 100:
                     st.warning(f"Your file has {row_count} rows. Files with 100 or less rows are on us!")
