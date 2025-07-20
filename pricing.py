@@ -23,8 +23,12 @@ def calculate_price(row_count):
             break
 
     if price_per_row == 'custom':
-        return 'custom', row_count, row_count - FREE_ROW_ALLOWANCE
+        return 'custom', row_count
 
-    billable_rows = row_count - FREE_ROW_ALLOWANCE
-    total_cost = billable_rows * price_per_row
-    return round(total_cost, 2), row_count, billable_rows
+    billable_rows = row_count
+
+    if row_count <= FREE_ROW_ALLOWANCE:
+        return "$0.00", row_count
+    else:
+        total_cost = billable_rows * price_per_row
+        return round(total_cost, 2), row_count

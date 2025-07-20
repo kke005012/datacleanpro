@@ -197,7 +197,7 @@ elif page == "Clean My Data":
                 st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.  Total rows minus free rows = {rows_minus_free}.")
 
                 if row_count > 100:
-                    st.warning(f"Your file has {row_count} rows. The first 1000 are free.")
+                    st.warning(f"Your file has {row_count} rows. Files with 100 or less rows are on us!")
 
                     user_email = st.text_input("📧 Enter your email to receive a receipt with cleaning details")
 
@@ -233,10 +233,10 @@ elif page == "Clean My Data":
                 else:
                     st.info("No cleaning actions were logged.")
 
-            #st.download_button(
-                #"📥 Download Cleaned CSV",
-                #data=cleaned_df.to_csv(index=False),
-                #file_name="cleaned_data.csv"
+            st.download_button(
+                " 📥 Download Cleaned CSV",
+                data=cleaned_df.to_csv(index=False),
+                file_name="cleaned_data.csv"
             #)
 
             if st.session_state.get("payment_complete", False):
