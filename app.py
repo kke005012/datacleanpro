@@ -194,10 +194,10 @@ elif page == "Clean My Data":
                 row_count = len(cleaned_df)
                 cost, rows = calculate_price(row_count)
                 st.write(f"##DEBUG50: after pricing call, cost={cost} rows={rows}")
-                st.markdown(f"**Estimated Cost: ${cost:.2f}**. Total Rows = {rows}.")
+                st.markdown(f"**Standard Cost: ${cost:.2f}**. Total Rows = {rows}.")
 
                 if row_count > 100:
-                    st.warning(f"Your file has {row_count} rows. Files with 100 or less rows are on us!")
+                    st.warning(f"Your file has {row_count} rows.")
 
                     user_email = st.text_input("📧 Enter your email to receive a receipt with cleaning details")
 
