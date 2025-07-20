@@ -237,7 +237,7 @@ elif page == "Clean My Data":
                 " 📥 Download Cleaned CSV",
                 data=cleaned_df.to_csv(index=False),
                 file_name="cleaned_data.csv"
-            #)
+            )
 
             if st.session_state.get("payment_complete", False):
                 cleaned_df = st.session_state.cleaned_df
