@@ -187,7 +187,7 @@ elif page == "Clean My Data":
 
                 logger("##DEBUG: dataframes after clean call")
                 logger("##DEBUG: cleaned_df", cleaned_df.head())
-                logger("##DEBUG: session state cleaned_df", st.session_state.cleaned_df.head()
+                logger("##DEBUG: session state cleaned_df", st.session_state.cleaned_df.head())
                 logger("##DEBUG: session state raw_df", st.session_state.raw_df.head())
 
                 row_count = len(cleaned_df)
