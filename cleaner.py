@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import re
 
 # --- cleaner.py ---
 
@@ -11,89 +12,170 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
 
     # 1. Strip whitespace
     df = strip_whitespace(df)
-    log_lines.append(f"Stripped leading/trailing whitespace")
-    logger(f"##DEBUG 1: After strip_whitespace:", df.head())
+    log_lines.append("Stripped leading/trailing whitespace")
+    logger("##DEBUG 1: After strip_whitespace:", df.head())
 
     # 2. Drop empty rows
     original_len = len(df)
-    df = drop_empty_rows(df)
-    log_lines.append(f"Dropped {original_len - len(df)} completely empty rows")
-    logger(f"##DEBUG 2: After replace blank rows with NaN:", df.head())
+    df, drop_log = drop_empty_rows(df)
+    log_lines.extend(drop_log)
+    logger("##DEBUG 2: After drop_empty_rows:", df.head())
+
 
     # 3. Deduplicate
     before_dedup = len(df)
-    df = deduplicate(df)
-    log_lines.append(f"Removed {before_dedup - len(df)} duplicate rows")
-    logger(f"##DEBUG 3: After deduplicate:", df.head())
+    df, dedup_log = deduplicate(df)
+    log_lines.extend(dedup_log)
+    logger("##DEBUG 3: After deduplicate:", df.head())
+
 
     # 4. Standardize column names
-    df = standardize_column_names(df)
-    log_lines.append(f"Standardized column names")
-    logger(f"##DEBUG 4: After standardize_column_names:", df.head())
+    df, colname_log = standardize_column_names(df)
+    log_lines.extend(colname_log)
+    logger("##DEBUG 4: After standardize_column_names:", df.head())
 
-    # 5. Normalize currency and date columns
-    logger(f"##DEBUG 5: before clean_currency_columns and normalize dates:", df.head())
-    df = clean_currency_columns(df)
-    logger(f"##DEBUG 5: After clean_currency_columns:", df.head())
-    df = normalize_dates(df)
-    log_lines.append(f"Normalized currency and date formats")
-    logger(f"##DEBUG 5: After clean_currency_columns and normalize dates:", df.head())
 
-    # 6. Handle missing values (based on strategy)
-    df = handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
-    logger(f"DEBUG 6: After handle_missing_values:", df.head())
+    # 5. Clean currency columns
+    df, currency_log = clean_currency_columns(df)
+    log_lines.extend(currency_log)
+    logger("##DEBUG 5a: After clean_currency_columns:", df.head())
 
-    # 7. Final sanity check
-    #df = final_sanity_check(df)
-    #log_lines.append(f"Performed final sanity checks")
 
-    df.attrs['log'] = log_lines
-    df.attrs['logger'] = logger
+    # 6. Normalize date columns
+    df, date_log = normalize_dates(df)
+    log_lines.extend(date_log)
+    logger("##DEBUG 5b: After normalize_dates:", df.head())
+
+    # 7. Handle missing values
+    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger)
+    log_lines.extend(missing_log)
+    logger("##DEBUG 6: After handle_missing_values:", df.head())
+
+
+    # 8. (Optional) Final sanity check
+    # df = final_sanity_check(df)
+    # log_lines.append("Performed final sanity checks")
+
+    # Attach log and logger for export or UI display
+    df.attrs["log"] = log_lines
+    df.attrs["logger"] = logger
+
     return df
 
 
 def strip_whitespace(df):
-    for col in df.select_dtypes(include='object'):
-        df[col] = df[col].map(lambda x: x.strip() if isinstance(x, str) else x)
-    return df
+    log = []
+    changed_cols = []
+
+    for col in df.columns:
+        if df[col].dtype == object:
+            original = df[col].copy()
+            df[col] = df[col].astype(str).str.strip()
+            if not original.equals(df[col]):
+                changed_cols.append(col)
+
+    if changed_cols:
+        log.append(f"Stripped whitespace in {len(changed_cols)} column(s): {', '.join(changed_cols)}")
+    else:
+        log.append("No whitespace stripping needed")
+
+    return df, log
+
 
 def drop_empty_rows(df):
-    return df.dropna(axis=0, how='all')
+    log = []
+    original_len = len(df)
+    df = df.dropna(axis=0, how='all')
+    dropped = original_len - len(df)
+
+    if dropped > 0:
+        log.append(f"Dropped {dropped} completely empty row(s)")
+    else:
+        log.append("No completely empty rows found")
+
+    return df, log
 
 
 def deduplicate(df):
-    return df.drop_duplicates()
+    log = []
+    original_len = len(df)
+    df = df.drop_duplicates()
+    removed = original_len - len(df)
 
+    if removed > 0:
+        log.append(f"Removed {removed} duplicate row(s)")
+    else:
+        log.append("No duplicate rows found")
 
-def write_log(original_df, cleaned_df):
-    return cleaned_df.attrs.get('log', ["No cleaning log available."])
+    return df, log
 
 
 def standardize_column_names(df):
-    df.columns = [col.strip().lower().replace(' ', '_') for col in df.columns]
-    return df
+    log = []
+    original_columns = df.columns.tolist()
+    cleaned_columns = []
+
+    for col in original_columns:
+        new_col = col.strip().lower()
+        new_col = re.sub(r'[^\w\s]', '', new_col)     # remove special chars
+        new_col = re.sub(r'\s+', '_', new_col)        # replace whitespace with underscore
+        cleaned_columns.append(new_col)
+
+    df.columns = cleaned_columns
+
+    if original_columns != cleaned_columns:
+        renamed_pairs = [
+            f"'{orig}' → '{new}'" for orig, new in zip(original_columns, cleaned_columns) if orig != new
+        ]
+        log.append(f"Standardized column names: {', '.join(renamed_pairs)}")
+    else:
+        log.append("No changes to column names")
+
+    return df, log
 
 
 def clean_currency_columns(df):
-    import re
+    log = []
+
     for col in df.columns:
-        if df[col].dtype == object and df[col].str.contains("\\$").any():
-            cleaned = df[col].replace('[\\$,]', '', regex=True)
-            df[col] = cleaned.apply(lambda x: float(x) if re.fullmatch(r"-?\d+(\.\d+)?", str(x).strip()) else x)
-    return df
+        if df[col].dtype == object and df[col].str.contains(r'[\$,]', na=False).any():
+            original_non_null = df[col].notna().sum()
+            df[col] = df[col].replace(r'[\$,]', '', regex=True)
+            df[col] = pd.to_numeric(df[col], errors='coerce')
+            cleaned_non_null = df[col].notna().sum()
+
+            if cleaned_non_null > 0:
+                log.append(f"Cleaned {cleaned_non_null} currency values in '{col}'")
+            else:
+                log.append(f"Currency format found in '{col}', but no values were successfully converted")
+
+    if not log:
+        log.append("No currency formats detected in any column")
+
+    return df, log
 
 
 def normalize_dates(df):
+    log = []
+
     for col in df.columns:
         if df[col].dtype == object:
-            sample = df[col].dropna().astype(str).head(10)
-            if sample.str.match(r"^\d{4}-\d{2}-\d{2}$").all():
-                df[col] = pd.to_datetime(df[col], format="%Y-%m-%d", errors='coerce')
-    return df
+            original_non_null = df[col].notna().sum()
+            try:
+                parsed = pd.to_datetime(df[col], errors='coerce')
+                parsed_non_null = parsed.notna().sum()
+
+                if parsed_non_null > 0:
+                    df[col] = parsed
+                    log.append(f"Parsed {parsed_non_null} date values
 
 
+def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=None):
+    if logger is None:
+        logger = lambda *args, **kwargs: None  # no-op if not passed
 
-def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines):
+    log_lines = []
+
     for col in df.columns:
         is_numeric = pd.api.types.is_numeric_dtype(df[col])
 
@@ -103,12 +185,11 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
 
         if is_numeric:
             if has_nulls:
+                num_missing = df[col].isnull().sum()
                 if numeric_strategy == "unknown":
-                    num_missing = df[col].isnull().sum()
                     df[col] = df[col].fillna(-1)
                     log_lines.append(f"⚠️ Filled {num_missing} missing values in numeric column '{col}' with -1")
                 elif numeric_strategy == "average":
-                    num_missing = df[col].isnull().sum()
                     df[col] = df[col].fillna(df[col].mean())
                     log_lines.append(f"📊 Filled {num_missing} missing values in numeric column '{col}' with column average")
                 else:
@@ -118,13 +199,16 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
 
         else:
             if non_numeric_strategy == "unknown":
-                # Replace empty strings and NaNs with 'Unknown'
+                # Count NaNs + blank strings
                 num_missing = df[col].apply(lambda x: pd.isna(x) or (isinstance(x, str) and x.strip() == "")).sum()
+
+                df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
                 df[col] = df[col].apply(lambda x: "Unknown" if (pd.isna(x) or (isinstance(x, str) and x.strip() == "")) else x)
+
                 log_lines.append(f"⚠️ Filled {num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
+                logger("DEBUG 6: After handle_missing_values:", num_missing)
 
             elif non_numeric_strategy == "mode":
-                # Convert blanks to NaN before mode calculation
                 df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
                 mode = df[col].mode()
 
@@ -135,11 +219,16 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, log_lines)
                 else:
                     log_lines.append(f"⚠️ No valid mode found for non-numeric column '{col}' — no changes made")
 
-            else:  # ignore
+            else:
                 log_lines.append(f"✅ Non-numeric column '{col}' left unchanged (ignored)")
 
-    return df
+    if not log_lines:
+        log_lines.append("✅ No missing values found")
 
+    return df, log_lines
+
+def write_log(cleaned_df):
+    return cleaned_df.attrs.get("log", ["No cleaning log available."])
 
 #def final_sanity_check(df):
     #possibly add functionality later if customer wants to drop columns where all values are missing
