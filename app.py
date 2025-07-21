@@ -118,7 +118,7 @@ elif page == "Clean My Data":
         if st.session_state.file_hash != file_hash:
             df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""])
             st.session_state.raw_df = df.copy()
-            logger("##DEBUG list rows to clean: About to clean {len(st.session_state.raw_df)} rows.")
+            logger("##DEBUG: About to clean {len(st.session_state.raw_df)} rows.")
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
             st.success("File uploaded!")
@@ -217,9 +217,9 @@ elif page == "Clean My Data":
         logger("##DEBUG: Cleaned {cleaned_df.shape[0]} rows.")
 
         if cleaned_df is not None and not cleaned_df.empty:
-            st.write(f"##DEBUG1: in first if")
+            logger("##DEBUG: if cleaned_df is not None and not cleaned_df.empty")
             st.write("### ✅ Cleaned Data Preview")
-            st.dataframe(cleaned_df.head())
+            logger("##DEBUG: cleaned data preview", cleaned_df.shape())
 
             if st.checkbox("Show cleaning log"):
                 logger("##DEBUG: in Show Cleaning Log if statement")
