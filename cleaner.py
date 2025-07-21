@@ -13,37 +13,37 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     # 1. Strip whitespace
     df, strip_log = strip_whitespace(df)
     log_lines.extend(strip_log)
-    logger("##DEBUG 1: After strip_whitespace:", df.head())
+    logger("##DEBUG: After strip_whitespace:", df.head())
 
     # 2. Drop empty rows
     df, drop_log = drop_empty_rows(df)
     log_lines.extend(drop_log)
-    logger("##DEBUG 2: After drop_empty_rows:", df.head())
+    logger("##DEBUG: After drop_empty_rows:", df.head())
 
     # 3. Deduplicate
     df, dedup_log = deduplicate(df)
     log_lines.extend(dedup_log)
-    logger("##DEBUG 3: After deduplicate:", df.head())
+    logger("##DEBUG: After deduplicate:", df.head())
 
     # 4. Standardize column names
     df, colname_log = standardize_column_names(df)
     log_lines.extend(colname_log)
-    logger("##DEBUG 4: After standardize_column_names:", df.head())
+    logger("##DEBUG: After standardize_column_names:", df.head())
 
     # 5. Clean currency columns
     df, currency_log = clean_currency_columns(df)
     log_lines.extend(currency_log)
-    logger("##DEBUG 5a: After clean_currency_columns:", df.head())
+    logger("##DEBUG: After clean_currency_columns:", df.head())
 
     # 6. Normalize date columns
     df, date_log = normalize_dates(df)
     log_lines.extend(date_log)
-    logger("##DEBUG 5b: After normalize_dates:", df.head())
+    logger("##DEBUG: After normalize_dates:", df.head())
 
     # 7. Handle missing values
     df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger)
     log_lines.extend(missing_log)
-    logger("##DEBUG 6: After handle_missing_values:", df.head())
+    logger("##DEBUG: After handle_missing_values:", df.head())
 
     # 8. (Optional) Final sanity check
     # df = final_sanity_check(df)
@@ -206,7 +206,7 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                 df[col] = df[col].apply(lambda x: "Unknown" if (pd.isna(x) or (isinstance(x, str) and x.strip() == "")) else x)
 
                 log_lines.append(f"⚠️ Filled {num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
-                logger("DEBUG 6: After handle_missing_values:", num_missing)
+                logger("DEBUG: After handle_missing_values:", num_missing)
 
             elif non_numeric_strategy == "mode":
                 df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
@@ -232,4 +232,3 @@ def write_log(cleaned_df):
 
 #def final_sanity_check(df):
     #possibly add functionality later if customer wants to drop columns where all values are missing
-    

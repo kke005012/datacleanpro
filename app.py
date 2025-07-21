@@ -183,7 +183,7 @@ elif page == "Clean My Data":
                 logger("##DEBUG: Cleaned {len(cleaned_df)} rows.")
                 logger("##DEBUG: Type of cleaned_df: {type(cleaned_df)}")
                 st.session_state.cleaned_df = cleaned_df
-                st.session_state["cleaning_log"] = df.attrs["log"]
+                st.session_state["cleaning_log"] = cleaned_df.attrs["log"]
 
                 logger("##DEBUG: dataframes after clean call")
                 logger("##DEBUG: cleaned_df", cleaned_df.head())
