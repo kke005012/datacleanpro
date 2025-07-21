@@ -213,8 +213,7 @@ elif page == "Clean My Data":
 
         # --- Show cleaned data ---
         cleaned_df = st.session_state.get("cleaned_df", None)
-        logger(f"##DEBUG: Cleaned {cleaned_df.shape[0]} rows.")
-
+        
         if cleaned_df is not None and not cleaned_df.empty:
             logger(f"##DEBUG: if cleaned_df is not None and not cleaned_df.empty")
             st.write("### ✅ Cleaned Data Preview")
