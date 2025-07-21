@@ -68,9 +68,9 @@ def strip_whitespace(df):
                 changed_cols.append(col)
 
     if changed_cols:
-        log.append(f"Stripped whitespace in {len(changed_cols)} column(s): {', '.join(changed_cols)}")
+        log.append(f"Stripped whitespace in {len(changed_cols)} column(s): {', '.join(changed_cols)}.")
     else:
-        log.append("No whitespace stripping needed")
+        log.append("No whitespace stripping needed.")
 
     return df, log
 
@@ -82,9 +82,9 @@ def drop_empty_rows(df):
     dropped = original_len - len(df)
 
     if dropped > 0:
-        log.append(f"Dropped {dropped} completely empty row(s)")
+        log.append(f"Dropped {dropped} completely empty row(s).")
     else:
-        log.append("No completely empty rows found")
+        log.append("No completely empty rows found.")
 
     return df, log
 
@@ -96,9 +96,9 @@ def deduplicate(df):
     removed = original_len - len(df)
 
     if removed > 0:
-        log.append(f"Removed {removed} duplicate row(s)")
+        log.append(f"Removed {removed} duplicate row(s).")
     else:
-        log.append("No duplicate rows found")
+        log.append("No duplicate rows found.")
 
     return df, log
 
@@ -120,9 +120,9 @@ def standardize_column_names(df):
         renamed_pairs = [
             f"'{orig}' → '{new}'" for orig, new in zip(original_columns, cleaned_columns) if orig != new
         ]
-        log.append(f"Standardized column names: {', '.join(renamed_pairs)}")
+        log.append(f"Standardized column names: {', '.join(renamed_pairs)}.")
     else:
-        log.append("No changes to column names")
+        log.append("No changes to column names.")
 
     return df, log
 
@@ -138,12 +138,12 @@ def clean_currency_columns(df):
             cleaned_non_null = df[col].notna().sum()
 
             if cleaned_non_null > 0:
-                log.append(f"Cleaned {cleaned_non_null} currency values in '{col}'")
+                log.append(f"Cleaned {cleaned_non_null} currency values in '{col}'.")
             else:
-                log.append(f"Currency format found in '{col}', but no values were successfully converted")
+                log.append(f"Currency format found in '{col}', but no values were successfully converted.")
 
     if not log:
-        log.append("No currency formats detected in any column")
+        log.append("No currency formats detected in any column.")
 
     return df, log
 
@@ -160,12 +160,12 @@ def normalize_dates(df):
 
             if parsed_non_null > 0:
                 df[col] = parsed
-                log.append(f"Parsed {parsed_non_null} date values in '{col}' to standardized format (YYYY-MM-DD)")
+                log.append(f"Parsed {parsed_non_null} date values in '{col}' to standardized format (YYYY-MM-DD).")
             else:
-                log.append(f"Attempted to parse '{col}' as dates, but no valid date values were found")
+                log.append(f"Attempted to parse '{col}' as dates, but no valid date values were found.")
 
     if not log:
-        log.append("No columns parsed as dates")
+        log.append("No columns parsed as dates.")
 
     return df, log
 
@@ -193,37 +193,38 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                     df[col] = df[col].fillna(df[col].mean())
                     log_lines.append(f"📊 Filled {num_missing} missing values in numeric column '{col}' with column average")
                 else:
-                    log_lines.append(f"✅ Numeric column '{col}' left unchanged (ignored)")
+                    log_lines.append(f"✅ Numeric column '{col}' left unchanged (ignored).")
             else:
-                log_lines.append(f"✅ Numeric column '{col}' had no missing values")
+                log_lines.append(f"✅ Numeric column '{col}' had no missing values.")
 
         else:
             if non_numeric_strategy == "unknown":
                 # Count NaNs + blank strings
-                num_missing = df[col].apply(lambda x: pd.isna(x) or (isinstance(x, str) and x.strip() == "")).sum()
+                non_num_missing = df[col].apply(lambda x: pd.isna(x) or (isinstance(x, str) and x.strip() == "")).sum()
 
-                df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
+                #df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
                 df[col] = df[col].apply(lambda x: "Unknown" if (pd.isna(x) or (isinstance(x, str) and x.strip() == "")) else x)
 
-                log_lines.append(f"⚠️ Filled {num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
-                logger("DEBUG: After handle_missing_values:", num_missing)
-
+                log_lines.append(f"⚠️ Filled {non_num_missing} missing values in non-numeric column '{col}' with 'Unknown'.")
+                
             elif non_numeric_strategy == "mode":
                 df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
                 mode = df[col].mode()
 
                 if not mode.empty:
-                    num_missing = df[col].isnull().sum()
+                    non_num_missing = df[col].isnull().sum()
                     df[col] = df[col].fillna(mode[0])
-                    log_lines.append(f"📋 Filled {num_missing} missing values in non-numeric column '{col}' with mode value '{mode[0]}'")
+                    log_lines.append(f"📋 Filled {non_num_missing} missing values in non-numeric column '{col}' with mode value '{mode[0]}'.")
                 else:
-                    log_lines.append(f"⚠️ No valid mode found for non-numeric column '{col}' — no changes made")
+                    log_lines.append(f"⚠️ No valid mode found for non-numeric column '{col}' — no changes made.")
 
             else:
-                log_lines.append(f"✅ Non-numeric column '{col}' left unchanged (ignored)")
+                log_lines.append(f"✅ Non-numeric column '{col}' left unchanged (Ignored).")
+            logger(f"##DEBUG: Number of missing categoricals:", non_num_missing)
+            logger(f"##DEBUG: Number of missing numerics:", num_missing)
 
     if not log_lines:
-        log_lines.append("✅ No missing values found")
+        log_lines.append("✅ No missing values found.")
 
     return df, log_lines
 
