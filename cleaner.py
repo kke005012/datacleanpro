@@ -167,7 +167,7 @@ def normalize_dates(df):
 
                 if parsed_non_null > 0:
                     df[col] = parsed
-                    log.append(f"Parsed {parsed_non_null} date values
+                    log.append(f"Parsed {parsed_non_null} date values.")
 
 
 def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=None):
