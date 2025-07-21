@@ -21,6 +21,9 @@ from cleaner import (
 )
 from pricing import calculate_price
 
+def logger(*args):
+    st.write(*args)
+
 st.set_page_config(page_title="DataCleanPro", layout="wide")
 
 # Navigation
@@ -85,7 +88,7 @@ elif page == "Clean My Data":
  
     st.title("🧹 Clean My Data")
 
-    # Debug cleaner.py toggle
+    # Debug logger toggle
     debug_mode = st.checkbox("🛠️ Enable Debug Mode")
     if debug_mode:
         st.info("🔍 Debug Mode is ON — showing internal logs.")
@@ -115,13 +118,12 @@ elif page == "Clean My Data":
         if st.session_state.file_hash != file_hash:
             df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""])
             st.session_state.raw_df = df.copy()
-            st.write(f"##DEBUG20: ✅ About to clean {len(st.session_state.raw_df)} rows.")
+            logger("##DEBUG list rows to clean: About to clean {len(st.session_state.raw_df)} rows.")
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
             st.success("File uploaded!")
         else:
             st.info("Same file detected — using cached version.")
-        st.write(f"##DEBUG41: Type of session cleaned_df: {type(st.session_state.cleaned_df)}")
         
         # --- Show raw data preview if available ---
         if not st.session_state.raw_df.empty:
@@ -167,11 +169,10 @@ elif page == "Clean My Data":
             # --- Clean button only appears if data is ready ---
 
             if st.button("Clean My Data"):
-                st.write(f"##DEBUG30: in clean my data if statement.")
+                logger("##DEBUG Clean My Data Button.")
                 
-                st.write(f"##DEBUG55: session state raw_df")
-                st.dataframe(st.session_state.raw_df.head())
- 
+                logger("##DEBUG: session state raw_df", st.session_state.raw_df.head())
+                 
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     numeric_strategy=numeric_map[numeric_strategy],
@@ -179,21 +180,19 @@ elif page == "Clean My Data":
                     logger = st.write if debug_mode else None
                 )
 
-                st.write(f"##DEBUG10: ✅ Cleaned {len(cleaned_df)} rows.")
-                st.write(f"##DEBUG40: Type of cleaned_df: {type(cleaned_df)}")
+                logger("##DEBUG: Cleaned {len(cleaned_df)} rows.")
+                logger("##DEBUG: Type of cleaned_df: {type(cleaned_df)}")
                 st.session_state.cleaned_df = cleaned_df
+                st.session_state["cleaning_log"] = df.attrs["log"]
 
-                st.write(f"##DEBUG51: dataframes after clean call")
-                st.write(f"##DEBUG52: cleaned_df")
-                st.dataframe(cleaned_df.head())
-                st.write(f"##DEBUG53: session state cleaned_df")
-                st.dataframe(st.session_state.cleaned_df.head())
-                st.write(f"##DEBUG54: session state raw_df")
-                st.dataframe(st.session_state.raw_df.head())
+                logger("##DEBUG: dataframes after clean call")
+                logger("##DEBUG: cleaned_df", cleaned_df.head())
+                logger("##DEBUG: session state cleaned_df", st.session_state.cleaned_df.head()
+                logger("##DEBUG: session state raw_df", st.session_state.raw_df.head())
 
                 row_count = len(cleaned_df)
                 cost, rows = calculate_price(row_count)
-                st.write(f"##DEBUG50: after pricing call, cost={cost} rows={rows}")
+                logger("##DEBUG: after pricing call, cost={cost} rows={rows}")
                 st.markdown(f"**Standard Cost: ${cost:.2f}**. Total Rows = {rows}.")
 
                 if row_count > 100:
@@ -215,7 +214,7 @@ elif page == "Clean My Data":
 
         # --- Show cleaned data ---
         cleaned_df = st.session_state.get("cleaned_df", None)
-        #st.write(f"##DEBUG: ✅ Cleaned {cleaned_df.shape[0]} rows.")
+        logger("##DEBUG: Cleaned {cleaned_df.shape[0]} rows.")
 
         if cleaned_df is not None and not cleaned_df.empty:
             st.write(f"##DEBUG1: in first if")
@@ -223,11 +222,10 @@ elif page == "Clean My Data":
             st.dataframe(cleaned_df.head())
 
             if st.checkbox("Show cleaning log"):
-                st.write(f"##DEBUG2: in second if")
+                logger("##DEBUG: in Show Cleaning Log if statement")
                 st.write("### 📋 Cleaning Log")
-                log_lines = write_log(st.session_state.raw_df, cleaned_df)
+                log_lines = write_log(cleaned_df)
                 if log_lines:
-                    st.write(f"##DEBUG3: in third if")
                     for line in log_lines:
                         st.markdown(f"- {line}")
                 else:
