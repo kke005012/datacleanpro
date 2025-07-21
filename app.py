@@ -181,7 +181,6 @@ elif page == "Clean My Data":
                 )
 
                 logger(f"##DEBUG: Cleaned {len(cleaned_df)} rows.")
-                logger(f"##DEBUG: Type of cleaned_df: {type(cleaned_df)}")
                 st.session_state.cleaned_df = cleaned_df
                 st.session_state["cleaning_log"] = cleaned_df.attrs["log"]
 
@@ -217,7 +216,8 @@ elif page == "Clean My Data":
         if cleaned_df is not None and not cleaned_df.empty:
             logger(f"##DEBUG: if cleaned_df is not None and not cleaned_df.empty")
             st.write("### ✅ Cleaned Data Preview")
-            logger(f"##DEBUG: cleaned data preview", cleaned_df.shape())
+            rows, cols = cleaned_df.shape
+            logger(f"##DEBUG: cleaned data preview — {rows} rows × {cols} columns")
 
             if st.checkbox("Show cleaning log"):
                 logger(f"##DEBUG: in Show Cleaning Log if statement")
