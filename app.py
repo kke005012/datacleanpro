@@ -118,7 +118,7 @@ elif page == "Clean My Data":
         if st.session_state.file_hash != file_hash:
             df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""])
             st.session_state.raw_df = df.copy()
-            logger("##DEBUG: About to clean {len(st.session_state.raw_df)} rows.")
+            logger(f"##DEBUG: About to clean {len(st.session_state.raw_df)} rows.")
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
             st.success("File uploaded!")
@@ -127,7 +127,7 @@ elif page == "Clean My Data":
         
         # --- Show raw data preview if available ---
         if not st.session_state.raw_df.empty:
-            st.write("### 📊 Preview of Uploaded Data")
+            st.write(f"### 📊 Preview of Uploaded Data")
             st.dataframe(st.session_state.raw_df.head())
 
             # --- Cleaning Options ---
@@ -169,9 +169,9 @@ elif page == "Clean My Data":
             # --- Clean button only appears if data is ready ---
 
             if st.button("Clean My Data"):
-                logger("##DEBUG Clean My Data Button.")
+                logger(f"##DEBUG Clean My Data Button.")
                 
-                logger("##DEBUG: session state raw_df", st.session_state.raw_df.head())
+                logger(f"##DEBUG: session state raw_df", st.session_state.raw_df.head())
                  
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
@@ -180,19 +180,18 @@ elif page == "Clean My Data":
                     logger = st.write if debug_mode else None
                 )
 
-                logger("##DEBUG: Cleaned {len(cleaned_df)} rows.")
-                logger("##DEBUG: Type of cleaned_df: {type(cleaned_df)}")
+                logger(f"##DEBUG: Cleaned {len(cleaned_df)} rows.")
+                logger(f"##DEBUG: Type of cleaned_df: {type(cleaned_df)}")
                 st.session_state.cleaned_df = cleaned_df
                 st.session_state["cleaning_log"] = cleaned_df.attrs["log"]
 
-                logger("##DEBUG: dataframes after clean call")
-                logger("##DEBUG: cleaned_df", cleaned_df.head())
-                logger("##DEBUG: session state cleaned_df", st.session_state.cleaned_df.head())
-                logger("##DEBUG: session state raw_df", st.session_state.raw_df.head())
+                logger(f"##DEBUG: cleaned_df", cleaned_df.head())
+                logger(f"##DEBUG: session state cleaned_df", st.session_state.cleaned_df.head())
+                logger(f"##DEBUG: session state raw_df", st.session_state.raw_df.head())
 
                 row_count = len(cleaned_df)
                 cost, rows = calculate_price(row_count)
-                logger("##DEBUG: after pricing call, cost={cost} rows={rows}")
+                logger(f"##DEBUG: after pricing call, cost={cost} rows={rows}")
                 st.markdown(f"**Standard Cost: ${cost:.2f}**. Total Rows = {rows}.")
 
                 if row_count > 100:
@@ -214,15 +213,15 @@ elif page == "Clean My Data":
 
         # --- Show cleaned data ---
         cleaned_df = st.session_state.get("cleaned_df", None)
-        logger("##DEBUG: Cleaned {cleaned_df.shape[0]} rows.")
+        logger(f"##DEBUG: Cleaned {cleaned_df.shape[0]} rows.")
 
         if cleaned_df is not None and not cleaned_df.empty:
-            logger("##DEBUG: if cleaned_df is not None and not cleaned_df.empty")
+            logger(f"##DEBUG: if cleaned_df is not None and not cleaned_df.empty")
             st.write("### ✅ Cleaned Data Preview")
-            logger("##DEBUG: cleaned data preview", cleaned_df.shape())
+            logger(f"##DEBUG: cleaned data preview", cleaned_df.shape())
 
             if st.checkbox("Show cleaning log"):
-                logger("##DEBUG: in Show Cleaning Log if statement")
+                logger(f"##DEBUG: in Show Cleaning Log if statement")
                 st.write("### 📋 Cleaning Log")
                 log_lines = write_log(cleaned_df)
                 if log_lines:
