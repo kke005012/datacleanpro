@@ -7,39 +7,33 @@ import re
 def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", logger=None):
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
-    
+
     log_lines = []
 
     # 1. Strip whitespace
-    df = strip_whitespace(df)
-    log_lines.append("Stripped leading/trailing whitespace")
+    df, strip_log = strip_whitespace(df)
+    log_lines.extend(strip_log)
     logger("##DEBUG 1: After strip_whitespace:", df.head())
 
     # 2. Drop empty rows
-    original_len = len(df)
     df, drop_log = drop_empty_rows(df)
     log_lines.extend(drop_log)
     logger("##DEBUG 2: After drop_empty_rows:", df.head())
 
-
     # 3. Deduplicate
-    before_dedup = len(df)
     df, dedup_log = deduplicate(df)
     log_lines.extend(dedup_log)
     logger("##DEBUG 3: After deduplicate:", df.head())
-
 
     # 4. Standardize column names
     df, colname_log = standardize_column_names(df)
     log_lines.extend(colname_log)
     logger("##DEBUG 4: After standardize_column_names:", df.head())
 
-
     # 5. Clean currency columns
     df, currency_log = clean_currency_columns(df)
     log_lines.extend(currency_log)
     logger("##DEBUG 5a: After clean_currency_columns:", df.head())
-
 
     # 6. Normalize date columns
     df, date_log = normalize_dates(df)
@@ -50,7 +44,6 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger)
     log_lines.extend(missing_log)
     logger("##DEBUG 6: After handle_missing_values:", df.head())
-
 
     # 8. (Optional) Final sanity check
     # df = final_sanity_check(df)
