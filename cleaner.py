@@ -224,8 +224,9 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
 
             elif verbose:
                 log_lines.append(f"✅ Non-numeric column '{col}' left unchanged (Ignored).")
-    logger(f"##DEBUG: Number of missing categoricals:", non_num_missing)
-    logger(f"##DEBUG: Number of missing numerics:", num_missing)
+
+            logger(f"##DEBUG: Number of missing categoricals:", non_num_missing)
+            logger(f"##DEBUG: Number of missing numerics:", num_missing)
 
     if not log_lines:
         log_lines.append("✅ No missing values found.")
