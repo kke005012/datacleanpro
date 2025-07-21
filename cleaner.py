@@ -161,13 +161,20 @@ def normalize_dates(df):
     for col in df.columns:
         if df[col].dtype == object:
             original_non_null = df[col].notna().sum()
-            try:
-                parsed = pd.to_datetime(df[col], errors='coerce')
-                parsed_non_null = parsed.notna().sum()
 
-                if parsed_non_null > 0:
-                    df[col] = parsed
-                    log.append(f"Parsed {parsed_non_null} date values.")
+            parsed = pd.to_datetime(df[col], errors='coerce')
+            parsed_non_null = parsed.notna().sum()
+
+            if parsed_non_null > 0:
+                df[col] = parsed
+                log.append(f"Parsed {parsed_non_null} date values in '{col}' to standardized format (YYYY-MM-DD)")
+            else:
+                log.append(f"Attempted to parse '{col}' as dates, but no valid date values were found")
+
+    if not log:
+        log.append("No columns parsed as dates")
+
+    return df, log
 
 
 def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=None):
