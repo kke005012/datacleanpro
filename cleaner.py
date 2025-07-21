@@ -11,37 +11,37 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     log_lines = []
 
     # 1. Strip whitespace
-    df, strip_log = strip_whitespace(df, verbose=False)
+    df, strip_log = strip_whitespace(df, verbose=True)
     log_lines.extend(strip_log)
     logger("##DEBUG: After strip_whitespace:", df.head())
 
     # 2. Drop empty rows
-    df, drop_log = drop_empty_rows(df, verbose=False)
+    df, drop_log = drop_empty_rows(df, verbose=True)
     log_lines.extend(drop_log)
     logger("##DEBUG: After drop_empty_rows:", df.head())
 
     # 3. Deduplicate
-    df, dedup_log = deduplicate(df, verbose=False)
+    df, dedup_log = deduplicate(df, verbose=True)
     log_lines.extend(dedup_log)
     logger("##DEBUG: After deduplicate:", df.head())
 
     # 4. Standardize column names
-    df, colname_log = standardize_column_names(df, verbose=False)
+    df, colname_log = standardize_column_names(df, verbose=True)
     log_lines.extend(colname_log)
     logger("##DEBUG: After standardize_column_names:", df.head())
 
     # 5. Clean currency columns
-    df, currency_log = clean_currency_columns(df, verbose=False)
+    df, currency_log = clean_currency_columns(df, verbose=True)
     log_lines.extend(currency_log)
     logger("##DEBUG: After clean_currency_columns:", df.head())
 
     # 6. Normalize date columns
-    df, date_log = normalize_dates(df, verbose=False)
+    df, date_log = normalize_dates(df, verbose=True)
     log_lines.extend(date_log)
     logger("##DEBUG: After normalize_dates:", df.head())
 
     # 7. Handle missing values
-    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger, verbose=False)
+    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger, verbose=True)
     log_lines.extend(missing_log)
     logger("##DEBUG: After handle_missing_values:", df.head())
 
@@ -193,7 +193,7 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                     df[col] = df[col].fillna(df[col].mean())
                     log_lines.append(f"📊 Filled {num_missing} missing values in numeric column '{col}' with column average.")
                 else:
-                    log_lines.append(f"✅ Numeric column '{col}' left unchanged (ignored).")
+                    log_lines.append(f"✅ Numeric column '{col}' left unchanged (Ignored).")
             elif verbose:
                 log_lines.append(f"✅ Numeric column '{col}' had no missing values.")
 
@@ -208,7 +208,7 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                 # Fill with "Unknown"
                 df[col] = df[col].fillna("Unknown")
 
-                log_lines.append(f"⚠️ Filled {non_num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
+                log_lines.append(f"⚠️ Filled {non_num_missing} missing values in non-numeric column '{col}' with 'Unknown'.")
 
                 
             elif non_numeric_strategy == "mode":
