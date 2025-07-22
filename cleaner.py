@@ -151,32 +151,43 @@ def clean_currency_columns(df, verbose=verbose):
     return df, log
 
 
+def is_likely_date(val):
+    if not isinstance(val, str):
+        return False
+    date_patterns = [
+        r"\d{4}[-/]\d{2}[-/]\d{2}",     # YYYY-MM-DD or YYYY/MM/DD
+        r"\d{2}[-/]\d{2}[-/]\d{4}",     # MM-DD-YYYY or DD-MM-YYYY
+        r"[A-Za-z]{3,9} \d{1,2}, \d{4}" # Month DD, YYYY
+    ]
+    return any(re.search(pat, val) for pat in date_patterns)
+
 def normalize_dates(df, verbose=False):
     log = []
 
     for col in df.columns:
         if df[col].dtype == object:
+            # Only try parsing if the sample data looks like dates
             sample = df[col].dropna().astype(str).head(10).tolist()
-            successfully_parsed = 0
+            if not any(is_likely_date(val) for val in sample):
+                if verbose:
+                    log.append(f"ℹ️ Skipped '{col}': no date-like patterns found.")
+                continue
 
-            # Try parsing manually for detection
-            parsed_col = []
-            for val in df[col]:
-                try:
-                    parsed_val = parser.parse(str(val), fuzzy=True)
-                    parsed_col.append(parsed_val)
-                    successfully_parsed += 1
-                except Exception:
-                    parsed_col.append(pd.NaT)
+            original_non_null = df[col].notna().sum()
+            try:
+                parsed = pd.to_datetime(df[col], errors="coerce", infer_datetime_format=True)
+                parsed_non_null = parsed.notna().sum()
 
-            if successfully_parsed > 0:
-                df[col] = parsed_col
-                log.append(f"🪄 Parsed {successfully_parsed} values in '{col}' to standard date format")
-            elif verbose:
-                log.append(f"ℹ️ Tried parsing '{col}' as dates, but no valid values were found")
+                if parsed_non_null > 0:
+                    df[col] = parsed
+                    log.append(f"📅 Parsed {parsed_non_null} date values in '{col}' to standardized format (YYYY-MM-DD)")
+                elif verbose:
+                    log.append(f"ℹ️ Attempted to parse '{col}', but no valid dates found.")
+            except Exception as e:
+                log.append(f"⚠️ Failed to parse '{col}' due to error: {str(e)}")
 
     if not log and verbose:
-        log.append("ℹ️ No object columns parsed as dates")
+        log.append("ℹ️ No columns parsed as dates")
 
     return df, log
 
