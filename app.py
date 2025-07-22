@@ -95,6 +95,8 @@ elif page == "Clean My Data":
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
 
+     
+
     # --- Safe session state initialization ---
     
     # Initialize session variables
@@ -117,6 +119,14 @@ elif page == "Clean My Data":
 
         if st.session_state.file_hash != file_hash:
             df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""])
+            # ✅ Check the number of rows in the DataFrame
+            if len(df) > 100000:
+                st.error(
+                    "❌ This app supports a maximum of 100,000 rows. Please upload a smaller file or "
+                    "[contact us](mailto:datacleanpro2025@gmail.com) for a custom order/pricing.",
+                    icon="🚫"
+                )
+                st.stop()
             st.session_state.raw_df = df.copy()
             logger(f"##DEBUG: About to clean {len(st.session_state.raw_df)} rows.")
             st.session_state.cleaned_df = None
