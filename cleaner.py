@@ -130,25 +130,31 @@ def standardize_column_names(df, verbose=verbose):
     return df, log
 
 
-def clean_currency_columns(df, verbose=verbose):
+def clean_currency_columns(df):
     log = []
 
     for col in df.columns:
-        if df[col].dtype == object and df[col].str.contains(r'[\$,]', na=False).any():
+        if df[col].dtype == object and df[col].str.contains(r'\$', na=False).any():
             original_non_null = df[col].notna().sum()
-            df[col] = df[col].replace(r'[\$,]', '', regex=True)
+
+            # Strip dollar sign, commas, spaces, and non-breaking spaces
+            df[col] = df[col].astype(str).str.replace(r'[\$,]', '', regex=True)
+            df[col] = df[col].str.replace(r'\s+', '', regex=True)
+            df[col] = df[col].str.replace(u'\xa0', '', regex=True)  # non-breaking space
+
             df[col] = pd.to_numeric(df[col], errors='coerce')
             cleaned_non_null = df[col].notna().sum()
 
             if cleaned_non_null > 0:
-                log.append(f"Cleaned {cleaned_non_null} currency values in '{col}'.")
-            elif verbose:
-                log.append(f"Currency format found in '{col}', but no values were successfully converted.")
+                log.append(f"💵 Cleaned {cleaned_non_null} currency values in '{col}'")
+            else:
+                log.append(f"💵 Currency format found in '{col}', but no values were successfully converted")
 
     if not log:
-        log.append("No currency formats detected in any column.")
+        log.append("💵 No currency formats detected in any column")
 
     return df, log
+
 
 
 def is_likely_date(val):
@@ -180,7 +186,7 @@ def normalize_dates(df, verbose=False):
 
                 if parsed_non_null > 0:
                     df[col] = parsed
-                    log.append(f"📅 Parsed {parsed_non_null} date values in '{col}' to standardized format (YYYY-MM-DD)")
+                    log.append(f"📅 Parsed {parsed_non_null} date values in '{col}' to standardized format (YYYY-MM-DD).")
                 elif verbose:
                     log.append(f"ℹ️ Attempted to parse '{col}', but no valid dates found.")
             except Exception as e:

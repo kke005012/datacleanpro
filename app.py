@@ -118,7 +118,7 @@ elif page == "Clean My Data":
         file_hash = get_file_hash(uploaded_file)
 
         if st.session_state.file_hash != file_hash:
-            df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""])
+            df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""], low_memory=False)
             # ✅ Check the number of rows in the DataFrame
             if len(df) > 100000:
                 st.error(
