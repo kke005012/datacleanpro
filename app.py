@@ -195,7 +195,7 @@ elif page == "Clean My Data":
                 st.session_state["row_count"] = row_count
                 st.session_state["cost"] = cost
                 st.session_state["total_rows"] = rows
-
+                logger(f"##DEBUG: cost in session_state = {st.session_state.get('cost')}")
                 if "cost" in st.session_state and "total_rows" in st.session_state:
                     st.markdown(f"**Standard Cost: ${st.session_state['cost']:.2f}**. Total Rows = {st.session_state['total_rows']}.")
 
