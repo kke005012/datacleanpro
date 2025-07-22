@@ -197,6 +197,7 @@ elif page == "Clean My Data":
         if cleaned_df is not None and not cleaned_df.empty:
             logger(f"##DEBUG: if cleaned_df is not None and not cleaned_df.empty")
             st.write("### ✅ Cleaned Data Preview")
+            st.dataframe(cleaned_df.head())
             rows, cols = cleaned_df.shape
             logger(f"##DEBUG: cleaned data preview — {rows} rows × {cols} columns")
 
