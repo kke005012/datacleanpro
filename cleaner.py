@@ -44,7 +44,7 @@ def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy
     logger("##DEBUG: After normalize_dates:", df.head())
 
     # 7. Handle missing values
-    df, missing_log = handle_missing_values(df, missing_values_option="", numeric_strategy, non_numeric_strategy, logger, verbose=verbose)
+    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, missing_values_option="", logger, verbose=verbose)
     log_lines.extend(missing_log)
     logger("##DEBUG: After handle_missing_values:", df.head())
 
