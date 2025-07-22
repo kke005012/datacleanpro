@@ -134,27 +134,30 @@ def clean_currency_columns(df, verbose=False):
     log = []
 
     for col in df.columns:
-        if df[col].dtype == object and df[col].str.contains(r'\$', na=False).any():
+        if df[col].dtype == object and df[col].str.contains(r'[\$,]', na=False).any():
             original_non_null = df[col].notna().sum()
-
-            # Strip dollar sign, commas, spaces, and non-breaking spaces
-            df[col] = df[col].astype(str).str.replace(r'[\$,]', '', regex=True)
+            
+            df[col] = df[col].astype(str)
+            df[col] = df[col].str.replace(r'[\$,]', '', regex=True)
             df[col] = df[col].str.replace(r'\s+', '', regex=True)
-            df[col] = df[col].str.replace(u'\xa0', '', regex=True)  # non-breaking space
-
+            df[col] = df[col].str.replace(u'\xa0', '', regex=True)
+            df[col] = df[col].str.replace('_', '', regex=False)
+            
             df[col] = pd.to_numeric(df[col], errors='coerce')
+
             cleaned_non_null = df[col].notna().sum()
 
             if cleaned_non_null > 0:
-                log.append(f"💵 Cleaned {cleaned_non_null} currency values in '{col}'")
-            else:
+                # Force formatting to 2 decimal places as string
+                df[col] = df[col].apply(lambda x: f"{x:.2f}" if pd.notnull(x) else "")
+                log.append(f"💵 Cleaned and formatted {cleaned_non_null} currency values in '{col}'")
+            elif verbose:
                 log.append(f"💵 Currency format found in '{col}', but no values were successfully converted")
 
-    if not log:
+    if not log and verbose:
         log.append("💵 No currency formats detected in any column")
 
     return df, log
-
 
 
 def is_likely_date(val):
