@@ -231,7 +231,7 @@ elif page == "Clean My Data":
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     keep_dollar=keep_dollar,
-                    missing_values_option=""
+                    missing_values_option="",
                     numeric_strategy=numeric_map[numeric_strategy],
                     non_numeric_strategy=non_numeric_map[non_numeric_strategy],
                     logger = st.write if debug_mode else None
