@@ -29,6 +29,16 @@ st.set_page_config(page_title="DataCleanPro", layout="wide")
 # Navigation
 page = st.sidebar.selectbox("📂 Choose a page", ["Welcome", "Clean My Data"])
 
+st.sidebar.markdown(
+    """
+    <hr style='margin-top: 1.5rem; margin-bottom: 0.5rem'>
+    <div style='font-size: 0.75rem; color: gray; text-align: center;'>
+        🧼 DataCleanPro is a cloud-based cleaning service for real-world CSVs.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 if page == "Welcome":
     st.title("✨ Welcome to DataCleanPro")
 
@@ -94,9 +104,45 @@ elif page == "Clean My Data":
         st.info("🔍 Debug Mode is ON — showing internal logs.")
 
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+         
+    # === Sidebar Cleaning Options ===
+    st.sidebar.markdown("### 🧹 Cleaning Options")
 
-     
+    keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False)
+    display_map = {"": "Empty", "NULL": "NULL", "NaN": "NaN"}
+    missing_values_option = st.radio(
+        "Preferred placeholder for missing values:",
+        options=["", "NULL", "NaN"],
+        format_func=lambda x: display_map[x],
+        index=0
+        )
 
+    st.sidebar.markdown("**🕳️ Hidden Value Replacement**")
+
+        numeric_strategy = st.sidebar.selectbox(
+        "Numeric Columns",
+        options=["ignore", "unknown", "average"],
+        index=0
+    )
+
+    non_numeric_strategy = st.sidebar.selectbox(
+        "Text Columns",
+        options=["ignore", "unknown", "mode"],
+        index=0
+    )
+    st.sidebar.markdown(
+    """
+    <hr style='margin-top: 1.5rem; margin-bottom: 0.5rem'>
+    <div style='font-size: 0.75rem; color: gray; text-align: center;'>
+        🧼 DataCleanPro is a cloud-based cleaning service for real-world CSVs.
+    </div>
+    """,
+    unsafe_allow_html=True
+    )
+
+    # === End of Sidebar Section ===
+ 
+   
     # --- Safe session state initialization ---
     
     # Initialize session variables
@@ -185,6 +231,8 @@ elif page == "Clean My Data":
                  
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
+                    keep_dollar=keep_dollar,
+                    missing_values_option=""
                     numeric_strategy=numeric_map[numeric_strategy],
                     non_numeric_strategy=non_numeric_map[non_numeric_strategy],
                     logger = st.write if debug_mode else None
