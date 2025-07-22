@@ -199,20 +199,21 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
 
         else:
             if non_numeric_strategy == "unknown":
-                non_num_missing1 = df[col].isnull().sum()
-                logger(f"DEBUG1: Raw values in '{col}':", non_num_missing1) 
-                # Step 1: Replace blank or whitespace-only strings with NaN
+                blanks = df[col].apply(lambda x: isinstance(x, str) and x.strip() == "").sum()
+                logger(f"DEBUG: Blank-looking strings in '{col}':", blanks)
+
+            # Only cast if blanks are found
+            if blanks > 0:
+                df[col] = df[col].astype(str)
                 df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
-                non_num_missing2 = df[col].isnull().sum()
-                logger(f"DEBUG2: Raw values in '{col}':", non_num_missing2) 
-                # Step 2: Count how many are now missing
-                non_num_missing = df[col].isnull().sum()
-                logger(f"DEBUG3: non_num_missing in '{col}' =", non_num_missing)
-                # Step 3: Fill all NaNs with "Unknown"
-                if non_num_missing > 0:
-                    df[col] = df[col].fillna("Unknown")
-                    log_lines.append(f"⚠️ Filled {non_num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
-                        
+
+            # Count real NaNs now
+            non_num_missing = df[col].isnull().sum()
+            logger(f"non num missing count is {non_num_missing}.")
+            if non_num_missing > 0:
+                df[col] = df[col].fillna("Unknown")
+                log_lines.append(f"⚠️ Filled {non_num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
+                                
             elif non_numeric_strategy == "mode":
                 df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
                 mode = df[col].mode()
