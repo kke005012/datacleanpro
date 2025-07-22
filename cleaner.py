@@ -199,12 +199,12 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
 
         else:
             if non_numeric_strategy == "unknown":
-                # Step 1: Count how many are now missing
-                non_num_missing = df[col].isnull().sum()
-                
-                # Step 2: Replace blank or whitespace-only strings with NaN
+                # Step 1: Replace blank or whitespace-only strings with NaN
                 df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
 
+                # Step 2: Count how many are now missing
+                non_num_missing = df[col].isnull().sum()
+                logger(f"DEBUG: non_num = {non_num_missing}
                 # Step 3: Fill all NaNs with "Unknown"
                 if non_num_missing > 0:
                     df[col] = df[col].fillna("Unknown")
