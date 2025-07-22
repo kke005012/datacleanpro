@@ -118,7 +118,7 @@ elif page == "Clean My Data":
     )
 
     st.sidebar.markdown("**🕳️ Hidden Value Replacement**")
-        numeric_strategy = st.sidebar.selectbox(
+    numeric_strategy = st.sidebar.selectbox(
         "Numeric Columns",
         options=["ignore", "unknown", "average"],
         index=0
