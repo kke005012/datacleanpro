@@ -204,7 +204,7 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
 
                 # Step 2: Count how many are now missing
                 non_num_missing = df[col].isnull().sum()
-                logger(f"DEBUG: non_num = {non_num_missing}
+                logger(f"DEBUG: non_num = {non_num_missing}.")
                 # Step 3: Fill all NaNs with "Unknown"
                 if non_num_missing > 0:
                     df[col] = df[col].fillna("Unknown")
