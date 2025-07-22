@@ -188,18 +188,6 @@ elif page == "Clean My Data":
                 logger(f"##DEBUG: session state cleaned_df", st.session_state.cleaned_df.head())
                 logger(f"##DEBUG: session state raw_df", st.session_state.raw_df.head())
 
-                row_count = len(cleaned_df)
-                cost, rows = calculate_price(row_count)
-                logger(f"##DEBUG: after pricing call, cost={cost} rows={rows}")
-
-                st.session_state["row_count"] = row_count
-                st.session_state["cost"] = cost
-                st.session_state["total_rows"] = rows
-                logger(f"##DEBUG: cost in session_state = {st.session_state.get('cost')}")
-                if "cost" in st.session_state and "total_rows" in st.session_state:
-                    st.markdown(f"**Standard Cost: ${st.session_state['cost']:.2f}**. Total Rows = {st.session_state['total_rows']}.")
-
-
                 if row_count > 100:
                     st.warning(f"Your file has {row_count} rows.")
 
@@ -219,6 +207,18 @@ elif page == "Clean My Data":
 
         # --- Show cleaned data ---
         cleaned_df = st.session_state.get("cleaned_df", None)
+     
+        row_count = len(cleaned_df)
+        cost, rows = calculate_price(row_count)
+        logger(f"##DEBUG: after pricing call, cost={cost} rows={rows}")
+
+        st.session_state["row_count"] = row_count
+        st.session_state["cost"] = cost
+        st.session_state["total_rows"] = rows
+        logger(f"##DEBUG: cost in session_state = {st.session_state.get('cost')}")
+        if "cost" in st.session_state and "total_rows" in st.session_state:
+            st.markdown(f"**Standard Cost: ${st.session_state['cost']:.2f}**. Total Rows = {st.session_state['total_rows']}.")
+        
         
         if cleaned_df is not None and not cleaned_df.empty:
             logger(f"##DEBUG: if cleaned_df is not None and not cleaned_df.empty")
