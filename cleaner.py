@@ -34,7 +34,7 @@ def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy
     logger("##DEBUG: After standardize_column_names:", df.head())
 
     # 5. Clean currency columns
-    df, currency_log = clean_currency_columns(df, missing_values_option="", keep_dollar=keep_dollar, verbose=verbose)
+    df, currency_log = clean_currency_columns(df, keep_dollar=keep_dollar, verbose=verbose, missing_values_option=missing_values_option)
     log_lines.extend(currency_log)
     logger("##DEBUG: After clean_currency_columns:", df.head())
 
@@ -44,7 +44,7 @@ def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy
     logger("##DEBUG: After normalize_dates:", df.head())
 
     # 7. Handle missing values
-    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, missing_values_option="", logger, verbose=verbose)
+    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger, missing_values_option=missing_values_option, verbose=verbose)
     log_lines.extend(missing_log)
     logger("##DEBUG: After handle_missing_values:", df.head())
 
@@ -130,7 +130,7 @@ def standardize_column_names(df, verbose=verbose):
     return df, log
 
 
-def clean_currency_columns(df, missing_values_option="", keep_dollar=keep_dollar, verbose=False):
+def clean_currency_columns(df, keep_dollar=keep_dollar, missing_values_option=missing_values_option, verbose=verbose):
     log = []
 
     for col in df.columns:
@@ -176,7 +176,7 @@ def is_likely_date(val):
     ]
     return any(re.search(pat, val) for pat in date_patterns)
 
-def normalize_dates(df, verbose=False):
+def normalize_dates(df, verbose=verbose):
     log = []
 
     for col in df.columns:
@@ -207,7 +207,7 @@ def normalize_dates(df, verbose=False):
     return df, log
 
 
-def handle_missing_values(df, numeric_strategy, non_numeric_strategy, missing_values_option="", verbose=False, logger=None):
+def handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose, logger=None, missing_values_option=missing_values_option):
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
 
