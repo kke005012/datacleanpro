@@ -115,10 +115,9 @@ elif page == "Clean My Data":
         options=["", "NULL", "NaN"],
         format_func=lambda x: display_map[x],
         index=0
-        )
+    )
 
     st.sidebar.markdown("**🕳️ Hidden Value Replacement**")
-
         numeric_strategy = st.sidebar.selectbox(
         "Numeric Columns",
         options=["ignore", "unknown", "average"],
