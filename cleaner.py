@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
+from dateutil import parser
 
 # --- cleaner.py ---
 
@@ -150,24 +151,32 @@ def clean_currency_columns(df, verbose=verbose):
     return df, log
 
 
-def normalize_dates(df, verbose=verbose):
+def normalize_dates(df, verbose=False):
     log = []
 
     for col in df.columns:
         if df[col].dtype == object:
-            original_non_null = df[col].notna().sum()
+            sample = df[col].dropna().astype(str).head(10).tolist()
+            successfully_parsed = 0
 
-            parsed = pd.to_datetime(df[col], errors='coerce')
-            parsed_non_null = parsed.notna().sum()
+            # Try parsing manually for detection
+            parsed_col = []
+            for val in df[col]:
+                try:
+                    parsed_val = parser.parse(str(val), fuzzy=True)
+                    parsed_col.append(parsed_val)
+                    successfully_parsed += 1
+                except Exception:
+                    parsed_col.append(pd.NaT)
 
-            if parsed_non_null > 0:
-                df[col] = parsed
-                log.append(f"Parsed {parsed_non_null} date values in '{col}' to standardized format (YYYY-MM-DD).")
+            if successfully_parsed > 0:
+                df[col] = parsed_col
+                log.append(f"🪄 Parsed {successfully_parsed} values in '{col}' to standard date format")
             elif verbose:
-                log.append(f"Attempted to parse '{col}' as dates, but no valid date values were found.")
+                log.append(f"ℹ️ Tried parsing '{col}' as dates, but no valid values were found")
 
-    if not log:
-        log.append("No columns parsed as dates.")
+    if not log and verbose:
+        log.append("ℹ️ No object columns parsed as dates")
 
     return df, log
 
