@@ -190,12 +190,13 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                 num_missing = df[col].isnull().sum()
                 if numeric_strategy == "unknown":
                     df[col] = df[col].fillna(-1)
-                    log_lines.append(f"⚠️ Filled {num_missing} missing values in numeric column '{col}' with -1.")
+                    log_lines.append(f"🪄 Filled {num_missing} missing values in numeric column '{col}' with -1.")
                 elif numeric_strategy == "average":
                     df[col] = df[col].fillna(df[col].mean())
                     log_lines.append(f"📊 Filled {num_missing} missing values in numeric column '{col}' with column average.")
                 else:
-                    log_lines.append(f"✅ Numeric column '{col}' left unchanged (Ignored).")
+                    if verbose:
+                        log_lines.append(f"✅ Numeric column '{col}' left unchanged (Ignored).")
             elif verbose:
                 log_lines.append(f"✅ Numeric column '{col}' had no missing values.")
 
@@ -214,7 +215,7 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                 logger(f"non num missing count is {non_num_missing}.")
                 if non_num_missing > 0:
                     df[col] = df[col].fillna("Unknown")
-                    log_lines.append(f"⚠️ Filled {non_num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
+                    log_lines.append(f"🪄 Filled {non_num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
                                 
             elif non_numeric_strategy == "mode":
                 df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
@@ -223,9 +224,9 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                 if not mode.empty:
                     non_num_missing = df[col].isnull().sum()
                     df[col] = df[col].fillna(mode[0])
-                    log_lines.append(f"📋 Filled {non_num_missing} missing values in non-numeric column '{col}' with mode value '{mode[0]}'.")
+                    log_lines.append(f"🪄 Filled {non_num_missing} missing values in non-numeric column '{col}' with mode value '{mode[0]}'.")
                 else:
-                    log_lines.append(f"⚠️ No valid mode found for non-numeric column '{col}' — no changes made.")
+                    log_lines.append(f"📉 No valid mode found for non-numeric column '{col}' — no changes made.")
 
             elif verbose:
                 log_lines.append(f"✅ Non-numeric column '{col}' left unchanged (Ignored).")

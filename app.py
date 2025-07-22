@@ -191,7 +191,14 @@ elif page == "Clean My Data":
                 row_count = len(cleaned_df)
                 cost, rows = calculate_price(row_count)
                 logger(f"##DEBUG: after pricing call, cost={cost} rows={rows}")
-                st.markdown(f"**Standard Cost: ${cost:.2f}**. Total Rows = {rows}.")
+
+                st.session_state["row_count"] = row_count
+                st.session_state["cost"] = cost
+                st.session_state["total_rows"] = rows
+
+                if "cost" in st.session_state and "total_rows" in st.session_state:
+                    st.markdown(f"**Standard Cost: ${st.session_state['cost']:.2f}**. Total Rows = {st.session_state['total_rows']}.")
+
 
                 if row_count > 100:
                     st.warning(f"Your file has {row_count} rows.")
