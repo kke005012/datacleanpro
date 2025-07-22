@@ -207,24 +207,24 @@ elif page == "Clean My Data":
 
         # --- Show cleaned data ---
         cleaned_df = st.session_state.get("cleaned_df", None)
-     
-        row_count = len(cleaned_df)
-        cost, rows = calculate_price(row_count)
-        logger(f"##DEBUG: after pricing call, cost={cost} rows={rows}")
-
-        st.session_state["row_count"] = row_count
-        st.session_state["cost"] = cost
-        st.session_state["total_rows"] = rows
-        logger(f"##DEBUG: cost in session_state = {st.session_state.get('cost')}")
-        if "cost" in st.session_state and "total_rows" in st.session_state:
-            st.markdown(f"**Standard Cost: ${st.session_state['cost']:.2f}**. Total Rows = {st.session_state['total_rows']}.")
-        
         
         if cleaned_df is not None and not cleaned_df.empty:
             logger(f"##DEBUG: if cleaned_df is not None and not cleaned_df.empty")
             st.write("### ✅ Cleaned Data Preview")
             rows, cols = cleaned_df.shape
             logger(f"##DEBUG: cleaned data preview — {rows} rows × {cols} columns")
+
+     
+            row_count = len(cleaned_df)
+            cost, rows = calculate_price(row_count)
+            logger(f"##DEBUG: after pricing call, cost={cost} rows={rows}")
+
+            st.session_state["row_count"] = row_count
+            st.session_state["cost"] = cost
+            st.session_state["total_rows"] = rows
+            logger(f"##DEBUG: cost in session_state = {st.session_state.get('cost')}")
+            if "cost" in st.session_state and "total_rows" in st.session_state:
+                st.markdown(f"**Standard Cost: ${st.session_state['cost']:.2f}**. Total Rows = {st.session_state['total_rows']}.")
 
             if st.checkbox("Show cleaning log"):
                 logger(f"##DEBUG: in Show Cleaning Log if statement")
