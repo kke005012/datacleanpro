@@ -7,7 +7,7 @@ from dateutil import parser
 
 verbose = False 
 
-def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy="ignore", non_numeric_strategy="ignore", logger=None):
+def clean_data(df, keep_dollar=keep_dollar, missing_values_option="", numeric_strategy="ignore", non_numeric_strategy="ignore", logger=None):
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
 
@@ -130,7 +130,7 @@ def standardize_column_names(df, verbose=verbose):
     return df, log
 
 
-def clean_currency_columns(df, keep_dollar=keep_dollar, missing_values_option=missing_values_option, verbose=verbose):
+def clean_currency_columns(df, keep_dollar=False, missing_values_option=missing_values_option, verbose=verbose):
     log = []
 
     for col in df.columns:
