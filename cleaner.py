@@ -207,7 +207,7 @@ def normalize_dates(df, verbose=verbose):
     return df, log
 
 
-def handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose, logger=None, missing_values_option=missing_values_option):
+def handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose, logger=None, missing_values_option=""):
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
 
