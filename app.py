@@ -116,9 +116,10 @@ elif page == "Clean My Data":
             display_map = {"NULL": "null", "NaN": "NaN"}
             missing_values_option = st.radio(
                 "Preferred placeholder for missing values:",
-                options=["", "null", "NaN"],
+                options=["null", "NaN"],
                 format_func=lambda x: display_map[x],
                 index=0
+                key="missing values"
             )
 
             st.sidebar.markdown("**Missing Value Filler**")
