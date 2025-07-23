@@ -129,14 +129,15 @@ elif page == "Clean My Data":
                 index=0,
                 key="missing numeric"
             )
+            if numeric_strategy == "Unknown":
+                num_missing_placeholder = st.radio("Preferred Numeric Filler:", ["null", "NaN"])
+            
             non_numeric_strategy = st.sidebar.radio(
                 "Text Columns",
                 options=["Ignore", "Unknown", "Mode"],
                 index=0,
                 key="missing non-numeric"
             )
-            if numeric_strategy == "Unknown":
-                num_missing_placeholder = st.radio("Preferred Numeric Filler:", ["null", "NaN"])
             if non_numeric_strategy == "Unknown":
                 non_num_missing_placeholder = st.radio("Preferred Text Filler:", ["null", "NaN"])
 
@@ -211,16 +212,16 @@ elif page == "Clean My Data":
 
             #st.markdown("</div>", unsafe_allow_html=True)
 
-            #numeric_map = {
-                #"Ignore": "ignore",
-                #"Replace with Unknown": "unknown",
-                #"Use Average": "average"
-            #}
-            #non_numeric_map = {
-                #"Ignore": "ignore",
-                #"Replace with Unknown": "unknown",
-                #"Use Mode": "mode"
-            #}
+            numeric_map = {
+                "Ignore": "ignore",
+                "Replace with Unknown": "unknown",
+                "Use Average": "average"
+            }
+            non_numeric_map = {
+                "Ignore": "ignore",
+                "Replace with Unknown": "unknown",
+                "Use Mode": "mode"
+            }
 
             # --- Clean button only appears if data is ready ---
 
