@@ -113,29 +113,31 @@ elif page == "Clean My Data":
             st.sidebar.markdown("### 🧹 Cleaning Options")
 
             keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False)
-            display_map = {"": "Empty", "NULL": "NULL", "NaN": "NaN"}
-            missing_values_option = st.radio(
-            "Preferred placeholder for missing values:",
-            options=["", "NULL", "NaN"],
-            format_func=lambda x: display_map[x],
-            index=0
+            display_map = {"NULL": "null", "NaN": "NaN"}
+                missing_values_option = st.radio(
+                "Preferred placeholder for missing values:",
+                options=["", "null", "NaN"],
+                format_func=lambda x: display_map[x],
+                index=0
             )
 
             st.sidebar.markdown("**Missing Value Filler**")
             numeric_strategy = st.sidebar.radio(
                 "Numeric Columns",
                 options=["Ignore", "Unknown", "Average"],
-                index=0
+                index=0,
+                key="missing numeric"
             )
             non_numeric_strategy = st.sidebar.radio(
                 "Text Columns",
                 options=["Ignore", "Unknown", "Mode"],
-                index=0
+                index=0,
+                key="missing non-numeric"
             )
             if numeric_strategy == "Unknown":
-                num_missing_placeholder = st.radio("Preferred Placeholder", ["null", "NaN"])
+                num_missing_placeholder = st.radio("Preferred Numeric Filler", ["null", "NaN"])
             if numeric_strategy == "Unknown":
-                non_num_missing_placeholder = st.radio("Preferred Placeholder", ["null", "NaN"])
+                non_num_missing_placeholder = st.radio("Preferred Text Filler", ["null", "NaN"])
 
     st.sidebar.markdown(
     """
