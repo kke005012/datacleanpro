@@ -130,7 +130,7 @@ def standardize_column_names(df, verbose=verbose):
     return df, log
 
 
-def clean_currency_columns(df, keep_dollar=False, missing_values_option=missing_values_option, verbose=verbose):
+def clean_currency_columns(df, keep_dollar=False, missing_values_option="", verbose=verbose):
     log = []
 
     for col in df.columns:
