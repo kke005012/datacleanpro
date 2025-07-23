@@ -7,7 +7,8 @@ from dateutil import parser
 
 verbose = False 
 
-def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy="ignore", non_numeric_strategy="ignore", logger=None):
+def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy="ignore", num_missing_placeholder="", non_num_missing_placeholder="", 
+    non_numeric_strategy="ignore", logger=None):
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
 
@@ -44,7 +45,8 @@ def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy
     logger("##DEBUG: After normalize_dates:", df.head())
 
     # 7. Handle missing values
-    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger, missing_values_option=missing_values_option, verbose=verbose)
+    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, num_missing_placeholder=num_missing_placeholder,
+        non_num_missing_placeholder=non_num_missing_placeholder,logger, missing_values_option=missing_values_option, verbose=verbose)
     log_lines.extend(missing_log)
     logger("##DEBUG: After handle_missing_values:", df.head())
 
@@ -130,7 +132,7 @@ def standardize_column_names(df, verbose=verbose):
     return df, log
 
 
-def clean_currency_columns(df, keep_dollar=False, missing_values_option="", verbose=verbose):
+def clean_currency_columns(df, keep_dollar=False, missing_values_option="", num_missing_placeholder="", non_num_missing_placeholder="", verbose=verbose):
     log = []
 
     for col in df.columns:
@@ -207,7 +209,8 @@ def normalize_dates(df, verbose=verbose):
     return df, log
 
 
-def handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose, logger=None, missing_values_option=""):
+def handle_missing_values(df, numeric_strategy, non_numeric_strategy, num_missing_placeholder="", non_num_missing_placeholder="", 
+    verbose=verbose, logger=None, missing_values_option=""):
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
 
@@ -223,14 +226,15 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=ve
                 num_missing = df[col].isnull().sum()
 
                 if numeric_strategy == "unknown":
-                    df[col] = df[col].fillna(missing_values_option if missing_values_option != "" else -1)
+                    df[col] = df[col].fillna(missing_values_option if missing_values_option != "" else num_missing_placeholder)
                     log_lines.append(
-                        f"🔮 Filled {num_missing} missing values in numeric column '{col}' with '{missing_values_option}'."
+                        f"🔮 Filled {num_missing} missing values in numeric column '{col}' with '{num_missing_placeholder}'."
                     )
                 elif numeric_strategy == "average":
+                    mean = df[col].mean()
                     df[col] = df[col].fillna(df[col].mean())
                     log_lines.append(
-                        f"📊 Filled {num_missing} missing values in numeric column '{col}' with column average."
+                        f"📊 Filled {num_missing} missing values in numeric column '{col}' with '{mean}'."
                     )
                 else:  # ignore
                     if verbose:
@@ -247,17 +251,17 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=ve
             if non_num_missing > 0:
                 if non_numeric_strategy == "unknown":
                     df[col] = df[col].apply(
-                        lambda x: missing_values_option if pd.isna(x) else x
+                        lambda x: non_num_missing_placeholder if pd.isna(x) else x
                     )
                     log_lines.append(
-                        f"🔮 Filled {non_num_missing} missing values in non-numeric column '{col}' with '{missing_values_option or 'Empty'}'"
+                        f"🔮 Filled {non_num_missing} missing values in non-numeric column '{col}' with '{non_num_missing_placeholder}'."
                     )
                 elif non_numeric_strategy == "mode":
                     mode = df[col].mode()
                     if not mode.empty:
                         df[col] = df[col].fillna(mode[0])
                         log_lines.append(
-                            f"📋 Filled {non_num_missing} missing values in non-numeric column '{col}' with mode value '{mode[0]}'"
+                            f"📋 Filled {non_num_missing} missing values in non-numeric column '{col}' with mode value '{mode}'"
                         )
                     else:
                         log_lines.append(

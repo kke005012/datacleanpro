@@ -106,29 +106,37 @@ elif page == "Clean My Data":
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
          
     # === Sidebar Cleaning Options ===
-    st.sidebar.markdown("### 🧹 Cleaning Options")
+    non_num_missing_placeholder = ""
+    num_missing_placeholder = ""
+    if "raw_df" in st.session_state and st.session_state.raw_df is not None:
+        with st.sidebar:
+            st.sidebar.markdown("### 🧹 Cleaning Options")
 
-    keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False)
-    display_map = {"": "Empty", "NULL": "NULL", "NaN": "NaN"}
-    missing_values_option = st.radio(
-        "Preferred placeholder for missing values:",
-        options=["", "NULL", "NaN"],
-        format_func=lambda x: display_map[x],
-        index=0
-    )
+            keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False)
+            display_map = {"": "Empty", "NULL": "NULL", "NaN": "NaN"}
+            missing_values_option = st.radio(
+            "Preferred placeholder for missing values:",
+            options=["", "NULL", "NaN"],
+            format_func=lambda x: display_map[x],
+            index=0
+            )
 
-    st.sidebar.markdown("**🕳️ Hidden Value Replacement**")
-    numeric_strategy = st.sidebar.selectbox(
-        "Numeric Columns",
-        options=["ignore", "unknown", "average"],
-        index=0
-    )
+            st.sidebar.markdown("**Missing Value Filler**")
+            numeric_strategy = st.sidebar.radio(
+                "Numeric Columns",
+                options=["Ignore", "Unknown", "Average"],
+                index=0
+            )
+            non_numeric_strategy = st.sidebar.radio(
+                "Text Columns",
+                options=["Ignore", "Unknown", "Mode"],
+                index=0
+            )
+            if numeric_strategy == "Unknown":
+                num_missing_placeholder = st.radio("Preferred Placeholder", ["null", "NaN"])
+            if numeric_strategy == "Unknown":
+                non_num_missing_placeholder = st.radio("Preferred Placeholder", ["null", "NaN"])
 
-    non_numeric_strategy = st.sidebar.selectbox(
-        "Text Columns",
-        options=["ignore", "unknown", "mode"],
-        index=0
-    )
     st.sidebar.markdown(
     """
     <hr style='margin-top: 1.5rem; margin-bottom: 0.5rem'>
@@ -234,6 +242,8 @@ elif page == "Clean My Data":
                     missing_values_option="",
                     numeric_strategy=numeric_map[numeric_strategy],
                     non_numeric_strategy=non_numeric_map[non_numeric_strategy],
+                    num_missing_placeholder=num_missing_placeholder,
+                    non_num_missing_placeholder=non_num_missing_placeholder,
                     logger = st.write if debug_mode else None
                 )
 
