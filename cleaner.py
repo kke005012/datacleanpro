@@ -46,7 +46,7 @@ def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy
 
     # 7. Handle missing values
     df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, num_missing_placeholder=num_missing_placeholder,
-        non_num_missing_placeholder=non_num_missing_placeholder,logger, missing_values_option=missing_values_option, verbose=verbose)
+        non_num_missing_placeholder=non_num_missing_placeholder, missing_values_option=missing_values_option, verbose=verbose)
     log_lines.extend(missing_log)
     logger("##DEBUG: After handle_missing_values:", df.head())
 
