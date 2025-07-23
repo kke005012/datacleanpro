@@ -24,7 +24,7 @@ from pricing import calculate_price
 def logger(*args):
     st.write(*args)
 
-st.set_page_config(page_title="DataCleanPro", layout="wide")
+st.set_page_config(page_title="DataClean Pro", layout="wide")
 
 # Navigation
 page = st.sidebar.selectbox("📂 Choose a page", ["Welcome", "Clean My Data"])
@@ -33,14 +33,14 @@ st.sidebar.markdown(
     """
     <hr style='margin-top: 1.5rem; margin-bottom: 0.5rem'>
     <div style='font-size: 0.75rem; color: gray; text-align: center;'>
-        🧼 DataCleanPro is a cloud-based cleaning service for real-world CSVs.
+        🧼 DataClean Pro is a cloud-based cleaning service for real-world CSVs.
     </div>
     """,
     unsafe_allow_html=True
 )
 
 if page == "Welcome":
-    st.title("✨ Welcome to DataCleanPro")
+    st.title("✨ Welcome to DataClean Pro")
 
     st.markdown("""
 **Clean data shouldn’t come with a dirty price tag.**  
@@ -140,16 +140,6 @@ elif page == "Clean My Data":
             if non_numeric_strategy == "Unknown":
                 non_num_missing_placeholder = st.radio("Preferred Text Filler:", ["null", "NaN"])
 
-    st.sidebar.markdown(
-    """
-    <hr style='margin-top: 1.5rem; margin-bottom: 0.5rem'>
-    <div style='font-size: 0.75rem; color: gray; text-align: center;'>
-        🧼 DataCleanPro is a cloud-based cleaning service for real-world CSVs.
-    </div>
-    """,
-    unsafe_allow_html=True
-    )
-
     # === End of Sidebar Section ===
  
    
@@ -203,34 +193,34 @@ elif page == "Clean My Data":
             #</div>
             #""", unsafe_allow_html=True)
 
-            st.markdown("""
-            <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
-            """, unsafe_allow_html=True)
+            #st.markdown("""
+            #<div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
+            #""", unsafe_allow_html=True)
 
-            numeric_strategy = st.radio(
-                "Missing Numeric Values:",
-                ["Ignore", "Replace with Unknown", "Use Average"],
-                index=0
-            )
+            #numeric_strategy = st.radio(
+                #"Missing Numeric Values:",
+                #["Ignore", "Replace with Unknown", "Use Average"],
+                #index=0
+            #)
 
-            non_numeric_strategy = st.radio(
-                "Missing Non-Numeric Values:",
-                 ["Ignore", "Replace with Unknown", "Use Mode"],
-                 index=0
-            )
+            #non_numeric_strategy = st.radio(
+                #"Missing Non-Numeric Values:",
+                 #["Ignore", "Replace with Unknown", "Use Mode"],
+                 #index=0
+            #)
 
-            st.markdown("</div>", unsafe_allow_html=True)
+            #st.markdown("</div>", unsafe_allow_html=True)
 
-            numeric_map = {
-                "Ignore": "ignore",
-                "Replace with Unknown": "unknown",
-                "Use Average": "average"
-            }
-            non_numeric_map = {
-                "Ignore": "ignore",
-                "Replace with Unknown": "unknown",
-                "Use Mode": "mode"
-            }
+            #numeric_map = {
+                #"Ignore": "ignore",
+                #"Replace with Unknown": "unknown",
+                #"Use Average": "average"
+            #}
+            #non_numeric_map = {
+                #"Ignore": "ignore",
+                #"Replace with Unknown": "unknown",
+                #"Use Mode": "mode"
+            #}
 
             # --- Clean button only appears if data is ready ---
 
