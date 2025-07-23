@@ -118,7 +118,7 @@ elif page == "Clean My Data":
                 "Preferred placeholder for missing values:",
                 options=["null", "NaN"],
                 format_func=lambda x: display_map[x],
-                index=0
+                index=0,
                 key="missing values"
             )
 
