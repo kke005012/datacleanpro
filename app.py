@@ -114,7 +114,7 @@ elif page == "Clean My Data":
 
             keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False)
             display_map = {"NULL": "null", "NaN": "NaN"}
-                missing_values_option = st.radio(
+            missing_values_option = st.radio(
                 "Preferred placeholder for missing values:",
                 options=["", "null", "NaN"],
                 format_func=lambda x: display_map[x],
