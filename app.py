@@ -136,9 +136,9 @@ elif page == "Clean My Data":
                 key="missing non-numeric"
             )
             if numeric_strategy == "Unknown":
-                num_missing_placeholder = st.radio("Preferred Numeric Filler", ["null", "NaN"])
+                num_missing_placeholder = st.radio("Preferred Numeric Filler:", ["null", "NaN"])
             if non_numeric_strategy == "Unknown":
-                non_num_missing_placeholder = st.radio("Preferred Text Filler", ["null", "NaN"])
+                non_num_missing_placeholder = st.radio("Preferred Text Filler:", ["null", "NaN"])
 
     st.sidebar.markdown(
     """
@@ -197,11 +197,11 @@ elif page == "Clean My Data":
             st.dataframe(st.session_state.raw_df.head())
 
             # --- Cleaning Options ---
-            st.markdown("""
-            <div style='margin-top: 2em; text-align: center;'>
-                <h4> 🛠️ Handle Missing Values</h4>
-            </div>
-            """, unsafe_allow_html=True)
+            #st.markdown("""
+            #<div style='margin-top: 2em; text-align: center;'>
+                #<h4> 🛠️ Handle Missing Values</h4>
+            #</div>
+            #""", unsafe_allow_html=True)
 
             st.markdown("""
             <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
