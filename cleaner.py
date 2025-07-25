@@ -227,7 +227,8 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
         # Check for missing values (NaN or blank strings for non-numeric)
         has_nulls = df[col].isnull().any()
         has_empty = (df[col] == "").any() if not is_numeric else False
-
+        has_nans = df[col].isnull().sum()
+        logger(f"##DEBUG: has_nulls = {has_nans}")
         if is_numeric:
             if has_nulls:
                 num_missing = df[col].isnull().sum()
@@ -276,6 +277,8 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                     logger(f"##DEBUG:  Filled {non_num_missing} missing values in non-numeric column '{col}' with '{mode}'.")
                 else:
                     log_lines.append(f"📉 No valid mode found for non-numeric column '{col}' — no changes made.")
+            else:
+                logger(f"##DEBUG: no text missing.")
 
 
     return df, log_lines
