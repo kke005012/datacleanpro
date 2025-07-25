@@ -27,7 +27,7 @@ def logger(*args):
 st.markdown(
     """
     <div style='background-color: #d4edda; padding: 15px; border-radius: 10px; text-align: center;'>
-        <h2 style='color: #155724; margin: 0;'>DataClean Pro is a cloud-based data cleaning app for CSV files</h2>
+        <h5 style='color: #155724; margin: 0;'>DataClean Pro is a cloud-based data cleaning app for CSV files</h5>
     </div>
     """,
     unsafe_allow_html=True
@@ -37,22 +37,10 @@ st.set_page_config(page_title="DataClean Pro | Clean Real-World CSVs Fast", page
 # Navigation
 page = st.sidebar.selectbox("📂 Choose a page", ["Welcome", "Clean My Data"])
 
-st.sidebar.markdown(
-    """
-    <hr style='margin-top: 1.5rem; margin-bottom: 0.5rem'>
-    <div style='font-size: 0.75rem; color: gray; text-align: center;'>
-        🧼 DataClean Pro is a cloud-based cleaning service for real-world CSVs.
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
 if page == "Welcome":
     st.markdown("""
     ### Welcome to DataCleanPro 🧼  
-    DataCleanPro is a cloud-based data cleaning tool designed for real-world CSV files.  
     Whether you're dealing with missing values, inconsistent dates, or currency formatting, we've got you covered.
-
     Clean your dataset, download your results, and get back to real work — fast.
     """)
 
@@ -89,14 +77,7 @@ Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com
 """, unsafe_allow_html=True)
 
 elif page == "Clean My Data":
-    st.markdown(
-        """
-        <div style='background-color: #d4edda; padding: 15px; border-radius: 10px; text-align: center;'>
-            <h2 style='color: #155724; margin: 0;'>DataClean Pro is a cloud-based data cleaning app for CSV files</h2>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+
     # Style the buttons
     st.markdown("""
         <style>
