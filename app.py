@@ -24,6 +24,14 @@ from pricing import calculate_price
 def logger(*args):
     st.write(*args)
 
+st.markdown(
+    """
+    <div style='background-color: #d4edda; padding: 15px; border-radius: 10px; text-align: center;'>
+        <h2 style='color: #155724; margin: 0;'>DataClean Pro is a cloud-based data cleaning app for CSV files</h2>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 st.set_page_config(page_title="DataClean Pro | Clean Real-World CSVs Fast", page_icon="🧼", layout="wide")
 
 # Navigation
@@ -81,6 +89,14 @@ Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com
 """, unsafe_allow_html=True)
 
 elif page == "Clean My Data":
+    st.markdown(
+        """
+        <div style='background-color: #d4edda; padding: 15px; border-radius: 10px; text-align: center;'>
+            <h2 style='color: #155724; margin: 0;'>DataClean Pro is a cloud-based data cleaning app for CSV files</h2>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     # Style the buttons
     st.markdown("""
         <style>
