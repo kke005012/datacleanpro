@@ -125,9 +125,7 @@ elif page == "Clean My Data":
         with st.sidebar:
             st.sidebar.markdown("
             keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False, help="Assumes USD format with period as decimal separator.")
-            display_map = {"NULL": "null", "NaN": "NaN"}
-                                            #options=["NULL", "NaN"],
-                #format_func=lambda x: display_map[x],
+                                                                        #format_func=lambda x: display_map[x],
                 #index=0,
                             #)
 
