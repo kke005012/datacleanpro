@@ -198,10 +198,9 @@ elif page == "Clean My Data":
                     icon="🚫"
                 )
                 st.stop()
-            if (len(df) == 1 and has_header) or (len(df) == 0 and not has_header):
-                st.error(
-                    "❌ This app supports a minimum of 1 row of data. Please refresh and try again with a data file."
-                )
+            min_rows_required = 1
+            if len(df) < min_rows_required:
+                st.error("❌ This app supports a minimum of 1 row of data. Please upload a valid file.")
                 st.stop()
             # ==== End Row Count Check ===                    
  
