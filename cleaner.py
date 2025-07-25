@@ -148,9 +148,9 @@ def clean_currency_columns(df, keep_dollar=False, verbose=False):
                 cleaned_non_null = df[col].notna().sum()
 
                 if cleaned_non_null > 0:
-                    # Format to 2 decimal places and replace missing values with -1
+                    # Format to 2 decimal places 
                     df[col] = df[col].apply(
-                        lambda x: f"{x:.2f}" if pd.notna(x) else -1
+                        lambda x: f"{x:.2f}" if pd.notna(x) else x
                     )
 
                     # Optional: re-add dollar sign
