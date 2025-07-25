@@ -23,7 +23,7 @@ Clean your dataset, download your results, and get back to real work — fast.
 
 | Rows | Cost |
 |------|------|
-| First 100 | Free |
+| <=100 | Free |
 | 101–500 | $0.02 |
 | 501-1500 | $0.015 |
 | 1501-10000 | $0.01 |
