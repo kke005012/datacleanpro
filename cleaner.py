@@ -277,8 +277,6 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                 else:
                     log_lines.append(f"📉 No valid mode found for non-numeric column '{col}' — no changes made.")
 
-        elif verbose:
-            log_lines.append(f"✅ Non-numeric column '{col}' left unchanged (Ignored).")
 
     return df, log_lines
 
