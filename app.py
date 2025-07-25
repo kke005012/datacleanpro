@@ -26,8 +26,8 @@ def logger(*args):
 
 st.markdown(
     """
-    <div style='background-color: #d4edda; padding: 20px; border-radius: 15px; text-align: center; inline-block;'>
-        <h7 style='color: #155724; margin: 0;'>DataClean Pro is a cloud-based data cleaning app for CSV files</h7>
+    <div style='background-color: #d4edda; padding: 10px; text-align: center;'>
+        <p style='font-size: 16px; color: #155724; margin: 0;'>🧼 <strong>DataClean Pro</strong> is a cloud-based data cleaning app for CSV files</p>
     </div>
     """,
     unsafe_allow_html=True
