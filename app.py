@@ -119,22 +119,17 @@ elif page == "Clean My Data":
         download_filename = f"{base_filename}_clean.csv" if uploaded_file else "cleaned_data.csv"
     # === End original filename ===
          
-    # === Sidebar Cleaning Options ===
-    non_num_missing_placeholder = ""
-    num_missing_placeholder = ""
+        non_
+    
     if "raw_df" in st.session_state and st.session_state.raw_df is not None:
         with st.sidebar:
-            st.sidebar.markdown("### 🧹 Cleaning Options")
-
+            st.sidebar.markdown("
             keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False, help="Assumes USD format with period as decimal separator.")
             display_map = {"NULL": "null", "NaN": "NaN"}
-            #missing_values_option = st.radio(
-                #"Preferred placeholder for missing values:",
-                #options=["NULL", "NaN"],
+                                            #options=["NULL", "NaN"],
                 #format_func=lambda x: display_map[x],
                 #index=0,
-                #key="missing values"
-            #)
+                            #)
 
             st.sidebar.markdown("**Missing Value Filler**")
             numeric_strategy = st.sidebar.radio(
@@ -214,8 +209,7 @@ elif page == "Clean My Data":
             st.write(f"### 📊 Preview of Uploaded Data")
             st.dataframe(st.session_state.raw_df.head())
 
-            # === Cleaning Options ===
-            #st.markdown("""
+                        #st.markdown("""
             #<div style='margin-top: 2em; text-align: center;'>
                 #<h4> 🛠️ Handle Missing Values</h4>
             #</div>
@@ -239,17 +233,7 @@ elif page == "Clean My Data":
 
             #st.markdown("</div>", unsafe_allow_html=True)
 
-            numeric_map = {
-                "Ignore": "ignore",
-                "Replace with Unknown": "unknown",
-                "Use Average": "average"
-            }
-            non_numeric_map = {
-                "Ignore": "ignore",
-                "Replace with Unknown": "unknown",
-                "Use Mode": "mode"
-            }
-
+                        non_
             # === Clean button only appears if data is ready ===
 
             if st.button("Clean My Data"):
@@ -260,9 +244,8 @@ elif page == "Clean My Data":
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     keep_dollar=keep_dollar,
-                    #missing_values_option=missing_values_option,
-                    numeric_strategy=numeric_map[numeric_strategy],
-                    non_numeric_strategy=non_numeric_map[non_numeric_strategy],
+                                        numeric_strategy=numeric_strategy.lower(),
+                    non_numeric_strategy=non_numeric_strategy.lower(),
                     num_missing_placeholder=num_missing_placeholder,
                     non_num_missing_placeholder=non_num_missing_placeholder,
                     logger = st.write if debug_mode else None
