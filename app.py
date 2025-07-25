@@ -200,8 +200,11 @@ elif page == "Clean My Data":
                 st.stop()
             min_rows_required = 1
             if len(df) < min_rows_required:
-                st.error("❌ This app supports a minimum of 1 row of data. Please upload a valid file.")
-                st.stop()
+                try:
+                    st.error("❌ This app supports a minimum of 1 row of data. Please upload a valid file.")
+                    st.stop()
+                except EmptyDataError:
+                    pass
             # ==== End Row Count Check ===                    
  
             st.session_state.raw_df = df.copy()
