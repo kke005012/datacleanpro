@@ -199,7 +199,6 @@ elif page == "Clean My Data":
                 )
                 st.stop()
             min_rows_required = 1
-            df = pd.read_csv(uploaded_file, header=0 if has_header else None)
             if df.empty or len(df) < min_rows_required:
                st.error("❌ This app supports a minimum of 1 row of data. Please upload a valid file.")
                st.stop()
