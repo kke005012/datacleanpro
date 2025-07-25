@@ -239,7 +239,7 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                     mean = df[col].mean()
                     df[col] = df[col].fillna(df[col].mean())
                     log_lines.append(f"📊 Filled {num_missing} missing values in numeric column '{col}' with {mean}.")
-                    logger((f"##DEBUG: Filled {num_missing} missing values in numeric column '{col}' with {mean}.")
+                    logger(f"##DEBUG: Filled {num_missing} missing values in numeric column '{col}' with {mean}.")
                 else:
                     if verbose:
                         log_lines.append(f"✅ Numeric column '{col}' left unchanged (Ignored).")
