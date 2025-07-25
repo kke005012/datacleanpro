@@ -26,7 +26,7 @@ def logger(*args):
 
 st.markdown(
     """
-    <div style='background-color: #d4edda; padding: 10px; text-align: center; margin-bottom: 30px;'>
+    <div style='background-color: #d4edda; padding: 10px; text-align: center; margin-bottom: 40px;'>
         <p style='font-size: 16px; color: #155724; margin: 0;'>🧼 <strong>DataClean Pro</strong> is a cloud-based data cleaning app for CSV files</p>
     </div>
     """,
@@ -128,13 +128,13 @@ elif page == "Clean My Data":
 
             keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False, help="Assumes USD format with period as decimal separator.")
             display_map = {"NULL": "null", "NaN": "NaN"}
-            #missing_values_option = st.radio(
-                #"Preferred placeholder for missing values:",
-                #options=["NULL", "NaN"],
-                #format_func=lambda x: display_map[x],
-                #index=0,
-                #key="missing values"
-            #)
+            missing_values_option = st.radio(
+                "Preferred placeholder for missing values:",
+                options=["NULL", "NaN"],
+                format_func=lambda x: display_map[x],
+                index=0,
+                key="missing values"
+            )
 
             st.sidebar.markdown("**Missing Value Filler**")
             numeric_strategy = st.sidebar.radio(
