@@ -1,4 +1,4 @@
-# --- app.py ---
+# === app.py ===
 import streamlit as st
 import pandas as pd
 import gspread
@@ -161,7 +161,7 @@ elif page == "Clean My Data":
     # === End of Sidebar Section ===
  
    
-    # --- Safe session state initialization ---
+    # === Safe session state initialization ===
     
     # Initialize session variables
     if "raw_df" not in st.session_state:
@@ -176,19 +176,19 @@ elif page == "Clean My Data":
     def get_file_hash(file):
         return hashlib.md5(file.getvalue()).hexdigest()
 
-    # --- Load file into session state ---
+    # === Load file into session state ===
     if uploaded_file is not None:
         st.session_state.upload_attempted = True
         file_hash = get_file_hash(uploaded_file)
 
         if st.session_state.file_hash != file_hash:
-            # ---------- Handle header/no header 
+            # === Handle header/no header ===
             if has_header:
                 df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""], low_memory=False)
             else:
                 df = pd.read_csv(uploaded_file, header=None, keep_default_na=False, na_values=[""], low_memory=False)
                 df.columns = [f"column_{i}" for i in range(df.shape[1])]
-            # ----------End Header/No Header
+            # === End Header/No Header ===
 
             # === Check the number of rows in the DataFrame ===
             if len(df) > 100000:
@@ -203,7 +203,7 @@ elif page == "Clean My Data":
                     "❌ This app supports a minimum of 1 row of data. Please refresh and try again with a data file."
                 )
                 st.stop()
-            ==== End Row Count Check ===                    
+            # ==== End Row Count Check ===                    
  
             st.session_state.raw_df = df.copy()
             logger(f"##DEBUG: About to clean {len(st.session_state.raw_df)} rows.")
@@ -213,12 +213,12 @@ elif page == "Clean My Data":
         else:
             st.info("Same file detected — using cached version.")
         
-        # --- Show raw data preview if available ---
+        # === Show raw data preview if available ===
         if not st.session_state.raw_df.empty:
             st.write(f"### 📊 Preview of Uploaded Data")
             st.dataframe(st.session_state.raw_df.head())
 
-            # --- Cleaning Options ---
+            # === Cleaning Options ===
             #st.markdown("""
             #<div style='margin-top: 2em; text-align: center;'>
                 #<h4> 🛠️ Handle Missing Values</h4>
@@ -254,7 +254,7 @@ elif page == "Clean My Data":
                 "Use Mode": "mode"
             }
 
-            # --- Clean button only appears if data is ready ---
+            # === Clean button only appears if data is ready ===
 
             if st.button("Clean My Data"):
                 logger(f"##DEBUG Clean My Data Button.")
@@ -284,7 +284,7 @@ elif page == "Clean My Data":
         elif st.session_state.upload_attempted:
             st.warning(" ⚠️ No raw data available to clean. Please upload a file.")
 
-        # --- Show cleaned data ---
+        # === Show cleaned data ===
         cleaned_df = st.session_state.get("cleaned_df", None)
         
         if cleaned_df is not None and not cleaned_df.empty:
@@ -361,7 +361,7 @@ elif page == "Clean My Data":
             st.markdown(receipt)
 
 
-    # --- Footer ---
+    # === Footer ===
     st.markdown("""
         <div style='text-align: center; padding-top: 2em;'>
             📩 Contact us: <a href='mailto:datacleanpro2025@gmail.com'>datacleanpro2025@gmail.com</a>
