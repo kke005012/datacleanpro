@@ -24,7 +24,7 @@ from pricing import calculate_price
 def logger(*args):
     st.write(*args)
 
-st.set_page_config(page_title="DataClean Pro", layout="wide")
+st.set_page_config(page_title="DataClean Pro | Clean Real-World CSVs Fast", page_icon="🧼", layout="wide")
 
 # Navigation
 page = st.sidebar.selectbox("📂 Choose a page", ["Welcome", "Clean My Data"])
@@ -40,7 +40,13 @@ st.sidebar.markdown(
 )
 
 if page == "Welcome":
-    st.title("✨ Welcome to DataClean Pro")
+    st.markdown("""
+    ### Welcome to DataCleanPro 🧼  
+    DataCleanPro is a cloud-based data cleaning tool designed for real-world CSV files.  
+    Whether you're dealing with missing values, inconsistent dates, or currency formatting, we've got you covered.
+
+    Clean your dataset, download your results, and get back to real work — fast.
+    """)
 
     st.markdown("""
 **Clean data shouldn’t come with a dirty price tag.**  
@@ -54,7 +60,7 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 
     st.markdown("""
 <h4><span>&#x1F4B8;</span> Pricing</h4>
-<p><strong>First 100 rows: Free</strong></p>
+<p><strong>100 rows or less: Free</strong></p>
 <p><strong>After that:</strong></p>
 <ul style="list-style-type: none; padding-left: 1em;">
   <li><strong>$0.02 per row from 101 to 500</strong></li>
@@ -102,8 +108,19 @@ elif page == "Clean My Data":
     debug_mode = st.checkbox("🛠️ Enable Debug Mode")
     if debug_mode:
         st.info("🔍 Debug Mode is ON — showing internal logs.")
-
+    
+    # === Add Header question in sidebar ===
+    has_header = st.sidebar.checkbox("File contains header row?", value=True)
+    # === End Header question in sidebar ===
+    
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
+
+    # === Capture original filename to use with cleaned on the download ===
+    if uploaded_file is not None:
+        original_filename = uploaded_file.name
+        base_filename = original_filename.rsplit(".", 1)[0]
+        download_filename = f"{base_filename}_clean.csv" if uploaded_file else "cleaned_data.csv"
+    # === End original filename ===
          
     # === Sidebar Cleaning Options ===
     non_num_missing_placeholder = ""
@@ -112,7 +129,7 @@ elif page == "Clean My Data":
         with st.sidebar:
             st.sidebar.markdown("### 🧹 Cleaning Options")
 
-            keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False)
+            keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False, help="Assumes USD format with period as decimal separator.")
             display_map = {"NULL": "null", "NaN": "NaN"}
             #missing_values_option = st.radio(
                 #"Preferred placeholder for missing values:",
@@ -165,15 +182,29 @@ elif page == "Clean My Data":
         file_hash = get_file_hash(uploaded_file)
 
         if st.session_state.file_hash != file_hash:
-            df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""], low_memory=False)
-            # ✅ Check the number of rows in the DataFrame
+            # ---------- Handle header/no header 
+            if has_header:
+                df = pd.read_csv(uploaded_file, keep_default_na=False, na_values=[""], low_memory=False)
+            else:
+                df = pd.read_csv(uploaded_file, header=None, keep_default_na=False, na_values=[""], low_memory=False)
+                df.columns = [f"column_{i}" for i in range(df.shape[1])]
+            # ----------End Header/No Header
+
+            # === Check the number of rows in the DataFrame ===
             if len(df) > 100000:
                 st.error(
                     "❌ This app supports a maximum of 100,000 rows. Please upload a smaller file or "
-                    "[contact us](mailto:datacleanpro2025@gmail.com) for a custom order/pricing.",
+                    "[contact us](mailto:datacleanpro2025@gmail.com) (datacleanpro2025@gmail.com) for a custom order/pricing.",
                     icon="🚫"
                 )
                 st.stop()
+            if (len(df) == 1 and has_headers) or (len(df) == 0 and !has_headers):
+		st.error(
+                    "❌ This app supports a minimum of 1 row of data. Please refresh and try again with a data file."
+                )
+                st.stop()
+            ==== End Row Count Check ===                    
+ 
             st.session_state.raw_df = df.copy()
             logger(f"##DEBUG: About to clean {len(st.session_state.raw_df)} rows.")
             st.session_state.cleaned_df = None
@@ -233,12 +264,13 @@ elif page == "Clean My Data":
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     keep_dollar=keep_dollar,
-                    missing_values_option="",
+                    missing_values_option=missing_values_option,
                     numeric_strategy=numeric_map[numeric_strategy],
                     non_numeric_strategy=non_numeric_map[non_numeric_strategy],
                     num_missing_placeholder=num_missing_placeholder,
                     non_num_missing_placeholder=non_num_missing_placeholder,
-                    logger = st.write if debug_mode else None
+                    logger = st.write if debug_mode else None,
+                    has_header=has_header
                 )
 
                 logger(f"##DEBUG: Cleaned {len(cleaned_df)} rows.")
@@ -300,7 +332,8 @@ elif page == "Clean My Data":
             st.download_button(
                 " 📥 Download Cleaned CSV",
                 data=cleaned_df.to_csv(index=False),
-                file_name="cleaned_data.csv"
+                file_name=download_filename
+                mime="text/csv"
             )
 
             if st.session_state.get("payment_complete", False):
@@ -309,7 +342,7 @@ elif page == "Clean My Data":
                     st.download_button(
                     " 📥 Download Cleaned CSV",
                     data=cleaned_df.to_csv(index=False),
-                    file_name="cleaned_data.csv"
+                    file_name=download_filename if uploaded_file else "cleaned_data.csv"
             )
 
         if st.button("📧 View Simulated Email Receipt"):

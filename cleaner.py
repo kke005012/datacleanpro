@@ -8,7 +8,7 @@ from dateutil import parser
 verbose = False 
 
 def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy="ignore", num_missing_placeholder="", non_num_missing_placeholder="", 
-    non_numeric_strategy="ignore", logger=None):
+    non_numeric_strategy="ignore", logger=None, has_header=True):
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
 
@@ -30,7 +30,7 @@ def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy
     logger("##DEBUG: After deduplicate:", df.head())
 
     # 4. Standardize column names
-    df, colname_log = standardize_column_names(df, verbose=verbose)
+    df, colname_log = standardize_column_names(df, has_header, verbose=verbose)
     log_lines.extend(colname_log)
     logger("##DEBUG: After standardize_column_names:", df.head())
 
@@ -108,31 +108,42 @@ def deduplicate(df, verbose=verbose):
     return df, log
 
 
-def standardize_column_names(df, verbose=verbose):
+def standardize_column_names(df, has_header, verbose=verbose):
     log = []
     original_columns = df.columns.tolist()
     cleaned_columns = []
 
-    for col in original_columns:
-        new_col = col.strip().lower()
-        new_col = re.sub(r'[^\w\s]', '', new_col)     # remove special chars
-        new_col = re.sub(r'\s+', '_', new_col)        # replace whitespace with underscore
-        cleaned_columns.append(new_col)
+    if has_header:
+        for col in original_columns:
+            new_col = col.strip().lower()
+            new_col = re.sub(r'[^\w\s]', '', new_col)     # remove special chars
+            new_col = re.sub(r'\s+', '_', new_col)        # replace whitespace with underscore
+            cleaned_columns.append(new_col)
 
-    df.columns = cleaned_columns
+        df.columns = cleaned_columns
 
-    if original_columns != cleaned_columns:
-        renamed_pairs = [
-            f"'{orig}' → '{new}'" for orig, new in zip(original_columns, cleaned_columns) if orig != new
-        ]
-        log.append(f"Standardized column names: {', '.join(renamed_pairs)}.")
-    elif verbose:
-        log.append("No changes to column names.")
+        if original_columns != cleaned_columns:
+            renamed_pairs = [
+                f"'{orig}' → '{new}'" for orig, new in zip(original_columns, cleaned_columns) if orig != new
+            ]
+            log.append(f"Standardized column names: {', '.join(renamed_pairs)}.")
+        elif verbose:
+            log.append("No changes to column names.")
+    else:
+        df.columns = [f"column_{i}" for i in range(len(df.columns))]  # Generic names
+        log.append("File uploaded without headers. Generic column names assigned.")
 
     return df, log
 
 
-def clean_currency_columns(df, keep_dollar=False, missing_values_option="", num_missing_placeholder="", non_num_missing_placeholder="", verbose=verbose):
+def clean_currency_columns(
+    df,
+    keep_dollar=False,
+    missing_values_option="",
+    num_missing_placeholder="",
+    non_num_missing_placeholder="",
+    verbose=False
+):
     log = []
 
     for col in df.columns:
@@ -140,21 +151,34 @@ def clean_currency_columns(df, keep_dollar=False, missing_values_option="", num_
             if df[col].str.contains(r'\$|,|_', na=False).any():
                 original_non_null = df[col].notna().sum()
 
+                # Remove $, , and _
                 df[col] = df[col].replace(r'[\$,]', '', regex=True)
                 df[col] = df[col].replace(r'_', '', regex=True)
+
+                # Convert to float
                 df[col] = pd.to_numeric(df[col], errors='coerce')
 
                 cleaned_non_null = df[col].notna().sum()
 
                 if cleaned_non_null > 0:
+                    # Format to 2 decimal places and replace missing
                     if missing_values_option != "":
                         df[col] = df[col].apply(
-                            lambda x: missing_values_option if pd.isna(x) else "{:.2f}".format(x)
+                            lambda x: missing_values_option if pd.isna(x) else f"{x:.2f}"
                         )
                     else:
                         df[col] = df[col].apply(
-                            lambda x: "{:.2f}".format(x) if pd.notnull(x) else np.nan
+                            lambda x: f"{x:.2f}" if pd.notna(x) else np.nan
                         )
+
+                    # Optional: re-add dollar sign
+                    if keep_dollar:
+                        df[col] = df[col].apply(
+                            lambda x: f"${x}" if pd.notna(x) and not str(x).startswith("$") and str(x) != str(missing_values_option) else x
+                        )
+
+                    # Ensure consistent type
+                    df[col] = df[col].astype(str)
 
                     log.append(f"💵 Cleaned and standardized {cleaned_non_null} currency values in '{col}'")
                 else:
@@ -239,10 +263,10 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, num_missin
                 else:  # ignore
                     if verbose:
                         log_lines.append(f"✅ Numeric column '{col}' left unchanged (Ignored).")
+                df = df.replace({np.nan: num_missing_placeholder})
             else:
                 if verbose:
                     log_lines.append(f"✅ Numeric column '{col}' had no missing values.")
-
         else:
             # Step 1: Normalize blank strings to NaN
             df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
@@ -273,7 +297,7 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, num_missin
             else:
                 if verbose:
                     log_lines.append(f"✅ Non-numeric column '{col}' had no missing values.")
-
+                df = df.replace({np.nan: non_num_missing_placeholder})
     if not log_lines:
         log_lines.append("✅ No missing values found.")
 
