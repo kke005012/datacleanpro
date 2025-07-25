@@ -213,25 +213,24 @@ elif page == "Clean My Data":
             #</div>
             #""", unsafe_allow_html=True)
 
-            #st.markdown("""
-            #<div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
-            #""", unsafe_allow_html=True)
+            st.markdown("""
+            <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
+            """, unsafe_allow_html=True)
 
-            #numeric_strategy = st.radio(
-                #"Missing Numeric Values:",
-                #["Ignore", "Replace with Unknown", "Use Average"],
-                #index=0
-            #)
+            numeric_strategy = st.radio(
+                "Missing Numeric Values:",
+                ["Ignore", "Replace with Unknown", "Use Average"],
+                index=0
+            )
 
-            #non_numeric_strategy = st.radio(
-                #"Missing Non-Numeric Values:",
-                 #["Ignore", "Replace with Unknown", "Use Mode"],
-                 #index=0
-            #)
+            non_numeric_strategy = st.radio(
+                "Missing Non-Numeric Values:",
+                 ["Ignore", "Replace with Unknown", "Use Mode"],
+                 index=0
+            )
 
-            #st.markdown("</div>", unsafe_allow_html=True)
+            st.markdown("</div>", unsafe_allow_html=True)
 
-                        non_
             # === Clean button only appears if data is ready ===
 
             if st.button("Clean My Data"):
