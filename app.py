@@ -135,8 +135,6 @@ elif page == "Clean My Data":
                 index=0,
                 key="missing numeric"
             )
-            if numeric_strategy == "Unknown":
-                num_missing_placeholder = st.radio("Preferred Numeric Filler:", ["null", "NaN"])
             
             non_numeric_strategy = st.sidebar.radio(
                 "Text Columns",
@@ -144,8 +142,6 @@ elif page == "Clean My Data":
                 index=0,
                 key="missing non-numeric"
             )
-            if non_numeric_strategy == "Unknown":
-                non_num_missing_placeholder = st.radio("Preferred Text Filler:", ["null", "NaN"])
 
     # === End of Sidebar Section ===
  

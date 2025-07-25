@@ -274,9 +274,6 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
             elif verbose:
                 log_lines.append(f"✅ Non-numeric column '{col}' left unchanged (Ignored).")
 
-    if not log_lines:
-        log_lines.append("✅ No missing values found.")
-
     return df, log_lines
 
 def write_log(cleaned_df):
