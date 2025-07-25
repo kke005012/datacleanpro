@@ -234,45 +234,51 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                 if numeric_strategy == "unknown":
                     df[col] = df[col].fillna(-1)
                     log_lines.append(f"🪄 Filled {num_missing} missing values in numeric column '{col}' with -1.")
+                    logger(f"##DEBUG: Filled Filled {num_missing} missing values in numeric column '{col}' with -1.")
                 elif numeric_strategy == "average":
+                    mean = df[col].mean()
                     df[col] = df[col].fillna(df[col].mean())
-                    log_lines.append(f"📊 Filled {num_missing} missing values in numeric column '{col}' with column average.")
+                    log_lines.append(f"📊 Filled {num_missing} missing values in numeric column '{col}' with {mean}.")
+                    logger((f"##DEBUG: Filled {num_missing} missing values in numeric column '{col}' with {mean}.")
                 else:
                     if verbose:
                         log_lines.append(f"✅ Numeric column '{col}' left unchanged (Ignored).")
+                    logger(f"##DEBUG:  Numeric column '{col}' left unchanged (Ignored).")
             elif verbose:
                 log_lines.append(f"✅ Numeric column '{col}' had no missing values.")
-
         else:
             if non_numeric_strategy == "unknown":
                 blanks = df[col].apply(lambda x: isinstance(x, str) and x.strip() == "").sum()
-                logger(f"DEBUG: Blank-looking strings in '{col}':", blanks)
+                logger(f"##DEBUG: Blank-looking strings in '{col}':", blanks)
 
                 # Only cast if blanks are found
                 if blanks > 0:
                     df[col] = df[col].astype(str)
                     df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
+                    logger(f"##DEBUG: blanks are replaced with nan in '{col}':", blanks)
 
                 # Count real NaNs now
                 non_num_missing = df[col].isnull().sum()
-                logger(f"non num missing count is {non_num_missing}.")
+                logger(f"##DEBUG: non num missing count is {non_num_missing}.")
                 if non_num_missing > 0:
                     df[col] = df[col].fillna("Unknown")
                     log_lines.append(f"🪄 Filled {non_num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
-                                
+                    logger(f"##DEBUG: Filled {non_num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
             elif non_numeric_strategy == "mode":
+                mode = df[col].mode() 
+                logger(f"##DEBUG: mode = {mode}")
                 df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
-                mode = df[col].mode()
-
+                
                 if not mode.empty:
                     non_num_missing = df[col].isnull().sum()
                     df[col] = df[col].fillna(mode[0])
-                    log_lines.append(f"🪄 Filled {non_num_missing} missing values in non-numeric column '{col}' with mode value '{mode[0]}'.")
+                    log_lines.append(f"🪄 Filled {non_num_missing} missing values in non-numeric column '{col}' with '{mode}'.")
+                    logger(f"##DEBUG:  Filled {non_num_missing} missing values in non-numeric column '{col}' with '{mode}'.")
                 else:
                     log_lines.append(f"📉 No valid mode found for non-numeric column '{col}' — no changes made.")
 
-            elif verbose:
-                log_lines.append(f"✅ Non-numeric column '{col}' left unchanged (Ignored).")
+        elif verbose:
+            log_lines.append(f"✅ Non-numeric column '{col}' left unchanged (Ignored).")
 
     return df, log_lines
 
