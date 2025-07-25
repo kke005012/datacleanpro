@@ -265,8 +265,7 @@ elif page == "Clean My Data":
                     non_numeric_strategy=non_numeric_map[non_numeric_strategy],
                     num_missing_placeholder=num_missing_placeholder,
                     non_num_missing_placeholder=non_num_missing_placeholder,
-                    logger = st.write if debug_mode else None,
-                    has_header=has_header
+                    logger = st.write if debug_mode else None
                 )
 
                 logger(f"##DEBUG: Cleaned {len(cleaned_df)} rows.")

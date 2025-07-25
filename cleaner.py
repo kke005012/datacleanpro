@@ -8,7 +8,7 @@ from dateutil import parser
 verbose = False 
 
 def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy="ignore", num_missing_placeholder="", non_num_missing_placeholder="", 
-    non_numeric_strategy="ignore", logger=None, has_header=True):
+    non_numeric_strategy="ignore", logger=None):
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
 
@@ -30,7 +30,7 @@ def clean_data(df, keep_dollar=False, missing_values_option="", numeric_strategy
     logger("##DEBUG: After deduplicate:", df.head())
 
     # 4. Standardize column names
-    df, colname_log = standardize_column_names(df, has_header, verbose=verbose)
+    df, colname_log = standardize_column_names(df, verbose=verbose)
     log_lines.extend(colname_log)
     logger("##DEBUG: After standardize_column_names:", df.head())
 
@@ -108,30 +108,27 @@ def deduplicate(df, verbose=verbose):
     return df, log
 
 
-def standardize_column_names(df, has_header, verbose=verbose):
+def standardize_column_names(df, verbose=verbose):
     log = []
     original_columns = df.columns.tolist()
     cleaned_columns = []
 
-    if has_header:
-        for col in original_columns:
-            new_col = col.strip().lower()
-            new_col = re.sub(r'[^\w\s]', '', new_col)     # remove special chars
-            new_col = re.sub(r'\s+', '_', new_col)        # replace whitespace with underscore
-            cleaned_columns.append(new_col)
+    for col in original_columns:
+        new_col = col.strip().lower()
+        new_col = re.sub(r'[^\w\s]', '', new_col)     # remove special chars
+        new_col = re.sub(r'\s+', '_', new_col)        # replace whitespace with underscore
+        cleaned_columns.append(new_col)
 
-        df.columns = cleaned_columns
+    df.columns = cleaned_columns
 
-        if original_columns != cleaned_columns:
-            renamed_pairs = [
-                f"'{orig}' → '{new}'" for orig, new in zip(original_columns, cleaned_columns) if orig != new
-            ]
-            log.append(f"Standardized column names: {', '.join(renamed_pairs)}.")
-        elif verbose:
-            log.append("No changes to column names.")
-    else:
-        df.columns = [f"column_{i}" for i in range(len(df.columns))]  # Generic names
-        log.append("File uploaded without headers. Generic column names assigned.")
+    if original_columns != cleaned_columns:
+        renamed_pairs = [
+            f"'{orig}' → '{new}'" for orig, new in zip(original_columns, cleaned_columns) if orig != new
+        ]
+        log.append(f"Standardized column names: {', '.join(renamed_pairs)}.")
+    elif verbose:
+        log.append("No changes to column names.")
+    
 
     return df, log
 
