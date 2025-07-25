@@ -26,8 +26,8 @@ def logger(*args):
 
 st.markdown(
     """
-    <div style='background-color: #d4edda; padding: 10px; text-align: center; margin-bottom: 40px;'>
-        <p style='font-size: 16px; color: #155724; margin: 0;'>🧼 <strong>DataClean Pro</strong> is a cloud-based data cleaning app for CSV files</p>
+    <div style='background-color: #d4edda; padding: 5px; text-align: center; margin-bottom: 40px;'>
+        <p style='font-size: 12px; color: #155724; margin: 0;'>🧼 <strong>DataClean Pro</strong> is a cloud-based data cleaning app for real-world CSV files.</p>
     </div>
     """,
     unsafe_allow_html=True
@@ -128,13 +128,13 @@ elif page == "Clean My Data":
 
             keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False, help="Assumes USD format with period as decimal separator.")
             display_map = {"NULL": "null", "NaN": "NaN"}
-            missing_values_option = st.radio(
-                "Preferred placeholder for missing values:",
-                options=["NULL", "NaN"],
-                format_func=lambda x: display_map[x],
-                index=0,
-                key="missing values"
-            )
+            #missing_values_option = st.radio(
+                #"Preferred placeholder for missing values:",
+                #options=["NULL", "NaN"],
+                #format_func=lambda x: display_map[x],
+                #index=0,
+                #key="missing values"
+            #)
 
             st.sidebar.markdown("**Missing Value Filler**")
             numeric_strategy = st.sidebar.radio(
@@ -260,7 +260,7 @@ elif page == "Clean My Data":
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     keep_dollar=keep_dollar,
-                    missing_values_option=missing_values_option,
+                    #missing_values_option=missing_values_option,
                     numeric_strategy=numeric_map[numeric_strategy],
                     non_numeric_strategy=non_numeric_map[non_numeric_strategy],
                     num_missing_placeholder=num_missing_placeholder,

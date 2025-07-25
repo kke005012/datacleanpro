@@ -295,8 +295,8 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, num_missin
                 if verbose:
                     log_lines.append(f"✅ Non-numeric column '{col}' had no missing values.")
                 df = df.replace({np.nan: non_num_missing_placeholder})
-    if not log_lines:
-        log_lines.append("✅ No missing values found.")
+        elif not log_lines:
+            log_lines.append("✅ No missing values found.")
 
     return df, log_lines
 
