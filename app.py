@@ -59,11 +59,11 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 <p><strong>100 rows or less: Free</strong></p>
 <p><strong>After that:</strong></p>
 <ul style="list-style-type: none; padding-left: 1em;">
-  <li><strong>$0.02 per row up to 500</strong></li>
-  <li><strong>$0.015 per row up to 1500</strong></li>
-  <li><strong>$0.01 per row up to 10,000</strong></li>
-  <li><strong>$0.008 per row up to 25,000</strong></li>
-  <li><strong>$0.007 per row up to 100,000</strong></li>
+  <li><strong>$0.02 per row up to 500 rows</strong></li>
+  <li><strong>$0.015 per row up to 1500 rows</strong></li>
+  <li><strong>$0.01 per row up to 10,000 rows</strong></li>
+  <li><strong>$0.008 per row up to 25,000 rows</strong></li>
+  <li><strong>$0.007 per row up to 100,000 rows</strong></li>
   <li><strong>Please contact us for custom pricing beyond 100,000 rows.</strong></li>
 </ul>
 <p>No commitments. No hidden fees.</p>
@@ -119,17 +119,16 @@ elif page == "Clean My Data":
         download_filename = f"{base_filename}_clean.csv" if uploaded_file else "cleaned_data.csv"
     # === End original filename ===
          
-        
-    # === Beginning of sidebar ===
+    # === Sidebar Cleaning Options ===
+    non_num_missing_placeholder = ""
+    num_missing_placeholder = ""
     if "raw_df" in st.session_state and st.session_state.raw_df is not None:
         with st.sidebar:
-            keep_dollar = st.sidebar.checkbox(
-                "Keep '$' sign in currency?",
-                value=False,
-                help="Assumes USD format with period as decimal separator."
-            )
+            st.sidebar.markdown("### 🧹 Cleaning Options")
 
-            st.sidebar.markdown("**Missing Value Filler**")
+            keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False, help="Assumes USD format with period as decimal separator.")
+
+            st.sidebar.markdown("**Handle Missing Values**")
             numeric_strategy = st.sidebar.radio(
                 "Numeric Columns",
                 options=["Ignore", "Unknown", "Average"],
@@ -207,29 +206,41 @@ elif page == "Clean My Data":
             st.write(f"### 📊 Preview of Uploaded Data")
             st.dataframe(st.session_state.raw_df.head())
 
-                        #st.markdown("""
+            # === Cleaning Options ===
+            #st.markdown("""
             #<div style='margin-top: 2em; text-align: center;'>
                 #<h4> 🛠️ Handle Missing Values</h4>
             #</div>
             #""", unsafe_allow_html=True)
 
-            st.markdown("""
-            <div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
-            """, unsafe_allow_html=True)
+            #st.markdown("""
+            #<div style='display: flex; justify-content: center; flex-direction: column; align-items: center;'>
+            #""", unsafe_allow_html=True)
 
-            numeric_strategy = st.radio(
-                "Missing Numeric Values:",
-                ["Ignore", "Replace with Unknown", "Use Average"],
-                index=0
-            )
+            #numeric_strategy = st.radio(
+                #"Missing Numeric Values:",
+                #["Ignore", "Replace with Unknown", "Use Average"],
+                #index=0
+            #)
 
-            non_numeric_strategy = st.radio(
-                "Missing Non-Numeric Values:",
-                 ["Ignore", "Replace with Unknown", "Use Mode"],
-                 index=0
-            )
+            #non_numeric_strategy = st.radio(
+                #"Missing Non-Numeric Values:",
+                 #["Ignore", "Replace with Unknown", "Use Mode"],
+                 #index=0
+            #)
 
-            st.markdown("</div>", unsafe_allow_html=True)
+            #st.markdown("</div>", unsafe_allow_html=True)
+
+            numeric_map = {
+                "Ignore": "ignore",
+                "Replace with Unknown": "unknown",
+                "Use Average": "average"
+            }
+            non_numeric_map = {
+                "Ignore": "ignore",
+                "Replace with Unknown": "unknown",
+                "Use Mode": "mode"
+            }
 
             # === Clean button only appears if data is ready ===
 
@@ -241,10 +252,8 @@ elif page == "Clean My Data":
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     keep_dollar=keep_dollar,
-                                        numeric_strategy=numeric_strategy.lower(),
-                    non_numeric_strategy=non_numeric_strategy.lower(),
-                    num_missing_placeholder=num_missing_placeholder,
-                    non_num_missing_placeholder=non_num_missing_placeholder,
+                    numeric_strategy=numeric_map[numeric_strategy],
+                    non_numeric_strategy=non_numeric_map[non_numeric_strategy],
                     logger = st.write if debug_mode else None
                 )
 

@@ -7,7 +7,7 @@ from dateutil import parser
 
 verbose = False 
 
-def clean_data(df, keep_dollar=False, ):
+def clean_data(df, keep_dollar=False, numeric_strategy="ignore", non_numeric_strategy="ignore", logger=None):
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
 
@@ -34,7 +34,7 @@ def clean_data(df, keep_dollar=False, ):
     logger("##DEBUG: After standardize_column_names:", df.head())
 
     # 5. Clean currency columns
-    df, currency_log = clean_currency_columns(df, keep_dollar=keep_dollar, verbose=verbose, missing_values_option=missing_values_option)
+    df, currency_log = clean_currency_columns(df, keep_dollar=keep_dollar, verbose=verbose)
     log_lines.extend(currency_log)
     logger("##DEBUG: After clean_currency_columns:", df.head())
 
@@ -44,8 +44,7 @@ def clean_data(df, keep_dollar=False, ):
     logger("##DEBUG: After normalize_dates:", df.head())
 
     # 7. Handle missing values
-    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, num_missing_placeholder=num_missing_placeholder,
-        non_num_missing_placeholder=non_num_missing_placeholder, missing_values_option=missing_values_option, verbose=verbose)
+    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose)
     log_lines.extend(missing_log)
     logger("##DEBUG: After handle_missing_values:", df.head())
 
@@ -58,7 +57,6 @@ def clean_data(df, keep_dollar=False, ):
     df.attrs["logger"] = logger
 
     return df
-
 
 def strip_whitespace(df, verbose=verbose):
     log = []
@@ -150,20 +148,15 @@ def clean_currency_columns(df, keep_dollar=False, verbose=False):
                 cleaned_non_null = df[col].notna().sum()
 
                 if cleaned_non_null > 0:
-                    # Format to 2 decimal places and replace missing
-                    if missing_values_option != "":
-                        df[col] = df[col].apply(
-                            lambda x: missing_values_option if pd.isna(x) else f"{x:.2f}"
-                        )
-                    else:
-                        df[col] = df[col].apply(
-                            lambda x: f"{x:.2f}" if pd.notna(x) else np.nan
-                        )
+                    # Format to 2 decimal places and replace missing values with -1
+                    df[col] = df[col].apply(
+                        lambda x: f"{x:.2f}" if pd.notna(x) else -1
+                    )
 
                     # Optional: re-add dollar sign
                     if keep_dollar:
                         df[col] = df[col].apply(
-                            lambda x: f"${x}" if pd.notna(x) and not str(x).startswith("$") and str(x) != str(missing_values_option) else x
+                            lambda x: f"${x}" if pd.notna(x) and not str(x).startswith("$") and str(x) != str("") else x
                         )
 
                     # Ensure consistent type
@@ -222,33 +215,69 @@ def normalize_dates(df, verbose=verbose):
     return df, log
 
 
-def handle_missing_values(df, numeric_strategy, non_numeric_strategy):
-    log = []
+def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=None, verbose=verbose):
+    if logger is None:
+        logger = lambda *args, **kwargs: None  # no-op if not passed
+
+    log_lines = []
 
     for col in df.columns:
-        if df[col].isnull().any() or (df[col] == "").any():
-            if pd.api.types.is_numeric_dtype(df[col]):
-                if numeric_strategy == "Unknown":
+        is_numeric = pd.api.types.is_numeric_dtype(df[col])
+
+        # Check for missing values (NaN or blank strings for non-numeric)
+        has_nulls = df[col].isnull().any()
+        has_empty = (df[col] == "").any() if not is_numeric else False
+
+        if is_numeric:
+            if has_nulls:
+                num_missing = df[col].isnull().sum()
+                if numeric_strategy == "unknown":
+                    df[col] = df[col].fillna(-1)
+                    log_lines.append(f"🪄 Filled {num_missing} missing values in numeric column '{col}' with -1.")
+                elif numeric_strategy == "average":
+                    df[col] = df[col].fillna(df[col].mean())
+                    log_lines.append(f"📊 Filled {num_missing} missing values in numeric column '{col}' with column average.")
+                else:
+                    if verbose:
+                        log_lines.append(f"✅ Numeric column '{col}' left unchanged (Ignored).")
+            elif verbose:
+                log_lines.append(f"✅ Numeric column '{col}' had no missing values.")
+
+        else:
+            if non_numeric_strategy == "unknown":
+                blanks = df[col].apply(lambda x: isinstance(x, str) and x.strip() == "").sum()
+                logger(f"DEBUG: Blank-looking strings in '{col}':", blanks)
+
+                # Only cast if blanks are found
+                if blanks > 0:
+                    df[col] = df[col].astype(str)
+                    df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
+
+                # Count real NaNs now
+                non_num_missing = df[col].isnull().sum()
+                logger(f"non num missing count is {non_num_missing}.")
+                if non_num_missing > 0:
                     df[col] = df[col].fillna("Unknown")
-                    log.append(f"Filled missing numeric values in '{col}' with 'Unknown'")
-                elif numeric_strategy == "Average/Mode":
-                    mean_val = df[col].mean()
-                    df[col] = df[col].fillna(mean_val)
-                    log.append(f"Filled missing numeric values in '{col}' with mean ({mean_val:.2f})")
-                elif numeric_strategy == "Ignore":
-                    log.append(f"Ignored missing values in numeric column '{col}'")
-            else:
-                if non_numeric_strategy == "Unknown":
-                    df[col] = df[col].replace(["", None, pd.NA, np.nan], "Unknown")
-                    log.append(f"Filled missing non-numeric values in '{col}' with 'Unknown'")
-                elif non_numeric_strategy == "Average/Mode":
-                    mode_val = df[col].mode().iloc[0] if not df[col].mode().empty else "Unknown"
-                    df[col] = df[col].fillna(mode_val).replace("", mode_val)
-                    log.append(f"Filled missing non-numeric values in '{col}' with mode ('{mode_val}')")
-                elif non_numeric_strategy == "Ignore":
-                    log.append(f"Ignored missing values in non-numeric column '{col}'")
-    
-    return df, log
+                    log_lines.append(f"🪄 Filled {non_num_missing} missing values in non-numeric column '{col}' with 'Unknown'")
+                                
+            elif non_numeric_strategy == "mode":
+                df[col] = df[col].replace(r'^\s*$', np.nan, regex=True)
+                mode = df[col].mode()
+
+                if not mode.empty:
+                    non_num_missing = df[col].isnull().sum()
+                    df[col] = df[col].fillna(mode[0])
+                    log_lines.append(f"🪄 Filled {non_num_missing} missing values in non-numeric column '{col}' with mode value '{mode[0]}'.")
+                else:
+                    log_lines.append(f"📉 No valid mode found for non-numeric column '{col}' — no changes made.")
+
+            elif verbose:
+                log_lines.append(f"✅ Non-numeric column '{col}' left unchanged (Ignored).")
+
+    if not log_lines:
+        log_lines.append("✅ No missing values found.")
+
+    return df, log_lines
 
 def write_log(cleaned_df):
     return cleaned_df.attrs.get("log", ["No cleaning log available."])
