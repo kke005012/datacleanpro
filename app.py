@@ -63,11 +63,11 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 <p><strong>100 rows or less: Free</strong></p>
 <p><strong>After that:</strong></p>
 <ul style="list-style-type: none; padding-left: 1em;">
-  <li><strong>$0.02 per row from 101 to 500</strong></li>
-  <li><strong>$0.015 per row from 501 to 1500</strong></li>
-  <li><strong>$0.01 per row from 1501 to 10,000</strong></li>
-  <li><strong>$0.008 per row from 10,001 to 25,000</strong></li>
-  <li><strong>$0.007 per row from 25,001 to 100,000</strong></li>
+  <li><strong>$0.02 per row up to 500</strong></li>
+  <li><strong>$0.015 per row up to 1500</strong></li>
+  <li><strong>$0.01 per row up to 10,000</strong></li>
+  <li><strong>$0.008 per row up to 25,000</strong></li>
+  <li><strong>$0.007 per row up to 100,000</strong></li>
   <li><strong>Please contact us for custom pricing beyond 100,000 rows.</strong></li>
 </ul>
 <p>No commitments. No hidden fees.</p>
@@ -110,7 +110,7 @@ elif page == "Clean My Data":
         st.info("🔍 Debug Mode is ON — showing internal logs.")
     
     # === Add Header question in sidebar ===
-    has_header = st.sidebar.checkbox("File contains header row?", value=True)
+    has_header = st.sidebar.checkbox("Uncheck if columns do not have titles.", value=True)
     # === End Header question in sidebar ===
     
     uploaded_file = st.file_uploader("Upload a CSV file", type=["csv"])
@@ -198,7 +198,7 @@ elif page == "Clean My Data":
                     icon="🚫"
                 )
                 st.stop()
-            if (len(df) == 1 and has_headers) or (len(df) == 0 and not has_headers):
+            if (len(df) == 1 and has_header) or (len(df) == 0 and not has_header):
                 st.error(
                     "❌ This app supports a minimum of 1 row of data. Please refresh and try again with a data file."
                 )
