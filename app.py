@@ -119,15 +119,15 @@ elif page == "Clean My Data":
         download_filename = f"{base_filename}_clean.csv" if uploaded_file else "cleaned_data.csv"
     # === End original filename ===
          
-        non_
-    
+        
+    # === Beginning of sidebar ===
     if "raw_df" in st.session_state and st.session_state.raw_df is not None:
         with st.sidebar:
-            st.sidebar.markdown("
-            keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False, help="Assumes USD format with period as decimal separator.")
-                                                                        #format_func=lambda x: display_map[x],
-                #index=0,
-                            #)
+            keep_dollar = st.sidebar.checkbox(
+                "Keep '$' sign in currency?",
+                value=False,
+                help="Assumes USD format with period as decimal separator."
+            )
 
             st.sidebar.markdown("**Missing Value Filler**")
             numeric_strategy = st.sidebar.radio(
