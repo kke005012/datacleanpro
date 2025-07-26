@@ -286,7 +286,7 @@ def normalize_dates(df, verbose=False, logger=None):
     if not log and verbose:
         log.append("ℹ️ No columns parsed as dates")
 
-    return df, log_lines
+    return df, log
 
 
 def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=None, verbose=verbose):
