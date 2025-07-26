@@ -227,17 +227,6 @@ elif page == "Clean My Data":
 
             #st.markdown("</div>", unsafe_allow_html=True)
 
-            numeric_map = {
-                "Ignore": "ignore",
-                "Replace with Unknown": "unknown",
-                "Use Average": "average"
-            }
-            non_numeric_map = {
-                "Ignore": "ignore",
-                "Replace with Unknown": "unknown",
-                "Use Mode": "mode"
-            }
-
             # === Clean button only appears if data is ready ===
 
             if st.button("Clean My Data"):
@@ -248,8 +237,8 @@ elif page == "Clean My Data":
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     keep_dollar=keep_dollar,
-                    numeric_strategy=numeric_map[numeric_strategy],
-                    non_numeric_strategy=non_numeric_map[non_numeric_strategy],
+                    numeric_strategy=numeric_strategy.lower(),
+                    non_numeric_strategy=non_numeric_strategy.lower(),
                     logger = st.write if debug_mode else None
                 )
 

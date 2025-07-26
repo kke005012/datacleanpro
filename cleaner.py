@@ -237,7 +237,7 @@ def normalize_dates(df, verbose=verbose, logger=None):
             if not any(is_likely_date(val) for val in sample):
                 if verbose:
                     log.append(f"ℹ️ Skipped '{col}': no date-like patterns found.")
-                logger(f"##DEBUG: Skipped '{col}': no date-like patterns found.")
+                #logger(f"##DEBUG: Skipped '{col}': no date-like patterns found.")
                 continue
 
             original_non_null = df[col].notna().sum()
