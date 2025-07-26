@@ -306,7 +306,7 @@ def is_junk_text(val):
     return val_str == "" or bool(re.fullmatch(r"[^\w]*", val_str))
 
 
-def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="ignore", verbose=True):
+def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="ignore", verbose=True, logger=None):
     log = []
 
     for col in df.columns:
