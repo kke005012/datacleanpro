@@ -299,27 +299,39 @@ def normalize_dates(df, verbose=False, logger=None):
 
 
 def is_junk_text(val):
-    """Returns True for null-like values or strings with only symbols/whitespace."""
     if pd.isna(val):
         return True
     val_str = str(val).strip()
-    return val_str == "" or bool(re.fullmatch(r"[^\w]*", val_str))
+
+    if val_str == "":
+        return True
+
+    # 1. All symbols/whitespace — junk
+    if re.fullmatch(r"[^\w]*", val_str):
+        return True
+
+    # 2. Mix of digits + symbols (e.g., '117%51', '19138_') — junk
+    if re.search(r"\d", val_str) and re.search(r"\D", val_str) and not val_str.isalpha():
+        if not val_str.replace('.', '', 1).isdigit():  # Allow decimals like 123.45
+            return True
+
+    return False
 
 
 def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="ignore", verbose=True, logger=None):
     log = []
 
     for col in df.columns:
-        if pd.api.types.is_numeric_dtype(df[col]):
-            if numeric_strategy == "unknown":
-                # Convert non-numeric junk to NaN
-                df[col] = pd.to_numeric(df[col], errors="coerce")
-                missing_count = df[col].isna().sum()
-                logger(f"##DEBUG mising values: missing count = {missing_count}")
-                if missing_count > 0:
-                    df[col] = df[col].fillna(-1)
-                    log.append(f"🛠️ Filled {missing_count} missing values in numeric column '{col}' with 'Unknown'")
-        else:
+if pd.api.types.is_numeric_dtype(df[col]):
+    if numeric_strategy == "unknown":
+        original_non_na = df[col].notna().sum()
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+        coerced_na = df[col].isna().sum() - (df.shape[0] - original_non_na)
+
+        if df[col].isna().sum() > 0:
+            df[col] = df[col].fillna("-1")
+            log.append(f"🔧 Replaced {df[col].isna().sum()} missing or invalid values in numeric column '{col}' with 'Unknown' (including {coerced_na} coerced junk)")        else:
+            
             if non_numeric_strategy == "unknown":
                 # Replace junk values and empty/NaN with 'Unknown'
                 junk_mask = df[col].apply(is_junk_text)
