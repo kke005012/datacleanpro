@@ -58,7 +58,7 @@ def clean_data(df, keep_dollar=False, numeric_strategy="ignore", non_numeric_str
 
     return df
 
-def strip_whitespace(df, verbose=verbose):
+def strip_whitespace(df, verbose=verbose, logger=None):
     log = []
     changed_cols = []
 
@@ -77,7 +77,7 @@ def strip_whitespace(df, verbose=verbose):
     return df, log
 
 
-def drop_empty_rows(df, verbose=verbose):
+def drop_empty_rows(df, verbose=verbose, logger=None):
     log = []
     original_len = len(df)
     df = df.dropna(axis=0, how='all')
@@ -91,7 +91,7 @@ def drop_empty_rows(df, verbose=verbose):
     return df, log
 
 
-def deduplicate(df, verbose=verbose):
+def deduplicate(df, verbose=verbose, logger=None):
     log = []
     original_len = len(df)
     df = df.drop_duplicates()
@@ -105,7 +105,7 @@ def deduplicate(df, verbose=verbose):
     return df, log
 
 
-def standardize_column_names(df, verbose=verbose):
+def standardize_column_names(df, verbose=verbose, logger=None):
     log = []
     original_columns = df.columns.tolist()
     cleaned_columns = []
@@ -130,7 +130,7 @@ def standardize_column_names(df, verbose=verbose):
     return df, log
 
 
-def clean_currency_columns(df, keep_dollar=False, verbose=False):
+def clean_currency_columns(df, keep_dollar=False, verbose=False, logger=None):
     log = []
 
     for col in df.columns:
@@ -184,7 +184,7 @@ def is_likely_date(val):
     ]
     return any(re.search(pat, val) for pat in date_patterns)
 
-def normalize_dates(df, verbose=verbose):
+def normalize_dates(df, verbose=verbose, logger=None):
     log = []
 
     for col in df.columns:
