@@ -8,9 +8,6 @@ from datetime import datetime
 
 verbose = False 
 
-if logger is None:
-    logger = lambda *args, **kwargs: None  # no-op if not passed
-
 def clean_data(df, keep_dollar=False, numeric_strategy="ignore", non_numeric_strategy="ignore", logger=None):
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
