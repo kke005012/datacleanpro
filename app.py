@@ -239,7 +239,7 @@ elif page == "Clean My Data":
                     logger = st.write if debug_mode else None
                 )
 
-                logger("🔍 DEBUG nan after clean: Post-cleaning unique values in 'some_column'", cleaned_df["some_column"].unique())
+                logger("🔍 DEBUG 0 nan after clean: Post-cleaning unique values in 'mas_vnr_type'", cleaned_df["mas_vnr_type"].unique())
                 st.session_state.cleaned_df = cleaned_df
                 st.session_state["cleaning_log"] = cleaned_df.attrs["log"]
 
