@@ -20,12 +20,7 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
         df, strip_log = strip_whitespace(df, strategy=non_numeric_strategy.lower())
     log_lines.extend(strip_log)
     logger(f"##DEBUG: After strip_whitespace:", df.head())
-    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
-        if col in df.columns:
-            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
-            logger(df[col].head())
-        else:
-            logger(f"##DEBUG: Column '{col}' not found after this step.")
+
 
     # 2. Drop empty rows
     df, drop_log = drop_empty_rows(df, verbose=verbose, logger=logger)
@@ -37,6 +32,7 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
             logger(df[col].head())
         else:
             logger(f"##DEBUG: Column '{col}' not found after this step.")
+
 
     # 3. Deduplicate
     df, dedup_log = deduplicate(df, verbose=verbose, logger=logger)
@@ -110,19 +106,23 @@ def strip_whitespace(df, strategy="ignore", verbose=True):
     If strategy is 'ignore', replaces with empty string.
     """
     log = []
+    logger("🔍 #DEBUG enter whitespace: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
     for col in df.columns:
         if df[col].dtype == object or df[col].dtype.name == "category":
             original_nulls = df[col].isna()
+            logger(f"##DEBUG original nulls = {original_nulls}.")
 
             df[col] = df[col].astype(str).str.strip()
-
+            logger("🔍 #DEBUG whitespace after str call: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
             if strategy == "unknown":
                 df[col] = df[col].mask(~original_nulls & df[col].isna(), "Unknown")
+                logger("🔍 #DEBUG whitespace after unknown: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
             elif strategy == "ignore":
                 df[col] = df[col].mask(~original_nulls & df[col].isna(), "")
-
+                logger("🔍 #DEBUG whitespace after ignore: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
             if verbose:
                 log.append(f"🧹 Stripped whitespace in column '{col}' using strategy '{strategy}'")
+    logger("🔍 #DEBUG drop whitespace: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
     return df, log
 
 
