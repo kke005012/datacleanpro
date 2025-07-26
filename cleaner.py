@@ -104,7 +104,7 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
 def strip_whitespace(df, verbose=True, logger=None):
     """
     Strips leading/trailing whitespace from string columns.
-    """S
+    """
     log = []
     for col in df.columns:
         if df[col].dtype == object or df[col].dtype.name == "category":
