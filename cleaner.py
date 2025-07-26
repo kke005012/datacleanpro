@@ -17,7 +17,7 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     # 1. Strip whitespace
     strip_log = []
     if non_numeric_strategy.lower() in ["ignore", "unknown"]:
-        df, strip_log = strip_whitespace(df, strategy=non_numeric_strategy.lower())
+        df, strip_log = strip_whitespace(df, strategy=non_numeric_strategy.lower(), logger=logger)
     log_lines.extend(strip_log)
     logger(f"##DEBUG: After strip_whitespace:", df.head())
 
@@ -99,7 +99,7 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
 
     return df
 
-def strip_whitespace(df, strategy="ignore", verbose=True):
+def strip_whitespace(df, strategy="ignore", verbose=True, logger=None):
     """
     Strips leading/trailing whitespace from string columns.
     If strategy is 'unknown', replaces newly created NaNs with 'Unknown'.
