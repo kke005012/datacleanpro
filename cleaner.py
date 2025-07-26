@@ -17,37 +17,67 @@ def clean_data(df, keep_dollar=False, numeric_strategy="ignore", non_numeric_str
     df, strip_log = strip_whitespace(df, verbose=verbose, logger=logger)
     log_lines.extend(strip_log)
     logger(f"##DEBUG: After strip_whitespace:", df.head())
-    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
+    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
+        if col in df.columns:
+            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
+            logger(df[col].head())
+        else:
+            logger(f"##DEBUG: Column '{col}' not found after this step.")
 
     # 2. Drop empty rows
     df, drop_log = drop_empty_rows(df, verbose=verbose, logger=logger)
     log_lines.extend(drop_log)
     logger("##DEBUG: After drop_empty_rows:", df.head())
-    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
+    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
+        if col in df.columns:
+            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
+            logger(df[col].head())
+        else:
+            logger(f"##DEBUG: Column '{col}' not found after this step.")
 
     # 3. Deduplicate
     df, dedup_log = deduplicate(df, verbose=verbose, logger=logger)
     log_lines.extend(dedup_log)
     logger("##DEBUG: After deduplicate:", df.head())
-    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
+    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
+        if col in df.columns:
+            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
+            logger(df[col].head())
+        else:
+            logger(f"##DEBUG: Column '{col}' not found after this step.")
 
     # 4. Standardize column names
     df, colname_log = standardize_column_names(df, verbose=verbose, logger=logger)
     log_lines.extend(colname_log)
     logger("##DEBUG: After standardize_column_names:", df.head())
-    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
+    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
+        if col in df.columns:
+            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
+            logger(df[col].head())
+        else:
+            logger(f"##DEBUG: Column '{col}' not found after this step.")
 
     # 5. Clean currency columns
     df, currency_log = clean_currency_columns(df, keep_dollar=keep_dollar, verbose=verbose)
     log_lines.extend(currency_log)
     logger("##DEBUG: After clean_currency_columns:", df.head())
-    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
+    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
+        if col in df.columns:
+            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
+            logger(df[col].head())
+        else:
+            logger(f"##DEBUG: Column '{col}' not found after this step.")
 
     # 6. Normalize date columns
     df, date_log = normalize_dates(df, verbose=verbose, logger=logger)
     log_lines.extend(date_log)
     logger("##DEBUG: After normalize_dates:", df.head())
-    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
+    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
+        if col in df.columns:
+            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
+            logger(df[col].head())
+        else:
+            logger(f"##DEBUG: Column '{col}' not found after this step.")
 
     # 7. Handle missing values
     df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose, logger=logger)
@@ -119,6 +149,7 @@ def standardize_column_names(df, verbose=verbose, logger=None):
 
     for col in original_columns:
         new_col = col.strip().lower()
+        new_col = col.strip().lower().replace("\r", "")
         new_col = re.sub(r'[^\w\s]', '', new_col)     # remove special chars
         new_col = re.sub(r'\s+', '_', new_col)        # replace whitespace with underscore
         cleaned_columns.append(new_col)
