@@ -15,7 +15,9 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     log_lines = []
     logger("🔍 #DEBUG beginning of clean data: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
     # 1. Strip whitespace
-    df, strip_log = strip_whitespace(df, verbose=verbose, logger=logger)
+    strip_log = []
+    if non_numeric_strategy.lower() in ["ignore", "unknown"]:
+        df, strip_log = strip_whitespace(df, strategy=non_numeric_strategy.lower())
     log_lines.extend(strip_log)
     logger(f"##DEBUG: After strip_whitespace:", df.head())
     for col in ["mas_vnr_type", "bsmt_exposure\r"]:
@@ -101,25 +103,26 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
 
     return df
 
-def strip_whitespace(df, verbose=True, logger=None):
+def strip_whitespace(df, strategy="ignore", verbose=True):
     """
     Strips leading/trailing whitespace from string columns.
+    If strategy is 'unknown', replaces newly created NaNs with 'Unknown'.
+    If strategy is 'ignore', replaces with empty string.
     """
     log = []
     for col in df.columns:
         if df[col].dtype == object or df[col].dtype.name == "category":
-            # Store original null mask to detect new NaNs introduced
             original_nulls = df[col].isna()
 
             df[col] = df[col].astype(str).str.strip()
 
-            # If .strip() created NaNs, replace them with empty strings
-            # ONLY if the original value wasn't null
-            df[col] = df[col].mask(~original_nulls & df[col].isna(), "")
+            if strategy == "unknown":
+                df[col] = df[col].mask(~original_nulls & df[col].isna(), "Unknown")
+            elif strategy == "ignore":
+                df[col] = df[col].mask(~original_nulls & df[col].isna(), "")
 
             if verbose:
-                log.append(f"🧹 Stripped whitespace in column '{col}'")
-    logger("🔍 #DEBUG whitespace: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
+                log.append(f"🧹 Stripped whitespace in column '{col}' using strategy '{strategy}'")
     return df, log
 
 
