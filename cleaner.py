@@ -315,6 +315,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                 # Convert non-numeric junk to NaN
                 df[col] = pd.to_numeric(df[col], errors="coerce")
                 missing_count = df[col].isna().sum()
+                logger(f"##DEBUG mising values: missing count = {missing_count}")
                 if missing_count > 0:
                     df[col] = df[col].fillna("Unknown")
                     if verbose:
@@ -328,6 +329,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                     df[col] = df[col].mask(junk_mask, "Unknown")
                     if verbose:
                         log.append(f"🛠️ Replaced {junk_count} missing or junk values in text column '{col}' with 'Unknown'")
+                    logger(f"##DEBUG missing values: 🛠️ Replaced {junk_count} missing or junk values in text column '{col}' with 'Unknown'")
 
             elif non_numeric_strategy == "mode":
                 try:
@@ -338,6 +340,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                         df[col] = df[col].mask(junk_mask, mode_val)
                         if verbose:
                             log.append(f"🛠️ Replaced {junk_count} missing or junk values in text column '{col}' with mode: '{mode_val}'")
+                        logger(f"##DEBUG missing values: 🛠️ Replaced {junk_count} missing or junk values in text column '{col}' with mode: '{mode_val}'")
                 except Exception:
                     if verbose:
                         log.append(f"⚠️ Unable to compute mode for column '{col}' — no replacement applied.")
@@ -352,9 +355,11 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                     df[col] = df[col].fillna(mean_val)
                     if verbose:
                         log.append(f"🛠️ Replaced {missing_count} missing values in numeric column '{col}' with mean: {mean_val:.2f}")
+                    logger(f"##DEBUG missing values: 🛠️ Replaced {missing_count} missing values in numeric column '{col}' with mean: {mean_val:.2f}")
             except Exception:
                 if verbose:
                     log.append(f"⚠️ Unable to compute mean for numeric column '{col}' — no replacement applied.")
+            logger(f"##DEBUG missing values: ⚠️ Unable to compute mean for numeric column '{col}' — no replacement applied.")
 
     return df, log
 
