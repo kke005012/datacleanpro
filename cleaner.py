@@ -8,7 +8,7 @@ from datetime import datetime
 
 verbose = False 
 
-def clean_data(df, keep_dollar=False, numeric_strategy="ignore", non_numeric_strategy="ignore", logger=None):
+def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", logger=None):
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
 
@@ -59,7 +59,7 @@ def clean_data(df, keep_dollar=False, numeric_strategy="ignore", non_numeric_str
             logger(f"##DEBUG: Column '{col}' not found after this step.")
 
     # 5. Clean currency columns
-    df, currency_log = clean_currency_columns(df, keep_dollar=keep_dollar, verbose=verbose)
+    df, currency_log = clean_currency_columns(df, verbose=verbose)
     log_lines.extend(currency_log)
     logger("##DEBUG: After clean_currency_columns:", df.head())
     for col in ["mas_vnr_type", "bsmt_exposure"]:
@@ -192,7 +192,7 @@ def is_likely_currency(val):
     return bool(currency_pattern.match(val))
 
 
-def clean_currency_columns(df, keep_dollar=False, verbose=False, logger=None):
+def clean_currency_columns(df, verbose=False, logger=None):
     log = []
 
     for col in df.columns:
@@ -211,8 +211,6 @@ def clean_currency_columns(df, keep_dollar=False, verbose=False, logger=None):
                 if pd.isna(val):
                     return val
                 val = str(val).strip()
-                if not keep_dollar:
-                    val = val.replace("$", "")
                 val = val.replace(",", "")
                 val = re.sub(r"[()]", "", val)  # remove parentheses
                 try:

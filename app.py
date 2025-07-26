@@ -126,8 +126,6 @@ elif page == "Clean My Data":
         with st.sidebar:
             st.sidebar.markdown("### 🧹 Cleaning Options")
 
-            keep_dollar = st.sidebar.checkbox("Keep '$' sign in currency?", value=False, help="Assumes USD format with period as decimal separator.")
-
             st.sidebar.markdown("**Handle Missing Values**")
             numeric_strategy = st.sidebar.radio(
                 "Numeric Columns",
@@ -236,13 +234,12 @@ elif page == "Clean My Data":
                  
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
-                    keep_dollar=keep_dollar,
                     numeric_strategy=numeric_strategy.lower(),
                     non_numeric_strategy=non_numeric_strategy.lower(),
                     logger = st.write if debug_mode else None
                 )
 
-                logger(f"##DEBUG: Cleaned {len(cleaned_df)} rows.")
+                logger("🔍 DEBUG nan after clean: Post-cleaning unique values in 'some_column'", cleaned_df["some_column"].unique())
                 st.session_state.cleaned_df = cleaned_df
                 st.session_state["cleaning_log"] = cleaned_df.attrs["log"]
 
@@ -257,16 +254,14 @@ elif page == "Clean My Data":
         cleaned_df = st.session_state.get("cleaned_df", None)
         
         if cleaned_df is not None and not cleaned_df.empty:
-            logger(f"##DEBUG: if cleaned_df is not None and not cleaned_df.empty")
             st.write("### ✅ Cleaned Data Preview")
             st.dataframe(cleaned_df.head())
             rows, cols = cleaned_df.shape
             logger(f"##DEBUG: cleaned data preview — {rows} rows × {cols} columns")
+            logger("🔍 DEBUG nan after clean: Post-cleaning unique values in 'some_column'", cleaned_df["some_column"].unique())
 
-     
             row_count = len(cleaned_df)
             cost, rows = calculate_price(row_count)
-            logger(f"##DEBUG: after pricing call, cost={cost} rows={rows}")
 
             st.session_state["row_count"] = row_count
             st.session_state["cost"] = cost
@@ -297,14 +292,14 @@ elif page == "Clean My Data":
                         st.markdown(f"- {line}")
                 else:
                     st.info("No cleaning actions were logged.")
-
+            logger("🔍 DEBUG 2 nan after clean: Post-cleaning unique values in 'some_column'", cleaned_df["some_column"].unique())
             st.download_button(
                 " 📥 Download Cleaned CSV",
                 data=cleaned_df.to_csv(index=False),
                 file_name=download_filename,
                 mime="text/csv"
             )
-
+            logger("🔍 DEBUG 3 nan after clean: Post-cleaning unique values in 'some_column'", cleaned_df["some_column"].unique())
             if st.session_state.get("payment_complete", False):
                 cleaned_df = st.session_state.cleaned_df
                 if cleaned_df is not None:
