@@ -318,10 +318,35 @@ def is_junk_text(val):
     return False
 
 
+def is_column_actually_numeric(series):
+    try:
+        pd.to_numeric(series.dropna().astype(str))
+        return True
+    except Exception:
+        return False
+
+
 def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="ignore", verbose=True, logger=None):
     log = []
 
     for col in df.columns:
+        # Skip likely date columns
+        if any(is_likely_date(val) for val in df[col].dropna().astype(str).head(10)):
+            if verbose:
+                log.append(f"📆 Skipping missing value handling for likely date column '{col}'")
+            continue
+
+        # Skip likely date columns
+        if any(is_likely_date(val) for val in df[col].dropna().astype(str).head(10)):
+            if verbose:
+                log.append(f"📆 Skipping missing value handling for likely date column '{col}'")
+            continue
+
+        # Convert object columns that are secretly numeric
+        if not pd.api.types.is_numeric_dtype(df[col]):
+            if is_column_actually_numeric(df[col]):
+                df[col] = pd.to_numeric(df[col], errors="coerce")
+
         if pd.api.types.is_numeric_dtype(df[col]):
             if numeric_strategy == "unknown":
                 original_non_na = df[col].notna().sum()
