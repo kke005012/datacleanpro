@@ -61,7 +61,7 @@ def clean_data(df, keep_dollar=False, numeric_strategy="ignore", non_numeric_str
     df, currency_log = clean_currency_columns(df, keep_dollar=keep_dollar, verbose=verbose)
     log_lines.extend(currency_log)
     logger("##DEBUG: After clean_currency_columns:", df.head())
-    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
+    for col in ["mas_vnr_type", "bsmt_exposure"]:
         if col in df.columns:
             logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
             logger(df[col].head())
@@ -72,7 +72,7 @@ def clean_data(df, keep_dollar=False, numeric_strategy="ignore", non_numeric_str
     df, date_log = normalize_dates(df, verbose=verbose, logger=logger)
     log_lines.extend(date_log)
     logger("##DEBUG: After normalize_dates:", df.head())
-    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
+    for col in ["mas_vnr_type", "bsmt_exposure"]:
         if col in df.columns:
             logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
             logger(df[col].head())
@@ -83,7 +83,12 @@ def clean_data(df, keep_dollar=False, numeric_strategy="ignore", non_numeric_str
     df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose, logger=logger)
     log_lines.extend(missing_log)
     logger("##DEBUG: After handle_missing_values:", df.head())
-    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
+    for col in ["mas_vnr_type", "bsmt_exposure"]:
+        if col in df.columns:
+            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
+            logger(df[col].head())
+        else:
+            logger(f"##DEBUG: Column '{col}' not found after this step.")
 
     # 8. (Optional) Final sanity check
     # df = final_sanity_check(df)
