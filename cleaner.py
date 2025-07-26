@@ -101,21 +101,24 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
 
     return df
 
-def strip_whitespace(df, verbose=verbose, logger=None):
+def strip_whitespace(df, verbose=True):
+    """
+    Strips leading/trailing whitespace from string columns.
+    """
     log = []
-    changed_cols = []
-
     for col in df.columns:
-        if df[col].dtype == object:
-            original = df[col].copy()
-            df[col] = df[col].astype(str).str.strip()
-            if not original.equals(df[col]):
-                changed_cols.append(col)
+        if df[col].dtype == object or df[col].dtype.name == "category":
+            # Store original null mask to detect new NaNs introduced
+            original_nulls = df[col].isna()
 
-    if changed_cols:
-        log.append(f"Stripped whitespace in {len(changed_cols)} column(s): {', '.join(changed_cols)}.")
-    elif verbose:
-        log.append("No whitespace stripping needed.")
+            df[col] = df[col].astype(str).str.strip()
+
+            # If .strip() created NaNs, replace them with empty strings
+            # ONLY if the original value wasn't null
+            df[col] = df[col].mask(~original_nulls & df[col].isna(), "")
+
+            if verbose:
+                log.append(f"🧹 Stripped whitespace in column '{col}'")
     logger("🔍 #DEBUG whitespace: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
     return df, log
 
