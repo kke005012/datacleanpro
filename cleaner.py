@@ -16,37 +16,44 @@ def clean_data(df, keep_dollar=False, numeric_strategy="ignore", non_numeric_str
     # 1. Strip whitespace
     df, strip_log = strip_whitespace(df, verbose=verbose, logger=logger)
     log_lines.extend(strip_log)
-    logger("##DEBUG: After strip_whitespace:", df.head())
+    logger(f"##DEBUG: After strip_whitespace:", df.head())
+    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
 
     # 2. Drop empty rows
     df, drop_log = drop_empty_rows(df, verbose=verbose, logger=logger)
     log_lines.extend(drop_log)
     logger("##DEBUG: After drop_empty_rows:", df.head())
+    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
 
     # 3. Deduplicate
     df, dedup_log = deduplicate(df, verbose=verbose, logger=logger)
     log_lines.extend(dedup_log)
     logger("##DEBUG: After deduplicate:", df.head())
+    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
 
     # 4. Standardize column names
     df, colname_log = standardize_column_names(df, verbose=verbose, logger=logger)
     log_lines.extend(colname_log)
     logger("##DEBUG: After standardize_column_names:", df.head())
+    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
 
     # 5. Clean currency columns
     df, currency_log = clean_currency_columns(df, keep_dollar=keep_dollar, verbose=verbose)
     log_lines.extend(currency_log)
     logger("##DEBUG: After clean_currency_columns:", df.head())
+    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
 
     # 6. Normalize date columns
     df, date_log = normalize_dates(df, verbose=verbose, logger=logger)
     log_lines.extend(date_log)
     logger("##DEBUG: After normalize_dates:", df.head())
+    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
 
     # 7. Handle missing values
     df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose, logger=logger)
     log_lines.extend(missing_log)
     logger("##DEBUG: After handle_missing_values:", df.head())
+    logger(f"##DEBUG: NaNs per column: {df.isna().sum()}")
 
     # 8. (Optional) Final sanity check
     # df = final_sanity_check(df)
@@ -194,6 +201,7 @@ def normalize_dates(df, verbose=verbose, logger=None):
             if not any(is_likely_date(val) for val in sample):
                 if verbose:
                     log.append(f"ℹ️ Skipped '{col}': no date-like patterns found.")
+                logger(f"##DEBUG: Skipped '{col}': no date-like patterns found.")
                 continue
 
             original_non_null = df[col].notna().sum()
@@ -228,7 +236,7 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
         has_nulls = df[col].isnull().any()
         has_empty = (df[col] == "").any() if not is_numeric else False
         has_nans = df[col].isnull().sum()
-        logger(f"##DEBUG: has_nulls = {has_nans}")
+        logger(f"##DEBUG: has_nans = {has_nans} in {df[col]}.")
         if is_numeric:
             if has_nulls:
                 num_missing = df[col].isnull().sum()
@@ -278,7 +286,7 @@ def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=Non
                 else:
                     log_lines.append(f"📉 No valid mode found for non-numeric column '{col}' — no changes made.")
             else:
-                logger(f"##DEBUG: no text missing.")
+                logger(f"##DEBUG: no text missing in {df[col]}.")
 
 
     return df, log_lines
