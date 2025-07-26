@@ -382,6 +382,11 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                         logger(f"##DEBUG missing values: 🛠️ Replaced {junk_count} missing or junk values in text column '{col}' with mode: '{mode_val}'")
                 except Exception:
                     log.append(f"⚠️ Unable to compute mode for column '{col}' — no replacement applied.")
+            else:
+                # Ignore strategy: do nothing
+                if verbose:
+                    log.append(f"🚫 Ignored missing value handling for text column '{col}'")
+
 
         # For numeric_strategy == "average"
         if pd.api.types.is_numeric_dtype(df[col]) and numeric_strategy == "average":
@@ -397,6 +402,10 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                 log.append(f"⚠️ Unable to compute mean for numeric column '{col}' — no replacement applied.")
             logger(f"##DEBUG missing values: ⚠️ Unable to compute mean for numeric column '{col}' — no replacement applied.")
 
+         else:
+             # Ignore strategy: do nothing
+             if verbose:
+                 log.append(f"🚫 Ignored missing value handling for numeric column '{col}'")  
     return df, log
 
 
