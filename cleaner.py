@@ -350,11 +350,15 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
         if pd.api.types.is_numeric_dtype(df[col]):
             if numeric_strategy == "unknown":
                 original_non_na = df[col].notna().sum()
+                original_col = df[col].copy()
                 df[col] = pd.to_numeric(df[col], errors="coerce")
                 coerced_na = df[col].isna().sum() - (df.shape[0] - original_non_na)
+               
+                # Count junky entries that became NaN (from symbols, etc.)
+                junk_count = (original_col.notna() & df[col].isna()).sum()
 
                 if df[col].isna().sum() > 0:
-                    df[col] = df[col].fillna("-1")
+                    df[col] = df[col].astype(object).fillna(-1)
                     log.append(f"🔧 Replaced {df[col].isna().sum()} missing or invalid values in numeric column '{col}' with '-1' (including {coerced_na} coerced junk)")
         else:
             if non_numeric_strategy == "unknown":
