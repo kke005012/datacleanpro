@@ -59,7 +59,7 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
             logger(f"##DEBUG: Column '{col}' not found after this step.")
 
     # 5. Clean currency columns
-    df, currency_log = clean_currency_columns(df, verbose=verbose)
+    df, currency_log = clean_currency_columns(df, logger=logger, verbose=verbose)
     log_lines.extend(currency_log)
     logger("##DEBUG: After clean_currency_columns:", df.head())
     for col in ["mas_vnr_type", "bsmt_exposure"]:
