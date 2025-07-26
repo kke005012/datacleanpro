@@ -13,7 +13,7 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
         logger = lambda *args, **kwargs: None  # no-op if not passed
 
     log_lines = []
-
+    logger("🔍 #DEBUG beginning of clean data: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["mas_vnr_type"].unique())
     # 1. Strip whitespace
     df, strip_log = strip_whitespace(df, verbose=verbose, logger=logger)
     log_lines.extend(strip_log)
@@ -116,7 +116,7 @@ def strip_whitespace(df, verbose=verbose, logger=None):
         log.append(f"Stripped whitespace in {len(changed_cols)} column(s): {', '.join(changed_cols)}.")
     elif verbose:
         log.append("No whitespace stripping needed.")
-
+    logger("🔍 #DEBUG whitespace: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["mas_vnr_type"].unique())
     return df, log
 
 
@@ -130,7 +130,7 @@ def drop_empty_rows(df, verbose=verbose, logger=None):
         log.append(f"Dropped {dropped} completely empty row(s).")
     elif verbose:
         log.append("No completely empty rows found.")
-
+    logger("🔍 #DEBUG drop empty rows: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["mas_vnr_type"].unique())
     return df, log
 
 
@@ -144,7 +144,7 @@ def deduplicate(df, verbose=verbose, logger=None):
         log.append(f"Removed {removed} duplicate row(s).")
     elif verbose:
         log.append("No duplicate rows found.")
-
+    logger("🔍 #DEBUG dedupe: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["mas_vnr_type"].unique())
     return df, log
 
 
@@ -169,7 +169,7 @@ def standardize_column_names(df, verbose=verbose, logger=None):
         log.append(f"Standardized column names: {', '.join(renamed_pairs)}.")
     elif verbose:
         log.append("No changes to column names.")
-    
+        logger("🔍 #DEBUG standardize column names: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["mas_vnr_type"].unique())
 
     return df, log
 
