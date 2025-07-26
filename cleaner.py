@@ -330,8 +330,8 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
 
                 if df[col].isna().sum() > 0:
                     df[col] = df[col].fillna("-1")
-                    log.append(f"🔧 Replaced {df[col].isna().sum()} missing or invalid values in numeric column '{col}' with 'Unknown' (including {coerced_na} coerced junk)")        else:
-            
+                    log.append(f"🔧 Replaced {df[col].isna().sum()} missing or invalid values in numeric column '{col}' with '-1' (including {coerced_na} coerced junk)")
+        else:
             if non_numeric_strategy == "unknown":
                 # Replace junk values and empty/NaN with 'Unknown'
                 junk_mask = df[col].apply(is_junk_text)
