@@ -180,7 +180,7 @@ def is_likely_currency(val):
     val = val.strip().lower()
 
     # Common patterns: "$123.45", "123.45", "1,234.56", "(123.45)"
-    currency_pattern = re.compile(r"^\\(?-?\\$?\\d{1,3}(?:,?\\d{3})*(\\.\\d{2})?\\)?$")
+    currency_pattern = re.compile(r"^\(?-?\$?\d{1,3}(?:,\d{3})*(?:\.\d{2})?\)?$|^\(?-?\$?\d+(?:\.\d{2})?\)?$")
 
     # Allow float-style strings or numbers with commas or $
     return bool(re.match(currency_pattern, val))
