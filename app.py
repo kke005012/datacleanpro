@@ -258,7 +258,7 @@ elif page == "Clean My Data":
             st.dataframe(cleaned_df.head())
             rows, cols = cleaned_df.shape
             logger(f"##DEBUG: cleaned data preview — {rows} rows × {cols} columns")
-            logger("🔍 DEBUG nan after clean: Post-cleaning unique values in 'some_column'", cleaned_df["some_column"].unique())
+            logger("🔍 #DEBUG 1 nan after clean: Post-cleaning unique values in 'mas_vnr_type'", cleaned_df["mas_vnr_type"].unique())
 
             row_count = len(cleaned_df)
             cost, rows = calculate_price(row_count)
@@ -292,14 +292,14 @@ elif page == "Clean My Data":
                         st.markdown(f"- {line}")
                 else:
                     st.info("No cleaning actions were logged.")
-            logger("🔍 DEBUG 2 nan after clean: Post-cleaning unique values in 'some_column'", cleaned_df["some_column"].unique())
+            logger("🔍 #DEBUG 2 nan after clean: Post-cleaning unique values in 'mas_vnr_type'", cleaned_df["mas_vnr_type"].unique())
             st.download_button(
                 " 📥 Download Cleaned CSV",
                 data=cleaned_df.to_csv(index=False),
                 file_name=download_filename,
                 mime="text/csv"
             )
-            logger("🔍 DEBUG 3 nan after clean: Post-cleaning unique values in 'some_column'", cleaned_df["some_column"].unique())
+            logger("🔍 #DEBUG 3 nan after clean: Post-cleaning unique values in 'mas_vnr_type'", cleaned_df["mas_vnr_type"].unique())
             if st.session_state.get("payment_complete", False):
                 cleaned_df = st.session_state.cleaned_df
                 if cleaned_df is not None:
