@@ -174,17 +174,22 @@ def standardize_column_names(df, verbose=verbose, logger=None):
     return df, log
 
 
+
 def is_likely_currency(val):
     if not isinstance(val, str):
         val = str(val)
 
-    val = val.strip().lower()
+    val = val.strip()
 
-    # Common patterns: "$123.45", "123.45", "1,234.56", "(123.45)"
-    currency_pattern = re.compile(r"^\(?-?\$?\d{1,3}(?:,\d{3})*(?:\.\d{2})?\)?$|^\(?-?\$?\d+(?:\.\d{2})?\)?$")
+    # Must include a currency signal — $, comma, decimal, or parentheses
+    if not any(x in val for x in ["$", ",", ".", "(", ")"]):
+        return False
 
-    # Allow float-style strings or numbers with commas or $
-    return bool(re.match(currency_pattern, val))
+    currency_pattern = re.compile(
+        r"^\(?-?\$?\d{1,3}(?:,\d{3})*(?:\.\d{2})?\)?$|^\(?-?\$?\d+(?:\.\d{2})?\)?$"
+    )
+
+    return bool(currency_pattern.match(val))
 
 
 def clean_currency_columns(df, keep_dollar=False, verbose=False, logger=None):
