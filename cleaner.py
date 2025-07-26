@@ -216,23 +216,40 @@ def clean_currency_columns(df, keep_dollar=False, verbose=False, logger=None):
     return df, log
 
 
-
 def is_likely_date(val):
     if not isinstance(val, str):
-        return False
-    date_patterns = [
-        r"\d{4}[-/]\d{2}[-/]\d{2}",     # YYYY-MM-DD or YYYY/MM/DD
-        r"\d{2}[-/]\d{2}[-/]\d{4}",     # MM-DD-YYYY or DD-MM-YYYY
-        r"[A-Za-z]{3,9} \d{1,2}, \d{4}" # Month DD, YYYY
-    ]
-    return any(re.search(pat, val) for pat in date_patterns)
+        val = str(val)
+
+    val = val.strip().lower()
+
+    # Common date substrings (month names, T/Z, slashes, dashes)
+    if any(month in val for month in [
+        "jan", "feb", "mar", "apr", "may", "jun",
+        "jul", "aug", "sep", "oct", "nov", "dec"
+    ]):
+        return True
+
+    if "t" in val and "z" in val:  # ISO format like 2025-07-19T14:30Z
+        return True
+
+    # Common separators
+    if re.match(r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}", val):  # 19/07/2028
+        return True
+    if re.match(r"\d{4}[./-]\d{1,2}[./-]\d{1,2}", val):  # 2025.07.18
+        return True
+    if re.match(r"\d{8}$", val):  # 19680719
+        return True
+    if re.match(r"\d{1,2}-[a-z]{3}-\d{2,4}", val):  # 23-Jul-25
+        return True
+
+    return False
+
 
 def normalize_dates(df, verbose=False, logger=None):
     log = []
 
     for col in df.columns:
         if df[col].dtype == object or pd.api.types.is_numeric_dtype(df[col]):
-            # 🧪 Sample values to test for date-likeness
             sample = df[col].dropna().astype(str).head(10).tolist()
             if not any(is_likely_date(val) for val in sample):
                 if verbose:
@@ -240,19 +257,26 @@ def normalize_dates(df, verbose=False, logger=None):
                 continue
 
             try:
-                # 🧼 Replace known garbage strings with NaT
+                # 🧼 Replace known garbage with NaT
                 df[col] = df[col].replace(["NULL", "InvalidDate", "NaT", ""], pd.NaT)
 
-                # 🧠 Handle UNIX-style epoch timestamps
+                # 🧽 Clean up string format
+                df[col] = df[col].astype(str).str.strip()
+                df[col] = df[col].str.replace(r"[.]", "-", regex=True)
+                df[col] = df[col].str.replace(r"\s+", " ", regex=True)
+
+                # Handle UNIX timestamps if column is numeric
                 if pd.api.types.is_numeric_dtype(df[col]):
                     df[col] = pd.to_datetime(df[col], unit="s", errors="coerce")
+                # Special handling for ISO timestamps
+                elif df[col].str.contains("T", na=False).any():
+                    df[col] = pd.to_datetime(df[col], utc=True, errors="coerce")
                 else:
-                    df[col] = pd.to_datetime(df[col], errors="coerce", infer_datetime_format=True)
+                    df[col] = pd.to_datetime(df[col], errors="coerce", infer_datetime_format=True, dayfirst=True)
 
                 parsed_non_null = df[col].notna().sum()
                 if parsed_non_null > 0:
                     log.append(f"📅 Parsed {parsed_non_null} date values in '{col}' to standardized format.")
-                
                 failed = df[col].isna().sum()
                 if failed > 0:
                     log.append(f"⚠️ {failed} unparsable values in '{col}' converted to NaT.")
@@ -262,8 +286,7 @@ def normalize_dates(df, verbose=False, logger=None):
     if not log and verbose:
         log.append("ℹ️ No columns parsed as dates")
 
-    return df, log
-
+    return df, log_lines
 
 
 def handle_missing_values(df, numeric_strategy, non_numeric_strategy, logger=None, verbose=verbose):
