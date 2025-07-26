@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import re
 from dateutil import parser
+from datetime import datetime
 
 # --- cleaner.py ---
 
@@ -251,43 +252,42 @@ def is_likely_date(val):
 def normalize_dates(df, verbose=False, logger=None):
     log = []
 
-    for col in df.columns:
-        if df[col].dtype == object or pd.api.types.is_numeric_dtype(df[col]):
-            sample = df[col].dropna().astype(str).head(10).tolist()
-            if not any(is_likely_date(val) for val in sample):
-                if verbose:
-                    log.append(f"ℹ️ Skipped '{col}': no date-like patterns found.")
-                continue
+    # Supported date formats — order matters (more specific first)
+    date_formats = [
+        "%m/%d/%Y %H:%M",        # 7/19/2025 14:30
+        "%Y-%m-%dT%H:%MZ",       # 2025-07-19T14:30Z
+        "%Y%m%d",                # 19680719
+        "%d-%b-%y",              # 19-Jul-25
+        "%A, %B %d, %Y",         # Saturday, July 19, 2026
+        "%d/%m/%Y",              # 19/09/2000
+        "%Y.%m.%d",              # 2025.07.18
+        "%m/%d/%Y",              # fallback — 7/19/2025
+    ]
 
+    def try_formats(val):
+        if pd.isna(val) or str(val).strip().upper() in ["NAN", "NULL", "", "UNKNOWN"]:
+            return "Unknown"
+        val = str(val).strip()
+        for fmt in date_formats:
             try:
-                # Replace known garbage
-                df[col] = df[col].replace(["NULL", "InvalidDate", "NaT", ""], pd.NA)
+                dt = datetime.strptime(val, fmt)
+                return dt.strftime("%m-%d-%Y")
+            except Exception:
+                continue
+        return "Unknown"
 
-                # Preprocess
-                df[col] = df[col].astype(str).str.strip()
-                df[col] = df[col].str.replace(r"[.]", "-", regex=True)
-                df[col] = df[col].str.replace(r"\s+", " ", regex=True)
+    for col in df.columns:
+        if df[col].dtype == object:
+            sample = df[col].dropna().astype(str).head(10).tolist()
+            match_count = sum(1 for val in sample if try_formats(val) != "Unknown")
 
-                # Parse with pandas
-                parsed = pd.to_datetime(df[col], errors="coerce", dayfirst=True, infer_datetime_format=True)
-
-                # Format as MM-DD-YYYY
-                df[col] = parsed.dt.strftime("%m-%d-%Y")
-
-                # Replace failed parses with 'Unknown'
-                df[col] = df[col].fillna("Unknown")
-
-                parsed_non_null = df[col][df[col] != "Unknown"].count()
-                if parsed_non_null > 0:
-                    log.append(f"📅 Normalized {parsed_non_null} values in '{col}' to MM-DD-YYYY format.")
-                failed = (df[col] == "Unknown").sum()
-                if failed > 0:
-                    log.append(f"⚠️ {failed} unparsable values in '{col}' replaced with 'Unknown'.")
-            except Exception as e:
-                log.append(f"⚠️ Failed to parse '{col}' due to error: {str(e)}")
-
-    if not log and verbose:
-        log.append("ℹ️ No columns parsed as dates")
+            if match_count >= 3:
+                df[col] = df[col].apply(try_formats)
+                unknowns = (df[col] == "Unknown").sum()
+                parsed = len(df) - unknowns
+                log.append(f"📅 Normalized '{col}' as date. Parsed: {parsed}, Unknown: {unknowns}")
+            elif verbose:
+                log.append(f"ℹ️ Skipped '{col}': not enough recognizable dates.")
 
     return df, log
 
