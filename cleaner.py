@@ -94,7 +94,6 @@ def drop_empty_rows(df, verbose=verbose, logger=None):
         log.append(f"Dropped {dropped} completely empty row(s).")
     elif verbose:
         log.append("No completely empty rows found.")
-    logger("🔍 #DEBUG drop empty rows: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
     return df, log
 
 
@@ -108,7 +107,7 @@ def deduplicate(df, verbose=verbose, logger=None):
         log.append(f"Removed {removed} duplicate row(s).")
     elif verbose:
         log.append("No duplicate rows found.")
-    logger("🔍 #DEBUG dedupe: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
+
     return df, log
 
 
