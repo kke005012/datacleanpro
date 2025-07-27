@@ -63,8 +63,6 @@ def strip_whitespace(df, strategy="ignore", verbose=True, logger=None):
             
             # Only apply strip to non-nulls
             stripped = df[col].where(original_nulls, df[col].astype(str).str.strip())
-            if col=="Mas Vnr Type":
-                logger("🔍 #DEBUG whitespace after stripped: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
             # Re-assign column
             df[col] = stripped
 
@@ -77,14 +75,12 @@ def strip_whitespace(df, strategy="ignore", verbose=True, logger=None):
                     df.loc[new_nulls, col] = "Unknown"
                 elif strategy == "ignore":
                     df.loc[new_nulls, col] = ""
-            if col=="Mas Vnr Type":
-                logger("🔍 #DEBUG whitespace after new nulls: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
+
             if verbose:
                 log.append(
                     f"🧹 Stripped whitespace in '{col}' — replaced {num_new_nulls} new NaNs with '{strategy.title()}'"
                 )
-            if col=="Mas Vnr Type":
-                logger("🔍 #DEBUG whitespace before return: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
+
     return df, log
 
 
