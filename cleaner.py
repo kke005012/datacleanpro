@@ -172,7 +172,7 @@ def clean_currency_columns(df, verbose=False, logger=None):
                 if pd.isna(val):
                     return val
                 val = str(val).strip()
-                val = val.replace(",", "")
+                val = val.replace("$", "").replace(",", "")
                 val = re.sub(r"[()]", "", val)  # remove parentheses
                 try:
                     return float(val)
@@ -183,12 +183,19 @@ def clean_currency_columns(df, verbose=False, logger=None):
 
             unknowns = (df[col] == "Unknown").sum()
             cleaned = len(df) - unknowns
-            log.append(f"💲 Cleaned '{col}' as currency. Parsed: {cleaned}, Unknown: {unknowns}.")
+            msg = f"💲 Cleaned '{col}' as currency. Parsed: {cleaned}, Unknown: {unknowns}."
+            log.append(msg)
+            if logger:
+                logger(f"##DEBUG: {msg}")
 
         except Exception as e:
-            log.append(f"⚠️ Failed to clean '{col}' as currency: {str(e)}.")
+            err_msg = f"⚠️ Failed to clean '{col}' as currency: {str(e)}."
+            log.append(err_msg)
+            if logger:
+                logger(f"##ERROR: {err_msg}")
 
     return df, log
+
 
 
 def is_likely_date(val):
