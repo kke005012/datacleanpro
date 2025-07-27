@@ -99,7 +99,7 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
 
     return df
 
-def strip_whitespace(df, strategy="ignore", verbose=True):
+def strip_whitespace(df, strategy="ignore", verbose=True, logger=None):
     log = []
     for col in df.columns:
         if df[col].dtype == object or df[col].dtype.name == "category":
