@@ -26,68 +26,37 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     df, drop_log = drop_empty_rows(df, verbose=verbose, logger=logger)
     log_lines.extend(drop_log)
     logger("##DEBUG: After drop_empty_rows:", df.head())
-    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
-        if col in df.columns:
-            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
-            logger(df[col].head())
-        else:
-            logger(f"##DEBUG: Column '{col}' not found after this step.")
 
 
     # 3. Deduplicate
     df, dedup_log = deduplicate(df, verbose=verbose, logger=logger)
     log_lines.extend(dedup_log)
     logger("##DEBUG: After deduplicate:", df.head())
-    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
-        if col in df.columns:
-            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
-            logger(df[col].head())
-        else:
-            logger(f"##DEBUG: Column '{col}' not found after this step.")
+
 
     # 4. Standardize column names
     df, colname_log = standardize_column_names(df, verbose=verbose, logger=logger)
     log_lines.extend(colname_log)
     logger("##DEBUG: After standardize_column_names:", df.head())
-    for col in ["mas_vnr_type", "bsmt_exposure\r"]:
-        if col in df.columns:
-            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
-            logger(df[col].head())
-        else:
-            logger(f"##DEBUG: Column '{col}' not found after this step.")
+
 
     # 5. Clean currency columns
     df, currency_log = clean_currency_columns(df, logger=logger, verbose=verbose)
     log_lines.extend(currency_log)
     logger("##DEBUG: After clean_currency_columns:", df.head())
-    for col in ["mas_vnr_type", "bsmt_exposure"]:
-        if col in df.columns:
-            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
-            logger(df[col].head())
-        else:
-            logger(f"##DEBUG: Column '{col}' not found after this step.")
+
 
     # 6. Normalize date columns
     df, date_log = normalize_dates(df, verbose=verbose, logger=logger)
     log_lines.extend(date_log)
     logger("##DEBUG: After normalize_dates:", df.head())
-    for col in ["mas_vnr_type", "bsmt_exposure"]:
-        if col in df.columns:
-            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
-            logger(df[col].head())
-        else:
-            logger(f"##DEBUG: Column '{col}' not found after this step.")
+
 
     # 7. Handle missing values
     df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose, logger=logger)
     log_lines.extend(missing_log)
     logger("##DEBUG: After handle_missing_values:", df.head())
-    for col in ["mas_vnr_type", "bsmt_exposure"]:
-        if col in df.columns:
-            logger(f"##DEBUG [{col}] — nulls: {df[col].isna().sum()} | empties: {(df[col] == '').sum()} | type: {df[col].dtype}")
-            logger(df[col].head())
-        else:
-            logger(f"##DEBUG: Column '{col}' not found after this step.")
+
 
     # 8. (Optional) Final sanity check
     # df = final_sanity_check(df)
@@ -105,10 +74,11 @@ def strip_whitespace(df, strategy="ignore", verbose=True, logger=None):
         if df[col].dtype == object or df[col].dtype.name == "category":
             # Save original null mask
             original_nulls = df[col].isna()
-
+            
             # Only apply strip to non-nulls
             stripped = df[col].where(original_nulls, df[col].astype(str).str.strip())
-
+            if col=="Mas Vnr Type":
+                logger("🔍 #DEBUG whitespace after stripped: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
             # Re-assign column
             df[col] = stripped
 
@@ -121,11 +91,14 @@ def strip_whitespace(df, strategy="ignore", verbose=True, logger=None):
                     df.loc[new_nulls, col] = "Unknown"
                 elif strategy == "ignore":
                     df.loc[new_nulls, col] = ""
-
+            if col=="Mas Vnr Type":
+                logger("🔍 #DEBUG whitespace after new nulls: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
             if verbose:
                 log.append(
                     f"🧹 Stripped whitespace in '{col}' — replaced {num_new_nulls} new NaNs with '{strategy.title()}'"
                 )
+            if col=="Mas Vnr Type":
+                logger("🔍 #DEBUG whitespace before return: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["Mas Vnr Type"].unique())
     return df, log
 
 
