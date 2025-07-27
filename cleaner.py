@@ -132,10 +132,8 @@ def standardize_column_names(df, verbose=verbose, logger=None):
         log.append(f"Standardized column names: {', '.join(renamed_pairs)}.")
     elif verbose:
         log.append("No changes to column names.")
-        logger("🔍 #DEBUG standardize column names: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["mas_vnr_type"].unique())
 
     return df, log
-
 
 
 def is_likely_currency(val):
@@ -190,7 +188,6 @@ def clean_currency_columns(df, verbose=False, logger=None):
         except Exception as e:
             log.append(f"⚠️ Failed to clean '{col}' as currency: {str(e)}")
 
-    logger("🔍 #DEBUG currency: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["mas_vnr_type"].unique())
     return df, log
 
 
@@ -256,7 +253,7 @@ def normalize_dates(df, verbose=False, logger=None):
                 log.append(f"📅 Normalized '{col}' as date. Parsed: {parsed}, Unknown: {unknowns}")
             elif verbose:
                 log.append(f"ℹ️ Skipped '{col}': not enough recognizable dates.")
-    logger("🔍 #DEBUG normalize dates: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["mas_vnr_type"].unique())
+
     return df, log
 
 
@@ -368,7 +365,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
             # Ignore strategy: do nothing
             if verbose:
                 log.append(f"🚫 Ignored missing value handling for numeric column '{col}'")  
-    logger("🔍 #DEBUG missing values: nan after clean: Post-cleaning unique values in 'mas_vnr_type'", df["mas_vnr_type"].unique())
+
     return df, log
 
 
