@@ -345,7 +345,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
         for col in df.columns:
             if col in currency_cols:
                 if verbose:
-                log.append(f"💵 Skipped '{col}' in missing value handler — already processed as currency.")
+                    log.append(f"💵 Skipped '{col}' in missing value handler — already processed as currency.")
             continue
 
         # --- Step 1: Run heuristic ---
