@@ -162,7 +162,6 @@ def round_currency(val):
 
 
 def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=None):
-    from decimal import Decimal, ROUND_DOWN
 
     log = []
 
@@ -184,7 +183,7 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=
 
         try:
             # Step 1: Clean and round
-             def convert(val):
+            def convert(val):
                 if pd.isna(val):
                     return np.nan
                 val = str(val).strip().replace("$", "").replace(",", "")
@@ -211,13 +210,14 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=
                     mean_val = round_currency(mean_val)
                     df[col] = df[col].fillna(mean_val)
                     filled = (df[col] == mean_val).sum()
-
                 except:
                     log.append(f"⚠️ Could not calculate average for column '{col}' — left missing values as is.")
 
             # Step 3: Convert all final values to string
             df[col] = df[col].apply(lambda x: str(x) if not pd.isna(x) else "")
+
             logger(f"##DEBUG amounts: {df[col].unique()}")
+
             msg = f"💲 Cleaned '{col}' as currency. Parsed: {len(df) - missing_total}, Filled: {filled}, Strategy: {numeric_strategy}."
             log.append(msg)
             if logger:
@@ -233,6 +233,7 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=
                 logger(f"##ERROR: {err_msg}")
 
     return df, log
+
 
 
 def is_likely_date(val):
