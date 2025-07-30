@@ -168,6 +168,7 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=
 
     def round_currency(val):
         try:
+            logger(f"##DEBUG price clean currency:", df[col]>100000.00)
             return Decimal(str(val)).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
         except:
             return np.nan
@@ -184,14 +185,18 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=
 
         try:
             # Step 1: Clean and round
+            logger(f"##DEBUG price clean currency try entry:", df[col]>100000.00)
+
             def convert(val):
                 if pd.isna(val):
                     return np.nan
                 val = str(val).strip().replace("$", "").replace(",", "")
                 val = re.sub(r"[()]", "", val)
                 return round_currency(val)
+            logger(f"##DEBUG price clean currency after convertval:", df[col]>100000.00)
 
             df[col] = df[col].apply(convert)
+            logger(f"##DEBUG price clean currency after apply convert:", df[col]>100000.00)
 
             # Step 2: Handle missing values according to strategy
             missing_total = df[col].isna().sum()
@@ -200,10 +205,12 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=
             if numeric_strategy == "unknown":
                 df[col] = df[col].astype(object).fillna("Unknown")
                 filled = (df[col] == "Unknown").sum()
+            logger(f"##DEBUG price clean currency unknown:", df[col]>100000.00)
 
             elif numeric_strategy == "ignore":
                 df[col] = df[col].astype(object).fillna("")
                 filled = (df[col] == "").sum()
+            logger(f"##DEBUG price clean currency ignore:", df[col]>100000.00)
 
             elif numeric_strategy == "average":
                 try:
@@ -211,11 +218,14 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=
                     mean_val = round_currency(mean_val)
                     df[col] = df[col].fillna(mean_val)
                     filled = (df[col] == mean_val).sum()
+                    logger(f"##DEBUG price clean currency average:", df[col]>100000.00)
+
                 except:
                     log.append(f"⚠️ Could not calculate average for column '{col}' — left missing values as is.")
 
             # Step 3: Convert all final values to string
             df[col] = df[col].apply(lambda x: str(x) if not pd.isna(x) else "")
+            logger(f"##DEBUG price clean currency apply lambda:", df[col]>100000.00)
 
             msg = f"💲 Cleaned '{col}' as currency. Parsed: {len(df) - missing_total}, Filled: {filled}, Strategy: {numeric_strategy}."
             log.append(msg)
