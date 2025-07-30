@@ -3,7 +3,7 @@ import numpy as np
 import re
 from dateutil import parser
 from datetime import datetime
-from decimal import Decimal, ROUND_HALF_UP
+from decimal import Decimal, ROUND_DOWN
 
 # --- cleaner.py ---
 
@@ -153,9 +153,10 @@ def is_likely_currency(val):
 
     return bool(currency_pattern.match(val))
 
+
 def round_currency(val):
     try:
-        return float(Decimal(str(val)).quantize(Decimal('0.01'), rounding=ROUND_HALF_UP))
+        return float(Decimal(str(val)).quantize(Decimal('0.01'), rounding=ROUND_DOWN))
     except:
         return np.nan
 
@@ -311,10 +312,16 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                 log.append(f"📆 Skipping missing value handling for likely date column '{col}'.")
             continue
 
-        # Convert object columns that are secretly numeric
-        if not pd.api.types.is_numeric_dtype(df[col]):
-            if is_column_actually_numeric(df[col]):
-                df[col] = pd.to_numeric(df[col], errors="coerce")
+        # --- Step 1: Run heuristic ---
+        sample = df[col].dropna().astype(str).head(50)
+        numeric_like = pd.to_numeric(sample, errors="coerce").notna().sum()
+        is_numeric_like = numeric_like / len(sample) > 0.7 if len(sample) > 0 else False
+
+        # --- Step 2: Handle numeric-like columns ---
+        if is_numeric_like:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
+            missing_total = df[col].isna().sum()
+            junk_count = (original_col.notna() & df[col].isna()).sum()
 
         if pd.api.types.is_numeric_dtype(df[col]):
            original_non_na = df[col].notna().sum()
