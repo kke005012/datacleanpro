@@ -25,12 +25,12 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     # 2. Drop empty rows
     df, drop_log = drop_empty_rows(df, verbose=verbose, logger=logger)
     log_lines.extend(drop_log)
-    logger(f"##DEBUG amounts empty rows:", df['price'].unique()))
+    logger(f"##DEBUG amounts empty rows:", df['price'].unique())
 
     # 3. Deduplicate
     df, dedup_log = deduplicate(df, verbose=verbose, logger=logger)
     log_lines.extend(dedup_log)
-    logger(f"##DEBUG amounts dedupe:", df['price'].unique()))
+    logger(f"##DEBUG amounts dedupe:", df['price'].unique())
 
     # 4. Standardize column names
     df, colname_log = standardize_column_names(df, verbose=verbose, logger=logger)
