@@ -298,7 +298,7 @@ elif page == "Clean My Data":
                 mime="text/csv"
             )
             logger(f"##DEBUG: app.py {cleaned_df.dtypes()}")
-            logger(cleaned_df.head())
+            print(cleaned_df.head())
             if st.session_state.get("payment_complete", False):
                 cleaned_df = st.session_state.cleaned_df
                 if cleaned_df is not None:
