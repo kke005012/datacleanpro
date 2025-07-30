@@ -156,7 +156,7 @@ def is_likely_currency(val):
 
 def round_currency(val):
     try:
-        return float(Decimal(str(val)).quantize(Decimal('0.01'), rounding=ROUND_DOWN))
+        return str(Decimal(str(val)).quantize(Decimal('0.01'), rounding=ROUND_DOWN))
     except:
         return np.nan
 
