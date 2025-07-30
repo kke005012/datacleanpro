@@ -20,30 +20,37 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     if non_numeric_strategy.lower() in ["ignore", "unknown"]:
         df, strip_log = strip_whitespace(df, strategy=non_numeric_strategy.lower(), logger=logger)
     log_lines.extend(strip_log)
+    logger(f"##DEBUG amounts whitespace: {df["price"].unique()}")
 
     # 2. Drop empty rows
     df, drop_log = drop_empty_rows(df, verbose=verbose, logger=logger)
     log_lines.extend(drop_log)
+    logger(f"##DEBUG amounts empty rows: {df["price"].unique()}")
 
     # 3. Deduplicate
     df, dedup_log = deduplicate(df, verbose=verbose, logger=logger)
     log_lines.extend(dedup_log)
+    logger(f"##DEBUG amounts dedupe: {df["price"].unique()}")
 
     # 4. Standardize column names
     df, colname_log = standardize_column_names(df, verbose=verbose, logger=logger)
     log_lines.extend(colname_log)
+    logger(f"##DEBUG amounts standarize columns: {df["price"].unique()}")
 
     # 5. Clean currency columns
     df, currency_log = clean_currency_columns(df, numeric_strategy=numeric_strategy, logger=logger, verbose=verbose)
     log_lines.extend(currency_log)
+    logger(f"##DEBUG amounts clean currency: {df["price"].unique()}")
 
     # 6. Normalize date columns
     df, date_log = normalize_dates(df, verbose=verbose, logger=logger)
     log_lines.extend(date_log)
+    logger(f"##DEBUG amounts dates: {df["price"].unique()}")
 
     # 7. Handle missing values
     df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose, logger=logger)
     log_lines.extend(missing_log)
+    logger(f"##DEBUG amounts hmv: {df["price"].unique()}")
 
     # 8. (Optional) Final sanity check
     # df = final_sanity_check(df)
