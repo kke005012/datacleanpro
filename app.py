@@ -71,7 +71,7 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 
     st.markdown("""
 #### 📨 Need Help?  
-Email us anytime: [datacleanpro2025@gmail.com](mailto:datacleanpro2025@gmail.com)
+Email us anytime: [admin@datacleanpro.com](mailto:admin@datacleanpro.com)
 
 #### 👉 Use the sidebar to switch to **Clean My Data**
 """, unsafe_allow_html=True)
@@ -177,7 +177,7 @@ elif page == "Clean My Data":
             if len(df) > 100000:
                 st.error(
                     "❌ This app supports a maximum of 100,000 rows. Please upload a smaller file or "
-                    "[contact us](mailto:datacleanpro2025@gmail.com) (datacleanpro2025@gmail.com) for a custom order/pricing.",
+                    "[contact us](mailto:admin@datacleanpro.com) (admin@datacleanpro.com) for a custom order/pricing.",
                     icon="🚫"
                 )
                 st.stop()
@@ -328,6 +328,6 @@ elif page == "Clean My Data":
     # === Footer ===
     st.markdown("""
         <div style='text-align: center; padding-top: 2em;'>
-            📩 Contact us: <a href='mailto:datacleanpro2025@gmail.com'>datacleanpro2025@gmail.com</a>
+            📩 Contact us: <a href='mailto:admin@datacleanpro.com'>admin@datacleanpro.com</a>
         </div>
     """, unsafe_allow_html=True)
