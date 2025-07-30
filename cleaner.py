@@ -34,7 +34,7 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     log_lines.extend(colname_log)
 
     # 5. Clean currency columns
-    df, currency_log = clean_currency_columns(df, logger=logger, verbose=verbose)
+    df, currency_log = clean_currency_columns(df, numeric_strategy=numeric_strategy, logger=logger, verbose=verbose)
     log_lines.extend(currency_log)
 
     # 6. Normalize date columns
@@ -161,8 +161,16 @@ def round_currency(val):
         return np.nan
 
 
-def clean_currency_columns(df, verbose=False, logger=None):
+def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=None):
+    from decimal import Decimal, ROUND_DOWN
+
     log = []
+
+    def round_currency(val):
+        try:
+            return Decimal(str(val)).quantize(Decimal('0.01'), rounding=ROUND_DOWN)
+        except:
+            return np.nan
 
     for col in df.columns:
         if df[col].dtype != object:
@@ -175,26 +183,47 @@ def clean_currency_columns(df, verbose=False, logger=None):
             continue
 
         try:
-            # Clean values
+            # Step 1: Clean and round
             def convert(val):
                 if pd.isna(val):
-                    return val
-                val = str(val).strip()
-                val = val.replace("$", "").replace(",", "")
-                val = re.sub(r"[()]", "", val)  # remove parentheses
-                try:
-                    return round_currency(val)
-                except:
                     return np.nan
+                val = str(val).strip().replace("$", "").replace(",", "")
+                val = re.sub(r"[()]", "", val)
+                return round_currency(val)
 
             df[col] = df[col].apply(convert)
 
-            unknowns = df[col].isna().sum()
-            cleaned = len(df) - unknowns
-            msg = f"💲 Cleaned '{col}' as currency. Parsed: {cleaned}, Unknown: {unknowns}."
+            # Step 2: Handle missing values according to strategy
+            missing_total = df[col].isna().sum()
+            filled = 0
+
+            if numeric_strategy == "unknown":
+                df[col] = df[col].astype(object).fillna("Unknown")
+                filled = (df[col] == "Unknown").sum()
+
+            elif numeric_strategy == "ignore":
+                df[col] = df[col].astype(object).fillna("")
+                filled = (df[col] == "").sum()
+
+            elif numeric_strategy == "average":
+                try:
+                    mean_val = df[col].dropna().mean()
+                    mean_val = round_currency(mean_val)
+                    df[col] = df[col].fillna(mean_val)
+                    filled = (df[col] == mean_val).sum()
+                except:
+                    log.append(f"⚠️ Could not calculate average for column '{col}' — left missing values as is.")
+
+            # Step 3: Convert all final values to string
+            df[col] = df[col].apply(lambda x: str(x) if not pd.isna(x) else "")
+
+            msg = f"💲 Cleaned '{col}' as currency. Parsed: {len(df) - missing_total}, Filled: {filled}, Strategy: {numeric_strategy}."
             log.append(msg)
             if logger:
                 logger(f"##DEBUG: {msg}")
+
+            # Mark this column to skip in handle_missing_values()
+            df.attrs.setdefault("currency_columns", []).append(col)
 
         except Exception as e:
             err_msg = f"⚠️ Failed to clean '{col}' as currency: {str(e)}."
@@ -203,7 +232,6 @@ def clean_currency_columns(df, verbose=False, logger=None):
                 logger(f"##ERROR: {err_msg}")
 
     return df, log
-
 
 
 def is_likely_date(val):
@@ -310,6 +338,14 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
         if any(is_likely_date(val) for val in df[col].dropna().astype(str).head(10)):
             if verbose:
                 log.append(f"📆 Skipping missing value handling for likely date column '{col}'.")
+            continue
+
+        # Get list of currency columns to be skipped by handle_missing_values
+        currency_cols = df.attrs.get("currency_columns", [])
+        for col in df.columns:
+            if col in currency_cols:
+                if verbose:
+                log.append(f"💵 Skipped '{col}' in missing value handler — already processed as currency.")
             continue
 
         # --- Step 1: Run heuristic ---
