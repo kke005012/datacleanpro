@@ -7,6 +7,7 @@ from datetime import datetime
 from oauth2client.service_account import ServiceAccountCredentials
 from io import BytesIO
 import hashlib
+from mailer import send_receipt
 
 from cleaner import (
     clean_data,
@@ -120,8 +121,6 @@ elif page == "Clean My Data":
     # === End original filename ===
          
     # === Sidebar Cleaning Options ===
-    non_num_missing_placeholder = ""
-    num_missing_placeholder = ""
     if "raw_df" in st.session_state and st.session_state.raw_df is not None:
         with st.sidebar:
             st.sidebar.markdown("### 🧹 Cleaning Options")
@@ -188,7 +187,6 @@ elif page == "Clean My Data":
             # ==== End Row Count Check ===                    
  
             st.session_state.raw_df = df.copy()
-            logger(f"##DEBUG: About to clean {len(st.session_state.raw_df)} rows.")
             st.session_state.cleaned_df = None
             st.session_state.file_hash = file_hash
             st.success("File uploaded!")
@@ -228,10 +226,6 @@ elif page == "Clean My Data":
             # === Clean button only appears if data is ready ===
 
             if st.button("Clean My Data"):
-                logger(f"##DEBUG Clean My Data Button.")
-                
-                logger(f"##DEBUG: session state raw_df", st.session_state.raw_df.head())
-                 
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     numeric_strategy=numeric_strategy.lower(),
@@ -241,10 +235,6 @@ elif page == "Clean My Data":
 
                 st.session_state.cleaned_df = cleaned_df
                 st.session_state["cleaning_log"] = cleaned_df.attrs["log"]
-
-                logger(f"##DEBUG: cleaned_df", cleaned_df.head())
-                logger(f"##DEBUG: session state cleaned_df", st.session_state.cleaned_df.head())
-                logger(f"##DEBUG: session state raw_df", st.session_state.raw_df.head())
 
         elif st.session_state.upload_attempted:
             st.warning(" ⚠️ No raw data available to clean. Please upload a file.")
@@ -256,7 +246,6 @@ elif page == "Clean My Data":
             st.write("### ✅ Cleaned Data Preview")
             st.dataframe(cleaned_df.head())
             rows, cols = cleaned_df.shape
-            logger(f"##DEBUG: cleaned data preview — {rows} rows × {cols} columns")
 
             row_count = len(cleaned_df)
             cost, rows = calculate_price(row_count)
@@ -264,7 +253,7 @@ elif page == "Clean My Data":
             st.session_state["row_count"] = row_count
             st.session_state["cost"] = cost
             st.session_state["total_rows"] = rows
-            logger(f"##DEBUG: cost in session_state = {st.session_state.get('cost')}")
+
             if "cost" in st.session_state and "total_rows" in st.session_state:
                 st.markdown(f"**Standard Cost: ${st.session_state['cost']:.2f}**. Total Rows = {st.session_state['total_rows']}.")
 
@@ -281,8 +270,30 @@ elif page == "Clean My Data":
                     st.session_state.customer_email = user_email
                     st.success("💰 Payment successful (mock)!")
 
+            smtp_user = st.secrets["smtp_user"]
+            smtp_app_password = st.secrets["smtp_app_password"]
+
+            # After cleaning & payment is successful
+            success, message = send_receipt(
+                to_email="kristi.esta@gmail.com"      #remove hardcoded email address and put user_email back,   Add email input field in sidebar or form
+                amount=calculated_price,
+                filename=uploaded_file.name,
+                strategy_dict={
+                    "numeric": numeric_strategy,
+                    "non_numeric": non_numeric_strategy,
+                    "currency": currency_strategy
+                },
+                log_lines=cleaned_df.attrs.get("log", []),
+                smtp_user="datacleanpro2025@gmail.com",
+                smtp_app_password=st.secrets["smtp_app_password"]
+            )
+
+            if success:
+                st.success("📧 Receipt sent to your email.")
+            else:
+                st.error(message)
+
             if st.checkbox("Show cleaning log"):
-                logger(f"##DEBUG: in Show Cleaning Log if statement")
                 st.write("### 📋 Cleaning Log")
                 log_lines = write_log(cleaned_df)
                 if log_lines:
@@ -297,7 +308,6 @@ elif page == "Clean My Data":
                 file_name=download_filename,
                 mime="text/csv"
             )
-            logger(f"##DEBUG: app.py")
             print(cleaned_df.dtypes)
             print(cleaned_df["price"].head())
             if st.session_state.get("payment_complete", False):
@@ -323,6 +333,12 @@ elif page == "Clean My Data":
                 receipt += f"\n- {line}"
 
             st.markdown(receipt)
+
+        st.markdown("---")
+        st.subheader("📬 Email Testing")
+
+        if st.button("📧 Send Test Email"):
+            send_test_email()
 
 
     # === Footer ===
