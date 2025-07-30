@@ -275,7 +275,7 @@ elif page == "Clean My Data":
 
             # After cleaning & payment is successful
             success, message = send_receipt(
-                to_email="kristi.esta@gmail.com"      #remove hardcoded email address and put user_email back,   Add email input field in sidebar or form
+                to_email="kristi.esta@gmail.com",      #remove hardcoded email address and put user_email back,   Add email input field in sidebar or form
                 amount=calculated_price,
                 filename=uploaded_file.name,
                 strategy_dict={
