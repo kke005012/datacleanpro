@@ -319,6 +319,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
 
         # --- Step 2: Handle numeric-like columns ---
         if is_numeric_like:
+            original_col = df[col].copy()
             df[col] = pd.to_numeric(df[col], errors="coerce")
             missing_total = df[col].isna().sum()
             junk_count = (original_col.notna() & df[col].isna()).sum()
