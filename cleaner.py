@@ -205,12 +205,12 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=
             if numeric_strategy == "unknown":
                 df[col] = df[col].astype(object).fillna("Unknown")
                 filled = (df[col] == "Unknown").sum()
-            logger(f"##DEBUG price clean currency unknown:", df[col]>100000.00)
+                logger(f"##DEBUG price clean currency unknown:", df[col]>100000.00)
 
             elif numeric_strategy == "ignore":
                 df[col] = df[col].astype(object).fillna("")
                 filled = (df[col] == "").sum()
-            logger(f"##DEBUG price clean currency ignore:", df[col]>100000.00)
+                logger(f"##DEBUG price clean currency ignore:", df[col]>100000.00)
 
             elif numeric_strategy == "average":
                 try:
@@ -225,7 +225,7 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=
 
             # Step 3: Convert all final values to string
             df[col] = df[col].apply(lambda x: str(x) if not pd.isna(x) else "")
-            logger(f"##DEBUG price clean currency apply lambda:", df[col]>100000.00)
+            logger(f"##DEBUG price clean currency:", df[col]>100000.00)
 
             msg = f"💲 Cleaned '{col}' as currency. Parsed: {len(df) - missing_total}, Filled: {filled}, Strategy: {numeric_strategy}."
             log.append(msg)
