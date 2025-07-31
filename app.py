@@ -336,11 +336,6 @@ elif page == "Clean My Data":
 
             st.markdown(receipt)
 
-    st.markdown("---")
-    st.subheader("📬 Email Testing")
-    if st.button("📧 Send Test Email"):
-        send_test_email()
-
 
 ## Test email function
 def send_test_email():
@@ -360,6 +355,11 @@ def send_test_email():
         st.success("📬 Test email sent successfully!")
     except Exception as e:
         st.error(f"Failed to send test email: {e}")
+
+ st.markdown("---")
+ st.subheader("📬 Email Testing")
+ if st.button("📧 Send Test Email"):
+     send_test_email()
 
     # === Footer ===
     st.markdown("""
