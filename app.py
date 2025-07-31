@@ -8,6 +8,8 @@ from oauth2client.service_account import ServiceAccountCredentials
 from io import BytesIO
 import hashlib
 from mailer import send_receipt
+import smtplib
+from email.mime.text import MIMEText
 
 from cleaner import (
     clean_data,
@@ -334,12 +336,30 @@ elif page == "Clean My Data":
 
             st.markdown(receipt)
 
-        st.markdown("---")
-        st.subheader("📬 Email Testing")
+    st.markdown("---")
+    st.subheader("📬 Email Testing")
+    if st.button("📧 Send Test Email"):
+        send_test_email()
 
-        if st.button("📧 Send Test Email"):
-            send_test_email()
 
+## Test email function
+def send_test_email():
+    smtp_user = st.secrets["smtp_user"]
+    smtp_app_password = st.secrets["smtp_app_password"]
+
+    msg = MIMEText("This is a test email from DataCleanPro — success! ✅")
+    msg["Subject"] = "Test Email from DataCleanPro"
+    msg["From"] = f"DataCleanPro <{smtp_user}>"
+    msg["To"] = "kristi.esta@gmail.com"
+
+    try:
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_app_password)
+            server.send_message(msg)
+        st.success("📬 Test email sent successfully!")
+    except Exception as e:
+        st.error(f"Failed to send test email: {e}")
 
     # === Footer ===
     st.markdown("""
