@@ -297,8 +297,8 @@ elif page == "Clean My Data":
                 st.warning("💳 Payment required before download. (Simulated in testing)")
                 # Simulate payment for testing
                 if st.button("💰 Simulate Payment"):
-                st.session_state["payment_complete"] = True
-                st.success("✅ Payment simulated. You may now download your cleaned data.")
+                    st.session_state["payment_complete"] = True
+                    st.success("✅ Payment simulated. You may now download your cleaned data.")
             ## Simulated payment stuff ends
 
             if (st.session_state.get("payment_complete", False) or cost == 0) and st.session_state.get("user_email"):
