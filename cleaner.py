@@ -10,87 +10,51 @@ from decimal import Decimal, ROUND_DOWN
 verbose = False 
 
 def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore"):  # add logger=None if debug mode is turned on in app.py
-    if logger is None:
-        logger = lambda *args, **kwargs: None  # no-op if not passed
+    #if logger is None:
+        #logger = lambda *args, **kwargs: None  # no-op if not passed
 
     log_lines = []
 
     # 1. Strip whitespace
     strip_log = []
     if non_numeric_strategy.lower() in ["ignore", "unknown"]:
-        df, strip_log = strip_whitespace(df, strategy=non_numeric_strategy.lower(), logger=logger)
+        df, strip_log = strip_whitespace(df, strategy=non_numeric_strategy.lower())
     log_lines.extend(strip_log)
-    if 'price' in df.columns:
-        logger(f"##DEBUG whitespace price column dtype: {df['price'].dtype}")
-        logger(f"##DEBUG price column unique values: {list(df['price'].unique())}")
-    else:
-        logger("⚠️ 'price' column not found in DataFrame.")
 
     # 2. Drop empty rows
-    df, drop_log = drop_empty_rows(df, verbose=verbose, logger=logger)
+    df, drop_log = drop_empty_rows(df, verbose=verbose)
     log_lines.extend(drop_log)
-    if 'price' in df.columns:
-        logger(f"##DEBUG empty rows price column dtype: {df['price'].dtype}")
-        logger(f"##DEBUG price column unique values: {list(df['price'].unique())}")
-    else:
-        logger("⚠️ 'price' column not found in DataFrame.")
 
     # 3. Deduplicate
-    df, dedup_log = deduplicate(df, verbose=verbose, logger=logger)
+    df, dedup_log = deduplicate(df, verbose=verbose)
     log_lines.extend(dedup_log)
-    if 'price' in df.columns:
-        logger(f"##DEBUG dedupe price column dtype: {df['price'].dtype}")
-        logger(f"##DEBUG price column unique values: {list(df['price'].unique())}")
-    else:
-        logger("⚠️ 'price' column not found in DataFrame.")
 
     # 4. Standardize column names
-    df, colname_log = standardize_column_names(df, verbose=verbose, logger=logger)
+    df, colname_log = standardize_column_names(df, verbose=verbose)
     log_lines.extend(colname_log)
-    if 'price' in df.columns:
-        logger(f"##DEBUG standard col price column dtype: {df['price'].dtype}")
-        logger(f"##DEBUG price column unique values: {list(df['price'].unique())}")
-    else:
-        logger("⚠️ 'price' column not found in DataFrame.")
 
     # 5. Clean currency columns
-    df, currency_log = clean_currency_columns(df, numeric_strategy=numeric_strategy, logger=logger, verbose=verbose)
+    df, currency_log = clean_currency_columns(df, numeric_strategy=numeric_strategy, verbose=verbose)
     log_lines.extend(currency_log)
-    if 'price' in df.columns:
-        logger(f"##DEBUG currency price column dtype: {df['price'].dtype}")
-        logger(f"##DEBUG price column unique values: {list(df['price'].unique())}")
-    else:
-        logger("⚠️ 'price' column not found in DataFrame.")
 
     # 6. Normalize date columns
-    df, date_log = normalize_dates(df, verbose=verbose, logger=logger)
+    df, date_log = normalize_dates(df, verbose=verbose)
     log_lines.extend(date_log)
-    if 'price' in df.columns:
-        logger(f"##DEBUG date price column dtype: {df['price'].dtype}")
-        logger(f"##DEBUG price column unique values: {list(df['price'].unique())}")
-    else:
-        logger("⚠️ 'price' column not found in DataFrame.")
 
     # 7. Handle missing values
-    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose, logger=logger)
+    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose)
     log_lines.extend(missing_log)
-    if 'price' in df.columns:
-        logger(f"##DEBUG hmv price column dtype: {df['price'].dtype}")
-        logger(f"##DEBUG price column unique values: {list(df['price'].unique())}")
-    else:
-        logger("⚠️ 'price' column not found in DataFrame.")
 
     # 8. (Optional) Final sanity check
     # df = final_sanity_check(df)
     # log_lines.append("Performed final sanity checks")
 
-    # Attach log and logger for export or UI display
+    # Attach log for export or UI display
     df.attrs["log"] = log_lines
-    df.attrs["logger"] = logger
 
     return df
 
-def strip_whitespace(df, strategy="ignore", verbose=True, logger=None):
+def strip_whitespace(df, strategy="ignore", verbose=True):
     log = []
     for col in df.columns:
         if df[col].dtype == object or df[col].dtype.name == "category":
@@ -120,7 +84,7 @@ def strip_whitespace(df, strategy="ignore", verbose=True, logger=None):
     return df, log
 
 
-def drop_empty_rows(df, verbose=verbose, logger=None):
+def drop_empty_rows(df, verbose=verbose):
     log = []
     original_len = len(df)
     df = df.dropna(axis=0, how='all')
@@ -133,7 +97,7 @@ def drop_empty_rows(df, verbose=verbose, logger=None):
     return df, log
 
 
-def deduplicate(df, verbose=verbose, logger=None):
+def deduplicate(df, verbose=verbose):
     log = []
     original_len = len(df)
     df = df.drop_duplicates()
@@ -147,7 +111,7 @@ def deduplicate(df, verbose=verbose, logger=None):
     return df, log
 
 
-def standardize_column_names(df, verbose=verbose, logger=None):
+def standardize_column_names(df, verbose=verbose):
     log = []
     original_columns = df.columns.tolist()
     cleaned_columns = []
@@ -196,7 +160,7 @@ def round_currency(val):
         return np.nan
 
 
-def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=None):
+def clean_currency_columns(df, numeric_strategy="ignore", verbose=False):
 
     log = []
 
@@ -251,12 +215,8 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=
             # Step 3: Convert all final values to string
             df[col] = df[col].apply(lambda x: str(x) if not pd.isna(x) else "")
 
-            logger(f"##DEBUG amounts: {df[col].unique()}")
-
             msg = f"💲 Cleaned '{col}' as currency. Parsed: {len(df) - missing_total}, Filled: {filled}, Strategy: {numeric_strategy}."
             log.append(msg)
-            if logger:
-                logger(f"##DEBUG: {msg}")
 
             # Mark this column to skip in handle_missing_values()
             df.attrs.setdefault("currency_columns", []).append(col)
@@ -264,8 +224,6 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False, logger=
         except Exception as e:
             err_msg = f"⚠️ Failed to clean '{col}' as currency: {str(e)}."
             log.append(err_msg)
-            if logger:
-                logger(f"##ERROR: {err_msg}")
 
     return df, log
 
@@ -294,7 +252,7 @@ def is_likely_date(val):
     return False
 
 
-def normalize_dates(df, verbose=False, logger=None):
+def normalize_dates(df, verbose=False):
     log = []
 
     # Supported date formats — order matters (more specific first)
@@ -367,7 +325,7 @@ def is_column_actually_numeric(series):
         return False
 
 
-def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="ignore", verbose=True, logger=None):
+def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="ignore", verbose=True):
     log = []
 
     for col in df.columns:
@@ -457,7 +415,6 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                     
             except Exception:
                 log.append(f"⚠️ Unable to compute mean for numeric column '{col}' — no replacement applied.")
-            logger(f"##DEBUG missing values: ⚠️ Unable to compute mean for numeric column '{col}' — no replacement applied.")
 
     return df, log
 
