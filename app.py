@@ -47,17 +47,20 @@ page = st.sidebar.selectbox("📂 Choose a page", ["Welcome", "Clean My Data"])
 
 if page == "Welcome":
     st.markdown("""
-    ### Welcome to DataCleanPro 🧼  
+        <h2 style='text-align: center;'>Welcome to DataClean Pro 🧼</h2>
+    """, unsafe_allow_html=True)
+    st.markdown("""
     Whether you're dealing with missing values, inconsistent dates, or currency formatting, we've got you covered.
     Clean your dataset, download your results, and get back to real work — fast.
     """)
-
 
     st.markdown("""
         <span style='color:#2B78E4; font-size:1.2em; font-weight:bold'>
         &#128338; Save hours. Clean your data in less than a minute — without the dirty price tag. Pay only for what you clean — no subscriptions, no upsells, no tricks.
         </span>
     """, unsafe_allow_html=True)
+
+    st.markdown("<br><br>", unsafe_allow_html=True)  # Adds vertical space
 
     st.markdown("""
         #### ✅ What We Offer  
