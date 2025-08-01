@@ -19,6 +19,8 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore"):  #
     strip_log = []
     if non_numeric_strategy.lower() in ["ignore", "unknown"]:
         df, strip_log = strip_whitespace(df, strategy=non_numeric_strategy.lower())
+    else:
+        df, strip_log = strip_whitespace(df)
     log_lines.extend(strip_log)
 
     # 2. Drop empty rows
@@ -77,9 +79,7 @@ def strip_whitespace(df, strategy="ignore", verbose=True):
                     df.loc[new_nulls, col] = ""
 
             if verbose:
-                log.append(
-                    f"🧹 Stripped whitespace in '{col}'."
-                )
+                log.append(f"✂️ Stripped leading/trailing whitespace from '{col}'")
 
     return df, log
 
