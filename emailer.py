@@ -20,7 +20,7 @@ Timestamp: {entry['timestamp']}
     msg = MIMEText(body)
     msg['Subject'] = "📬 New Feedback - DataCleanPro"
     msg['From'] = st.secrets["smtp_user"]
-    msg['To'] = "admin@datacleanpro.com"
+    msg['To'] = "datacleanpro2025@gmail.com"
 
     try:
         with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
