@@ -251,8 +251,8 @@ elif page == "Clean My Data":
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     numeric_strategy=numeric_strategy.lower(),
-                    non_numeric_strategy=non_numeric_strategy.lower(),
-                    logger = st.write if debug_mode else None
+                    non_numeric_strategy=non_numeric_strategy.lower() #add comma if debug mode is reinstated
+                    #logger = st.write if debug_mode else None
                 )
 
                 st.session_state.cleaned_df = cleaned_df
