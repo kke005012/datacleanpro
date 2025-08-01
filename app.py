@@ -325,7 +325,7 @@ elif page == "Clean My Data":
                     smtp_app_password=st.secrets["smtp_app_password"]
                 )
                 if success:
-                    st.success("📧 Receipt sent to your email.")
+                    st.success("📧 Your receipt was emailed.")
                 else:
                     st.warning(f"⚠️ {message}")
 
@@ -345,7 +345,6 @@ elif page == "Clean My Data":
 
                 try:
                     append_log_to_sheet(log_entry)
-                    st.info("📊 Usage logged to Google Sheets.")
                 except Exception as e:
                     st.warning(f"⚠️ Failed to log usage: {e}")
 
