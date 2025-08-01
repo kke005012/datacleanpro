@@ -3,13 +3,14 @@ import gspread
 from google.oauth2.service_account import Credentials
 import traceback
 
-
-def append_log_to_sheet(log_entry: dict, spreadsheet_id: str):
+#Log usage to google sheet
+def append_log_to_sheet(log_entry: dict):
     try:
         credentials_dict = st.secrets["gcp_service_account"]
         scopes = ["https://www.googleapis.com/auth/spreadsheets"]
         credentials = Credentials.from_service_account_info(credentials_dict, scopes=scopes)
 
+        spreadsheet_id = st.secrets["google_sheet_id"]
         client = gspread.authorize(credentials)
         sheet = client.open_by_key(spreadsheet_id).sheet1
 
@@ -26,3 +27,38 @@ def append_log_to_sheet(log_entry: dict, spreadsheet_id: str):
         import traceback
         st.warning(f"⚠️ Failed to log usage: {e}")
         st.text(traceback.format_exc())  # Print full stack trace in Streamlit
+
+
+# Write to feedback tab of google sheet
+def append_feedback_to_sheet(entry):
+    import gspread
+    from google.oauth2.service_account import Credentials
+
+    # Define scope and credentials
+    scope = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive"
+    ]
+    creds = Credentials.from_service_account_file(
+        st.secrets["gcp_service_account"],
+        scopes=scope
+    )
+
+    client = gspread.authorize(creds)
+    spreadsheet_id = st.secrets["google_sheet_id"]
+    sheet = client.open_by_key(spreadsheet_id)
+
+    try:
+        feedback_tab = sheet.worksheet("Feedback")
+    except gspread.exceptions.WorksheetNotFound:
+        feedback_tab = sheet.add_worksheet(title="Feedback", rows="1000", cols="5")
+        feedback_tab.append_row(["timestamp", "category", "message", "name", "email"])
+
+    # Append the feedback data
+    feedback_tab.append_row([
+        entry["timestamp"],
+        entry["category"],
+        entry["message"],
+        entry["name"],
+        entry["email"]
+    ])

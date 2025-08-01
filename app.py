@@ -13,6 +13,8 @@ from email.mime.text import MIMEText
 import os
 import csv
 from google_sheets import append_log_to_sheet
+from feedback import show_sidebar_feedback
+
 
 from cleaner import (
     clean_data,
@@ -358,6 +360,8 @@ elif page == "Clean My Data":
                         #file_name=download_filename if uploaded_file else "cleaned_data.csv"
                 #)
 
+     # Show feedback form in the sidebar
+     show_sidebar_feedback()
 
 
 ## Test email function
