@@ -3,8 +3,9 @@ from email.mime.text import MIMEText
 import streamlit as st
 
 def send_feedback_email(entry):
-    smtp_user = st.secrets["smtp_user"]
-    smtp_pass = st.secrets["smtp_app_password"]
+    import smtplib
+    from email.mime.text import MIMEText
+    import streamlit as st
 
     body = f"""📬 New Feedback Received
 
@@ -18,9 +19,15 @@ Timestamp: {entry['timestamp']}
 
     msg = MIMEText(body)
     msg['Subject'] = "📬 New Feedback - DataCleanPro"
-    msg['From'] = smtp_user  # must match login
-    msg['To'] = "datacleanpro2025@gmail.com"
+    msg['From'] = st.secrets["smtp_user"]
+    msg['To'] = "admin@datacleanpro.com"
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(smtp_user, smtp_pass)
-        server.send_message(msg)
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
+            server.login(
+                st.secrets["smtp_user"],
+                st.secrets["smtp_app_password"]
+            )
+            server.send_message(msg)
+    except Exception:
+        pass

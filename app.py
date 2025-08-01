@@ -82,18 +82,15 @@ if page == "Welcome":
   <li><strong>$0.007 per row up to 100,000 rows</strong></li>
   <li><strong>Please contact us for custom pricing beyond 100,000 rows.</strong></li>
 </ul>
-<p>No commitments. No hidden fees.</p>
 """, unsafe_allow_html=True)
 
     st.markdown("""
+#### 👈 Use the sidebar to switch to **Clean My Data**
 #### 📨 Need Help?  
 Email us anytime: [admin@datacleanpro.com](mailto:datacleanpro2025@gmail.com)
-
-#### 👉 Use the sidebar to switch to **Clean My Data**
 """, unsafe_allow_html=True)
 
 elif page == "Clean My Data":
-    st.write("🔐 Secrets loaded keys:", list(st.secrets.keys()))
     # Style the buttons
     st.markdown("""
         <style>
@@ -118,9 +115,9 @@ elif page == "Clean My Data":
     st.title("🧹 Clean My Data")
 
     # Debug logger toggle
-    debug_mode = st.checkbox("🛠️ Enable Debug Mode")
-    if debug_mode:
-        st.info("🔍 Debug Mode is ON — showing internal logs.")
+    #debug_mode = st.checkbox("🛠️ Enable Debug Mode")
+    #if debug_mode:
+        #st.info("🔍 Debug Mode is ON — showing internal logs.")
     
     # === Add Header question in sidebar ===
     has_header = st.sidebar.checkbox("Uncheck if columns do not have titles.", value=True)

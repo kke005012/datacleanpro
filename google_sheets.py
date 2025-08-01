@@ -41,33 +41,27 @@ def append_feedback_to_sheet(entry):
     ]
 
     creds = Credentials.from_service_account_info(
-        st.secrets["gcp_service_account"],
-        scopes=scope
+        st.secrets["gcp_service_account"], scopes=scope
     )
-
     client = gspread.authorize(creds)
-    spreadsheet_id = st.secrets["google_sheet_id"] 
+
+    spreadsheet_id = st.secrets["google_sheet_id"]
+    sheet = client.open_by_key(spreadsheet_id)
 
     try:
-        sheet = client.open_by_key(spreadsheet_id)
-    except Exception as e:
-        print("❌ Failed to open sheet:", e)
-        raise
-
-    try:
-        worksheet = sheet.worksheet("Feedback")
+        tab = sheet.worksheet("Feedback")
     except gspread.exceptions.WorksheetNotFound:
-        worksheet = sheet.add_worksheet(title="Feedback", rows="1000", cols="5")
-        worksheet.append_row(["timestamp", "category", "message", "name", "email"])
+        tab = sheet.add_worksheet(title="Feedback", rows="1000", cols="5")
+        tab.append_row(["timestamp", "category", "message", "name", "email"])
 
+    # Fail silently if append fails
     try:
-        worksheet.append_row([
+        tab.append_row([
             entry["timestamp"],
             entry["category"],
             entry["message"],
             entry["name"],
             entry["email"]
         ])
-    except Exception as e:
-        print("❌ Failed to append row:", e)
-        raise
+    except Exception:
+        pass
