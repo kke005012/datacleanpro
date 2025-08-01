@@ -8,7 +8,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 import streamlit as st
 
-def send_receipt(to_email, amount, filename, cleaning_strategies=None, log_lines, smtp_user, smtp_app_password):
+def send_receipt(to_email, amount, filename, cleaning_strategies, log_lines, smtp_user, smtp_app_password):
     try:
         msg = EmailMessage()
         msg["Subject"] = "Your DataCleanPro Cleaning Receipt"
