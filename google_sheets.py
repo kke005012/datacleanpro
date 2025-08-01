@@ -46,7 +46,7 @@ def append_feedback_to_sheet(entry):
     )
 
     client = gspread.authorize(creds)
-    spreadsheet_id = "your_actual_sheet_id"  # ← or st.secrets["google_sheet_id"] if moved
+    spreadsheet_id = st.secrets["google_sheet_id"] 
 
     try:
         sheet = client.open_by_key(spreadsheet_id)
