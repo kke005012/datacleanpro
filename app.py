@@ -115,9 +115,9 @@ elif page == "Clean My Data":
     st.title("🧹 Clean My Data")
 
     # Debug logger toggle
-    #debug_mode = st.checkbox("🛠️ Enable Debug Mode")
-    #if debug_mode:
-        #st.info("🔍 Debug Mode is ON — showing internal logs.")
+    debug_mode = st.checkbox("🛠️ Enable Debug Mode")
+    if debug_mode:
+        st.info("🔍 Debug Mode is ON — showing internal logs.")
     
     # === Add Header question in sidebar ===
     has_header = st.sidebar.checkbox("Uncheck if columns do not have titles.", value=True)
@@ -251,8 +251,8 @@ elif page == "Clean My Data":
                 cleaned_df = clean_data(
                     st.session_state.raw_df.copy(),
                     numeric_strategy=numeric_strategy.lower(),
-                    non_numeric_strategy=non_numeric_strategy.lower() #add comma if debug mode is reinstated
-                    #logger = st.write if debug_mode else None
+                    non_numeric_strategy=non_numeric_strategy.lower(),     #add comma if debug mode is reinstated
+                    logger = st.write if debug_mode else None
                 )
 
                 st.session_state.cleaned_df = cleaned_df

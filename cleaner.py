@@ -9,9 +9,9 @@ from decimal import Decimal, ROUND_DOWN
 
 verbose = False 
 
-def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore"):  # add logger=None if debug mode is turned on in app.py
-    #if logger is None:
-        #logger = lambda *args, **kwargs: None  # no-op if not passed
+def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", logger=None):  # add logger=None if debug mode is turned on in app.py
+    if logger is None:
+        logger = lambda *args, **kwargs: None  # no-op if not passed
 
     log_lines = []
 
@@ -22,30 +22,37 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore"):  #
     else:
         df, strip_log = strip_whitespace(df)
     log_lines.extend(strip_log)
+    logger(f"##DEBUG whitespace ran {strip_log}")
 
     # 2. Drop empty rows
     df, drop_log = drop_empty_rows(df, verbose=verbose)
     log_lines.extend(drop_log)
+    logger(f"##DEBUG empty rows ran {drop_log}")
 
     # 3. Deduplicate
     df, dedup_log = deduplicate(df, verbose=verbose)
     log_lines.extend(dedup_log)
+    logger(f"##DEBUG dedupe ran {dedup_log}")
 
     # 4. Standardize column names
     df, colname_log = standardize_column_names(df, verbose=verbose)
     log_lines.extend(colname_log)
+    logger(f"##DEBUG standardize cols ran {colname_log}")
 
     # 5. Clean currency columns
     df, currency_log = clean_currency_columns(df, numeric_strategy=numeric_strategy, verbose=verbose)
     log_lines.extend(currency_log)
+    logger(f"##DEBUG currency ran {currency_log}")
 
     # 6. Normalize date columns
     df, date_log = normalize_dates(df, verbose=verbose)
     log_lines.extend(date_log)
+    logger(f"##DEBUG dates ran {date_log}")
 
     # 7. Handle missing values
     df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose)
     log_lines.extend(missing_log)
+    logger(f"##DEBUG hmv ran {missing_log}")
 
     # 8. (Optional) Final sanity check
     # df = final_sanity_check(df)
