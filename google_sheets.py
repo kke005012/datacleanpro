@@ -7,7 +7,8 @@ import traceback
 def append_log_to_sheet(log_entry: dict, spreadsheet_id: str):
     try:
         credentials_dict = st.secrets["gcp_service_account"]
-        credentials = Credentials.from_service_account_info(credentials_dict)
+        scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+        credentials = Credentials.from_service_account_info(credentials_dict, scopes=scopes)
 
         client = gspread.authorize(credentials)
         sheet = client.open_by_key(spreadsheet_id).sheet1
