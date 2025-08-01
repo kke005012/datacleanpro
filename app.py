@@ -390,6 +390,6 @@ def send_test_email():
     # === Footer ===
     st.markdown("""
         <div style='text-align: center; padding-top: 2em;'>
-            📩 Contact us: <a href='mailto:admin@datacleanpro.com'>admin@datacleanpro.com</a>
+            📩 Contact us: <a href='mailto:datacleanpro2025@gmail.com'>admin@datacleanpro.com</a>
         </div>
     """, unsafe_allow_html=True)

@@ -54,6 +54,9 @@ def show_sidebar_feedback():
                 try:
                     send_feedback_email(feedback_entry)
                 except Exception as e:
-                    print("⚠️ Feedback email error:", e)
+                    st.warning("⚠️ Feedback was logged but email failed to send.")
+                    st.text(f"❌ Email Error: {e}")
+                    import traceback
+                    traceback.print_exc()
 
                 st.success("✅ Thank you for your feedback!")
