@@ -291,6 +291,16 @@ elif page == "Clean My Data":
             email = st.text_input("📧 Enter your email to receive a receipt")
             if email:
                 st.session_state["user_email"] = email
+            
+            ## Simulated payment stuff starts
+            if cost > 0 and not st.session_state.get("payment_complete"):
+                st.warning("💳 Payment required before download. (Simulated in testing)")
+                # Simulate payment for testing
+                if st.button("💰 Simulate Payment"):
+                st.session_state["payment_complete"] = True
+                st.success("✅ Payment simulated. You may now download your cleaned data.")
+            ## Simulated payment stuff ends
+
             if (st.session_state.get("payment_complete", False) or cost == 0) and st.session_state.get("user_email"):
                 success, message = send_receipt(
                     to_email=st.session_state["user_email"],
