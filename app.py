@@ -10,6 +10,9 @@ import hashlib
 from mailer import send_receipt
 import smtplib
 from email.mime.text import MIMEText
+import os
+import csv
+from google_sheets import append_log_to_sheet
 
 from cleaner import (
     clean_data,
@@ -251,49 +254,16 @@ elif page == "Clean My Data":
 
             row_count = len(cleaned_df)
             cost, rows = calculate_price(row_count)
-
             st.session_state["row_count"] = row_count
             st.session_state["cost"] = cost
             st.session_state["total_rows"] = rows
-
+            
             if "cost" in st.session_state and "total_rows" in st.session_state:
                 st.markdown(f"**Standard Cost: ${st.session_state['cost']:.2f}**. Total Rows = {st.session_state['total_rows']}.")
 
-            if row_count > 100:
-                st.warning(f"Your file has {row_count} rows.")
-
-                user_email = st.text_input("📧 Enter your email to receive a receipt with cleaning details")
-
-                if user_email:
-                    st.success("✅ Email captured. Proceed to payment below.")
-
-                if user_email and st.button("💳 Proceed to Payment (Mock)"):
-                    st.session_state.payment_complete = True
-                    st.session_state.customer_email = user_email
-                    st.success("💰 Payment successful (mock)!")
-
-            smtp_user = st.secrets["smtp_user"]
-            smtp_app_password = st.secrets["smtp_app_password"]
-
-            # After cleaning & payment is successful
-            success, message = send_receipt(
-                to_email="kristi.esta@gmail.com",      #remove hardcoded email address and put user_email back,   Add email input field in sidebar or form
-                amount=calculated_price,
-                filename=uploaded_file.name,
-                strategy_dict={
-                    "numeric": numeric_strategy,
-                    "non_numeric": non_numeric_strategy,
-                    "currency": currency_strategy
-                },
-                log_lines=cleaned_df.attrs.get("log", []),
-                smtp_user="datacleanpro2025@gmail.com",
-                smtp_app_password=st.secrets["smtp_app_password"]
-            )
-
-            if success:
-                st.success("📧 Receipt sent to your email.")
-            else:
-                st.error(message)
+            if cost == 0:
+                st.info("✅ This file qualifies for free cleaning.")
+                st.session_state["payment_complete"] = True
 
             if st.checkbox("Show cleaning log"):
                 st.write("### 📋 Cleaning Log")
@@ -304,37 +274,66 @@ elif page == "Clean My Data":
                 else:
                     st.info("No cleaning actions were logged.")
 
-            st.download_button(
-                " 📥 Download Cleaned CSV",
-                data=cleaned_df.to_csv(index=False),
-                file_name=download_filename,
-                mime="text/csv"
-            )
-            print(cleaned_df.dtypes)
-            print(cleaned_df["price"].head())
-            if st.session_state.get("payment_complete", False):
-                cleaned_df = st.session_state.cleaned_df
-                if cleaned_df is not None:
-                    st.download_button(
+
+            ## PUT PAYMENT STUFF HERE
+
+
+            email = st.text_input("📧 Enter your email to receive a receipt")
+            if email:
+                st.session_state["user_email"] = email
+            if (st.session_state.get("payment_complete", False) or cost == 0) and st.session_state.get("user_email"):
+                success, message = send_receipt(
+                    to_email=st.session_state["user_email"],
+                    filename=uploaded_file.name,
+                    amount=cost,
+                    cleaning_strategies=[
+                        f"Numeric Strategy: {numeric_strategy}",
+                        f"Non-Numeric Strategy: {non_numeric_strategy}",
+                        "Currency Normalization",
+                        "Date Standardization",
+                        "Whitespace & Deduplication"
+                    ],
+                    log_lines=cleaned_df.attrs.get("log", []),
+                    smtp_user=st.secrets["smtp_user"],
+                    smtp_app_password=st.secrets["smtp_app_password"]
+                )
+                st.success("📧 Receipt sent to your email.") if success else st.warning(f"⚠️ {message}")
+
+
+                # ... after sending receipt ...
+                log_entry = {
+                    "timestamp": datetime.now().isoformat(),
+                    "email": st.session_state.get("user_email", "unknown"),
+                    "filename": uploaded_file.name,
+                    "row_count": len(cleaned_df),
+                    "charged": cost,
+                }
+
+                # Your actual sheet ID from the URL
+                spreadsheet_id = "1BomItCLK3VrduEhevlB7W-B0btpL_xUDI092J1x26P8"
+
+                try:
+                    append_log_to_sheet(log_entry, spreadsheet_id)
+                    st.info("📊 Usage logged to Google Sheets.")
+                except Exception as e:
+                    st.warning(f"⚠️ Failed to log usage: {e}")
+
+                st.download_button(
                     " 📥 Download Cleaned CSV",
                     data=cleaned_df.to_csv(index=False),
-                    file_name=download_filename if uploaded_file else "cleaned_data.csv"
-            )
+                    file_name=download_filename,
+                    mime="text/csv"
+                )
 
-        if st.button("📧 View Simulated Email Receipt"):
-            cleaning_log = write_log(st.session_state.raw_df, cleaned_df)
-            receipt = f"""
-            **Receipt for {st.session_state.customer_email}**
+                if st.session_state.get("payment_complete", False):
+                    cleaned_df = st.session_state.cleaned_df
+                    if cleaned_df is not None:
+                        st.download_button(
+                        " 📥 Download Cleaned CSV",
+                        data=cleaned_df.to_csv(index=False),
+                        file_name=download_filename if uploaded_file else "cleaned_data.csv"
+                )
 
-            ✅ Rows cleaned: {len(cleaned_df)}
-            💵 Amount Paid: ${cost:.2f}
-
-            🧹 Cleaning Actions:
-            """
-            for line in cleaning_log:
-                receipt += f"\n- {line}"
-
-            st.markdown(receipt)
 
 
 ## Test email function
@@ -356,10 +355,10 @@ def send_test_email():
     except Exception as e:
         st.error(f"Failed to send test email: {e}")
 
-st.markdown("---")
-st.subheader("📬 Email Testing")
-if st.button("📧 Send Test Email"):
-    send_test_email()
+#st.markdown("---")
+#st.subheader("📬 Email Testing")
+#if st.button("📧 Send Test Email"):
+    #send_test_email()
 
     # === Footer ===
     st.markdown("""
