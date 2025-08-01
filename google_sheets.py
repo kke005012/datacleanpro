@@ -33,32 +33,41 @@ def append_log_to_sheet(log_entry: dict):
 def append_feedback_to_sheet(entry):
     import gspread
     from google.oauth2.service_account import Credentials
+    import streamlit as st
 
-    # Define scope and credentials
     scope = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive"
     ]
-    creds = Credentials.from_service_account_file(
+
+    creds = Credentials.from_service_account_info(
         st.secrets["gcp_service_account"],
         scopes=scope
     )
 
     client = gspread.authorize(creds)
-    spreadsheet_id = st.secrets["google_sheet_id"]
-    sheet = client.open_by_key(spreadsheet_id)
+    spreadsheet_id = "your_actual_sheet_id"  # ← or st.secrets["google_sheet_id"] if moved
 
     try:
-        feedback_tab = sheet.worksheet("Feedback")
-    except gspread.exceptions.WorksheetNotFound:
-        feedback_tab = sheet.add_worksheet(title="Feedback", rows="1000", cols="5")
-        feedback_tab.append_row(["timestamp", "category", "message", "name", "email"])
+        sheet = client.open_by_key(spreadsheet_id)
+    except Exception as e:
+        print("❌ Failed to open sheet:", e)
+        raise
 
-    # Append the feedback data
-    feedback_tab.append_row([
-        entry["timestamp"],
-        entry["category"],
-        entry["message"],
-        entry["name"],
-        entry["email"]
-    ])
+    try:
+        worksheet = sheet.worksheet("Feedback")
+    except gspread.exceptions.WorksheetNotFound:
+        worksheet = sheet.add_worksheet(title="Feedback", rows="1000", cols="5")
+        worksheet.append_row(["timestamp", "category", "message", "name", "email"])
+
+    try:
+        worksheet.append_row([
+            entry["timestamp"],
+            entry["category"],
+            entry["message"],
+            entry["name"],
+            entry["email"]
+        ])
+    except Exception as e:
+        print("❌ Failed to append row:", e)
+        raise
