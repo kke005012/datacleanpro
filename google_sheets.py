@@ -5,7 +5,7 @@ import streamlit as st
 
 def append_log_to_sheet(log_entry, spreadsheet_id):
     # ✅ Parse credentials from secrets
-    creds_dict = json.loads(st.secrets["gcp_service_account"])
+    creds_dict = st.secrets["gcp_service_account"] 
 
     # ✅ Build credentials object
     scopes = ["https://www.googleapis.com/auth/spreadsheets"]
