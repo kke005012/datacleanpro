@@ -135,14 +135,24 @@ elif page == "Clean My Data":
                 "Numeric Columns",
                 options=["Ignore", "Unknown", "Average"],
                 index=0,
-                key="missing numeric"
+                key="missing numeric",
+                help="""
+                    - **Ignore**: Leaves missing numeric values blank.
+                    - **Unknown**: Replaces missing numeric values with -1.
+                    - **Average**: Replaces missing values with the column's average.
+                """
             )
             
             non_numeric_strategy = st.sidebar.radio(
                 "Text Columns",
                 options=["Ignore", "Unknown", "Mode"],
                 index=0,
-                key="missing non-numeric"
+                key="missing non-numeric",
+                help="""
+                    - **Ignore**: Leaves missing text values blank.
+                    - **Unknown**: Replaces them with 'Unknown'.
+                    - **Mode**: Fills missing values with the most frequent (mode) value in that column.
+                """
             )
 
     # === End of Sidebar Section ===
@@ -297,7 +307,11 @@ elif page == "Clean My Data":
                     smtp_user=st.secrets["smtp_user"],
                     smtp_app_password=st.secrets["smtp_app_password"]
                 )
-                st.success("📧 Receipt sent to your email.") if success else st.warning(f"⚠️ {message}")
+                if success:
+                    st.success("📧 Receipt sent to your email.")
+                else:
+                    st.warning(f"⚠️ {message}")
+
 
 
                 # ... after sending receipt ...
@@ -325,14 +339,14 @@ elif page == "Clean My Data":
                     mime="text/csv"
                 )
 
-                if st.session_state.get("payment_complete", False):
-                    cleaned_df = st.session_state.cleaned_df
-                    if cleaned_df is not None:
-                        st.download_button(
-                        " 📥 Download Cleaned CSV",
-                        data=cleaned_df.to_csv(index=False),
-                        file_name=download_filename if uploaded_file else "cleaned_data.csv"
-                )
+                #if st.session_state.get("payment_complete", False):
+                    #cleaned_df = st.session_state.cleaned_df
+                    #if cleaned_df is not None:
+                        #st.download_button(
+                        #" 📥 Download Cleaned CSV",
+                        #data=cleaned_df.to_csv(index=False),
+                        #file_name=download_filename if uploaded_file else "cleaned_data.csv"
+                #)
 
 
 
