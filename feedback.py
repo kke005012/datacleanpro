@@ -9,7 +9,7 @@ import traceback
 def show_sidebar_feedback():
     with st.sidebar:
         st.markdown("---")
-        st.markdown("#### 💬 Feedback")
+        st.markdown("#### 💬 Feedback Form")
 
         with st.form("sidebar_feedback_form"):
             category = st.selectbox(
@@ -19,13 +19,21 @@ def show_sidebar_feedback():
             )
             message = st.text_area("Your Message", placeholder="Tell us more...", height=120, key="feedback_message")
             name = st.text_input("Name (optional)", key="feedback_name")
-            email = st.text_input("Email (optional)", key="feedback_email")
+            email = st.text_input("Email *", key="feedback_email")
 
             submitted = st.form_submit_button("Submit")
 
             if submitted:
                 if not message.strip():
                     st.warning("Please enter a message.")
+                    return
+
+                if not email.strip():
+                    st.warning("Please enter your email address.")
+                    return
+
+                if "@" not in email or "." not in email:
+                    st.warning("Please enter a valid email address.")
                     return
 
                 feedback_entry = {

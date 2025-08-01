@@ -53,8 +53,12 @@ if page == "Welcome":
     """)
 
     st.markdown("""
-**Clean data shouldn’t come with a dirty price tag.**  
-Pay only for what you clean — no subscriptions, no upsells, no tricks.
+st.markdown("""
+<span style='color:#2B78E4; font-size:1.2em; font-weight:bold'>
+🕒 Save hours. Clean your data in less than a minute — without the dirty price tag.  Pay only for what you clean — no subscriptions, no upsells, no tricks.
+</span>
+""", unsafe_allow_html=True) 
+
 
 #### ✅ What We Offer  
 • Upload your messy CSV  
@@ -79,13 +83,13 @@ Pay only for what you clean — no subscriptions, no upsells, no tricks.
 
     st.markdown("""
 #### 📨 Need Help?  
-Email us anytime: [admin@datacleanpro.com](mailto:admin@datacleanpro.com)
+Email us anytime: [admin@datacleanpro.com](mailto:datacleanpro2025@gmail.com)
 
 #### 👉 Use the sidebar to switch to **Clean My Data**
 """, unsafe_allow_html=True)
 
 elif page == "Clean My Data":
-
+    st.write("🔐 Secrets loaded keys:", list(st.secrets.keys()))
     # Style the buttons
     st.markdown("""
         <style>
@@ -193,7 +197,7 @@ elif page == "Clean My Data":
             if len(df) > 100000:
                 st.error(
                     "❌ This app supports a maximum of 100,000 rows. Please upload a smaller file or "
-                    "[contact us](mailto:admin@datacleanpro.com) (admin@datacleanpro.com) for a custom order/pricing.",
+                    "[contact us][admin@datacleanpro.com](mailto:datacleanpro2025@gmail.com) for a custom order/pricing.",
                     icon="🚫"
                 )
                 st.stop()
