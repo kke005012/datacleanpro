@@ -65,9 +65,9 @@ if page == "Welcome":
 
     st.markdown("""
         #### ✅ What We Offer  
-        • Upload your messy CSV  
-        • Strip whitespace, fix formats, remove duplicates  
-        • Replace missing numeric/non-numeric values or leave as-is...your choice! 
+        - Upload your messy CSV  
+        - Strip whitespace, fix formats, remove duplicates  
+        - Replace missing numeric/non-numeric values or leave as-is...your choice! 
     """, unsafe_allow_html=True)
 
     st.markdown("""
