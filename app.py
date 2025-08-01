@@ -52,12 +52,12 @@ if page == "Welcome":
     Clean your dataset, download your results, and get back to real work — fast.
     """)
 
+
     st.markdown("""
-st.markdown("""
-<span style='color:#2B78E4; font-size:1.2em; font-weight:bold'>
-&#128338; Save hours. Clean your data in less than a minute — without the dirty price tag. Pay only for what you clean — no subscriptions, no upsells, no tricks.
-</span>
-""", unsafe_allow_html=True)
+        <span style='color:#2B78E4; font-size:1.2em; font-weight:bold'>
+        &#128338; Save hours. Clean your data in less than a minute — without the dirty price tag. Pay only for what you clean — no subscriptions, no upsells, no tricks.
+        </span>
+    """, unsafe_allow_html=True)
 
 
 #### ✅ What We Offer  
