@@ -35,7 +35,7 @@ def logger(*args):
 st.markdown(
     """
     <div style='background-color: #d4edda; padding: 5px; text-align: center; margin-bottom: 40px;'>
-        <p style='font-size: 16px; color: #155724; margin: 0;'>🧼 <strong>DataClean Pro</strong> is a cloud-based data cleaning app for real-world CSV files.</p>
+        <p style='font-size: 15px; color: #155724; margin: 0;'>🧼 <strong>DataClean Pro</strong> is a cloud-based data cleaning app for real-world CSV files.</p>
     </div>
     """,
     unsafe_allow_html=True
@@ -55,12 +55,12 @@ if page == "Welcome":
     """)
 
     st.markdown("""
-        <span style='color:#2B78E4; font-size:1.2em; font-weight:bold'>
+        <span style='color:#2B78E4; font-size:1.2em'>
         &#128338; Save hours. Clean your data in less than a minute — without the dirty price tag. Pay only for what you clean — no subscriptions, no upsells, no tricks.
         </span>
     """, unsafe_allow_html=True)
 
-    st.markdown("<br><br>", unsafe_allow_html=True)  # Adds vertical space
+    st.markdown("<br>", unsafe_allow_html=True)  # Adds vertical space
 
     st.markdown("""
         #### ✅ What We Offer  
