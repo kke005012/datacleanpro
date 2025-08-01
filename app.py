@@ -59,7 +59,7 @@ if page == "Welcome":
         </span>
     """, unsafe_allow_html=True)
 
-
+st.markdown("""
 #### ✅ What We Offer  
 • Upload your messy CSV  
 • Strip whitespace, fix formats, remove duplicates  
