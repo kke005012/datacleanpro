@@ -4,7 +4,7 @@ from google.oauth2.service_account import Credentials
 def append_log_to_sheet(log_entry: dict, spreadsheet_id: str, sheet_name: str = "Logs"):
     # Define scope and authorize using credentials
     scopes = ["https://www.googleapis.com/auth/spreadsheets"]
-    creds = Credentials.from_service_account_file("google-credentials.json", scopes=scopes)
+    creds = Credentials.from_service_account_file("credentials.json", scopes=scopes)
     client = gspread.authorize(creds)
 
     # Open the spreadsheet by ID
