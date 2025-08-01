@@ -336,10 +336,10 @@ elif page == "Clean My Data":
                 }
 
                 # Your actual sheet ID from the URL
-                spreadsheet_id = "1BomItCLK3VrduEhevlB7W-B0btpL_xUDI092J1x26P8"
+                #spreadsheet_id = "1BomItCLK3VrduEhevlB7W-B0btpL_xUDI092J1x26P8"
 
                 try:
-                    append_log_to_sheet(log_entry, spreadsheet_id)
+                    append_log_to_sheet(log_entry)
                     st.info("📊 Usage logged to Google Sheets.")
                 except Exception as e:
                     st.warning(f"⚠️ Failed to log usage: {e}")
@@ -351,17 +351,8 @@ elif page == "Clean My Data":
                     mime="text/csv"
                 )
 
-                #if st.session_state.get("payment_complete", False):
-                    #cleaned_df = st.session_state.cleaned_df
-                    #if cleaned_df is not None:
-                        #st.download_button(
-                        #" 📥 Download Cleaned CSV",
-                        #data=cleaned_df.to_csv(index=False),
-                        #file_name=download_filename if uploaded_file else "cleaned_data.csv"
-                #)
-
-     # Show feedback form in the sidebar
-     show_sidebar_feedback()
+    # Show feedback form in the sidebar
+    show_sidebar_feedback()
 
 
 ## Test email function
