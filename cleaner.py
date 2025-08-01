@@ -9,7 +9,7 @@ from decimal import Decimal, ROUND_DOWN
 
 verbose = False 
 
-def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", logger=None):
+def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore"):  # add logger=None if debug mode is turned on in app.py
     if logger is None:
         logger = lambda *args, **kwargs: None  # no-op if not passed
 
