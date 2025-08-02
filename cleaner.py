@@ -235,27 +235,41 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False):
     return df, log
 
 
-def is_likely_date(val):
-    if not isinstance(val, str):
-        val = str(val)
-    val = val.strip().lower()
-    if any(month in val for month in [
-        "jan", "feb", "mar", "apr", "may", "jun",
-        "jul", "aug", "sep", "oct", "nov", "dec"
-    ]):
-        return True
-    if "t" in val and "z" in val:
-        return True
-    import re
-    if re.match(r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}", val):
-        return True
-    if re.match(r"\d{4}[./-]\d{1,2}[./-]\d{1,2}", val):
-        return True
-    if re.match(r"\d{8}$", val):
-        return True
-    if re.match(r"\d{1,2}-[a-z]{3}-\d{2,4}", val):
-        return True
-    return False
+def is_likely_date_column(series):
+    sample = series.dropna().astype(str).head(10)
+    matches = 0
+
+    for val in sample:
+        val = val.strip().lower()
+
+        if any(month in val for month in [
+            "jan", "feb", "mar", "apr", "may", "jun",
+            "jul", "aug", "sep", "oct", "nov", "dec"
+        ]):
+            matches += 1
+            continue
+
+        if "t" in val and "z" in val:
+            matches += 1
+            continue
+
+        if re.match(r"\d{1,2}[/-]\d{1,2}[/-]\d{2,4}", val):
+            matches += 1
+            continue
+
+        if re.match(r"\d{4}[./-]\d{1,2}[./-]\d{1,2}", val):
+            matches += 1
+            continue
+
+        if re.match(r"\d{8}$", val):
+            matches += 1
+            continue
+
+        if re.match(r"\d{1,2}-[a-z]{3}-\d{2,4}", val):
+            matches += 1
+            continue
+
+    return matches / len(sample) >= 0.8  # Only convert if 80%+ look like dates
 
 
 def normalize_dates(df, verbose=False):
