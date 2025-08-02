@@ -30,7 +30,6 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     # 3. Deduplicate
     df, dedup_log = deduplicate(df, verbose=verbose)
     log_lines.extend(dedup_log)
-    logger(f"##DEBUG dedupe ran {dedup_log}")
 
     # 4. Standardize column names
     df, colname_log = standardize_column_names(df, verbose=verbose)
@@ -359,19 +358,17 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
         # Get list of date columns to be skipped by handle_missing_values
         date_cols = df.attrs.get("date_columns", [])
         logger(f"##DEBUG date cols:", df.attrs.get("date_columns", []))
-        for col in df.columns:
-            if col in date_cols:
-                if verbose:
-                    log.append(f"💵 Skipped '{col}' in missing value handler — already processed as date.")
+        if col in date_cols:
+            if verbose:
+                log.append(f"💵 Skipped '{col}' in missing value handler — already processed as date.")
             continue
 
         # Get list of currency columns to be skipped by handle_missing_values
         currency_cols = df.attrs.get("currency_columns", [])
         logger(f"##DEBUG currency cols:", df.attrs.get("currency_columns", []))
-        for col in df.columns:
-            if col in currency_cols:
-                if verbose:
-                    log.append(f"💵 Skipped '{col}' in missing value handler — already processed as currency.")       
+        if col in currency_cols:
+            if verbose:
+                log.append(f"💵 Skipped '{col}' in missing value handler — already processed as currency.")       
             continue
             
         # --- Step 1: Run heuristic ---
