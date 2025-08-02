@@ -330,7 +330,6 @@ elif page == "Clean My Data":
                     st.warning(f"⚠️ {message}")
 
 
-
                 # ... after sending receipt ...
                 log_entry = {
                     "timestamp": datetime.now().isoformat(),
@@ -339,9 +338,6 @@ elif page == "Clean My Data":
                     "row_count": len(cleaned_df),
                     "charged": cost,
                 }
-
-                # Your actual sheet ID from the URL
-                #spreadsheet_id = "1BomItCLK3VrduEhevlB7W-B0btpL_xUDI092J1x26P8"
 
                 try:
                     append_log_to_sheet(log_entry)

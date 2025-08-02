@@ -72,7 +72,7 @@ def strip_whitespace(df, strategy="ignore", verbose=False):
             stripped = df[col].where(original_nulls, df[col].astype(str).str.strip())
             # Re-assign column
             df[col] = stripped
-            num_stripped =+ 1
+            num_stripped = num_stripped + 1
 
             # Now detect new NaNs introduced *after* strip
             new_nulls = df[col].isna() & ~original_nulls
@@ -87,7 +87,7 @@ def strip_whitespace(df, strategy="ignore", verbose=False):
             if verbose:
                 log.append(f"✂️ Stripped leading/trailing whitespace from '{col}'")
     
-    log.append(f"✂️ Stripped leading/trailing whitespace from '{num_stripped}' columns.")
+    log.append(f"✂️ Stripped leading/trailing whitespace from {num_stripped} columns.")
 
     return df, log
 
@@ -275,6 +275,7 @@ def is_likely_date(series):
 
 def normalize_dates(df, verbose=False):
     log = []
+    date_cols = []
 
     # Supported date formats — order matters (more specific first)
     date_formats = [
@@ -309,6 +310,8 @@ def normalize_dates(df, verbose=False):
                 df[col] = df[col].apply(try_formats)
                 unknowns = (df[col] == "Unknown").sum()
                 parsed = len(df) - unknowns
+                # Mark this column to skip in handle_missing_values()
+                df.attrs.setdefault("date_columns", []).append(col)
                 log.append(f"📅 Normalized '{col}' as date. Parsed: {parsed}, Unknown: {unknowns}.")
             elif verbose:
                 log.append(f"ℹ️ Skipped '{col}': not enough recognizable dates.")
@@ -351,10 +354,20 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
 
     for col in df.columns:
         # Skip likely date columns
-        if is_likely_date(df[col]):                #any(is_likely_date(val) for val in df[col].dropna().astype(str).head(10)):
-            if verbose:
-                log.append(f"📆 Skipping missing value handling for likely date column '{col}'.")
-            logger(f"##DEBUG: Skipping missing value handling for likely date column '{col}'.")
+        #if is_likely_date(df[col]):                #any(is_likely_date(val) for val in df[col].dropna().astype(str).head(10)):
+            #if verbose:
+                #log.append(f"📆 Skipping missing value handling for likely date column '{col}'.")
+            #logger(f"##DEBUG: Skipping missing value handling for likely date column '{col}'.")
+            #continue
+
+        # Get list of date columns to be skipped by handle_missing_values
+        date_cols = df.attrs.get("date_columns", [])
+        logger(f"##DEBUG date cols:", df.attrs.get("currency_columns", []))
+        for col in df.columns:
+            if col in date_cols:
+                if verbose:
+                    log.append(f"💵 Skipped '{col}' in missing value handler — already processed as date.")
+            logger(f"##DEBUG: Skipping missing value handling bc date col '{col}'.")            
             continue
 
         # Get list of currency columns to be skipped by handle_missing_values
@@ -392,11 +405,11 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
 
            if numeric_strategy == "unknown":
                if df[col].isna().sum() > 0:
-                   df[col] = df[col].astype(object).fillna("Unknown")
+                   df[col] = df[col].astype(object).fillna("-1")
                    log.append(
-                       f"🔧 Replaced {missing_total} missing or invalid values in numeric column '{col}' with 'Unknown'."
+                       f"🔧 Replaced {missing_total} missing or invalid values in numeric column '{col}' with '-1'."
                    )
-                   logger(f"##DEBUG junk count non num unk = Replaced {missing_total} missing or invalid values in numeric column '{col}' with 'Unknown'")
+                   logger(f"##DEBUG junk count non num unk = Replaced {missing_total} missing or invalid values in numeric column '{col}' with '-1'")
 
            elif numeric_strategy == "ignore":
                if df[col].isna().sum() > 0:
