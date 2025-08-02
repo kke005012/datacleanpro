@@ -378,12 +378,12 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
         sample = df[col].dropna().astype(str).head(50)
         numeric_like = pd.to_numeric(sample, errors="coerce").notna().sum()
         is_numeric_like = numeric_like / len(sample) > 0.7 if len(sample) > 0 else False
-        logger(f"##DEBUG run heuristic: is numeric like is {is_numeric_like}".)
+        logger(f"##DEBUG is_numeric_like = {is_numeric_like}")
 
         # --- Step 2: Handle numeric-like columns ---
         if is_numeric_like:
             original_col = df[col].copy()
-            logger(f"##DE BUG original col = {original_col}")
+            logger(f"##DEBUG original col = {original_col}")
             df[col] = pd.to_numeric(df[col], errors="coerce")
             missing_total = df[col].isna().sum()
             junk_count = (original_col.notna() & df[col].isna()).sum()
