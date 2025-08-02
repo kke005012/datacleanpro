@@ -355,13 +355,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
     log = []
 
     for col in df.columns:
-        # Skip likely date columns
-        #if is_likely_date(df[col]):                #any(is_likely_date(val) for val in df[col].dropna().astype(str).head(10)):
-            #if verbose:
-                #log.append(f"📆 Skipping missing value handling for likely date column '{col}'.")
-            #logger(f"##DEBUG: Skipping missing value handling for likely date column '{col}'.")
-            #continue
-
+        logger(f"##DEBUG col is: {col}")
         # Get list of date columns to be skipped by handle_missing_values
         date_cols = df.attrs.get("date_columns", [])
         logger(f"##DEBUG date cols:", df.attrs.get("date_columns", []))
@@ -384,6 +378,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
         sample = df[col].dropna().astype(str).head(50)
         numeric_like = pd.to_numeric(sample, errors="coerce").notna().sum()
         is_numeric_like = numeric_like / len(sample) > 0.7 if len(sample) > 0 else False
+        logger(f"##DEBUG run heuristic: is numeric like is {is_numeric_like}".)
 
         # --- Step 2: Handle numeric-like columns ---
         if is_numeric_like:
