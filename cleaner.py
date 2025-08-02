@@ -72,6 +72,7 @@ def strip_whitespace(df, strategy="ignore", verbose=False):
             stripped = df[col].where(original_nulls, df[col].astype(str).str.strip())
             # Re-assign column
             df[col] = stripped
+            num_stripped =+ 1
 
             # Now detect new NaNs introduced *after* strip
             new_nulls = df[col].isna() & ~original_nulls
