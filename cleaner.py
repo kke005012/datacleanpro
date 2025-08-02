@@ -331,7 +331,7 @@ def is_column_actually_numeric(series):
         return False
 
 
-def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="ignore", verbose=False):
+def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="ignore", verbose=False, logger=None):
     log = []
 
     for col in df.columns:
