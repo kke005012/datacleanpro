@@ -351,7 +351,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
 
     for col in df.columns:
         # Skip likely date columns
-        if any(is_likely_date(val) for val in df[col].dropna().astype(str).head(10)):
+        if is_likely_date_column(df[col]):                #any(is_likely_date(val) for val in df[col].dropna().astype(str).head(10)):
             if verbose:
                 log.append(f"📆 Skipping missing value handling for likely date column '{col}'.")
             logger(f"##DEBUG: Skipping missing value handling for likely date column '{col}'.")
