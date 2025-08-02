@@ -235,7 +235,7 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False):
     return df, log
 
 
-def is_likely_date_column(series):
+def is_likely_date(series):
     sample = series.dropna().astype(str).head(10)
     matches = 0
 
