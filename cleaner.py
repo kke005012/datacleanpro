@@ -41,7 +41,7 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     log_lines.extend(currency_log)
 
     # 6. Normalize date columns
-    df, date_log = normalize_dates(df, verbose=verbose)
+    df, date_log = normalize_dates(df, non_numeric_strategy=non_numeric_strategy, verbose=verbose)
     log_lines.extend(date_log)
     logger(f"##DEBUG dates ran {date_log}")
 
@@ -273,7 +273,7 @@ def is_likely_date(series):
     return matches / len(sample) >= 0.8  # Only convert if 80%+ look like dates
 
 
-def normalize_dates(df, verbose=False):
+def normalize_dates(df, verbose=False, non_numeric_strategy="ignore"):
     log = []
     date_cols = []
 
@@ -312,6 +312,8 @@ def normalize_dates(df, verbose=False):
                 parsed = len(df) - unknowns
                 # Mark this column to skip in handle_missing_values()
                 df.attrs.setdefault("date_columns", []).append(col)
+                if non_numeric_strategy == "ignore":
+                    df[col] = df[col].replace("Unknown", "")
                 log.append(f"📅 Normalized '{col}' as date. Parsed: {parsed}, Unknown: {unknowns}.")
             elif verbose:
                 log.append(f"ℹ️ Skipped '{col}': not enough recognizable dates.")
@@ -362,12 +364,11 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
 
         # Get list of date columns to be skipped by handle_missing_values
         date_cols = df.attrs.get("date_columns", [])
-        logger(f"##DEBUG date cols:", df.attrs.get("currency_columns", []))
+        logger(f"##DEBUG date cols:", df.attrs.get("date_columns", []))
         for col in df.columns:
             if col in date_cols:
                 if verbose:
                     log.append(f"💵 Skipped '{col}' in missing value handler — already processed as date.")
-            logger(f"##DEBUG: Skipping missing value handling bc date col '{col}'.")            
             continue
 
         # Get list of currency columns to be skipped by handle_missing_values
@@ -376,8 +377,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
         for col in df.columns:
             if col in currency_cols:
                 if verbose:
-                    log.append(f"💵 Skipped '{col}' in missing value handler — already processed as currency.")
-            logger(f"##DEBUG: Skipping missing value handling for likely date column '{col}'.")            
+                    log.append(f"💵 Skipped '{col}' in missing value handler — already processed as currency.")       
             continue
             
         # --- Step 1: Run heuristic ---
