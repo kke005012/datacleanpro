@@ -22,12 +22,10 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     else:
         df, strip_log = strip_whitespace(df)
     log_lines.extend(strip_log)
-    logger(f"##DEBUG whitespace ran {strip_log}")
 
     # 2. Drop empty rows
     df, drop_log = drop_empty_rows(df, verbose=verbose)
     log_lines.extend(drop_log)
-    logger(f"##DEBUG empty rows ran {drop_log}")
 
     # 3. Deduplicate
     df, dedup_log = deduplicate(df, verbose=verbose)
@@ -37,12 +35,10 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     # 4. Standardize column names
     df, colname_log = standardize_column_names(df, verbose=verbose)
     log_lines.extend(colname_log)
-    logger(f"##DEBUG standardize cols ran {colname_log}")
 
     # 5. Clean currency columns
     df, currency_log = clean_currency_columns(df, numeric_strategy=numeric_strategy, verbose=verbose)
     log_lines.extend(currency_log)
-    logger(f"##DEBUG currency ran {currency_log}")
 
     # 6. Normalize date columns
     df, date_log = normalize_dates(df, verbose=verbose)
@@ -50,7 +46,7 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
     logger(f"##DEBUG dates ran {date_log}")
 
     # 7. Handle missing values
-    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose)
+    df, missing_log = handle_missing_values(df, numeric_strategy, non_numeric_strategy, verbose=verbose, logger=logger)
     log_lines.extend(missing_log)
     logger(f"##DEBUG hmv ran {missing_log}")
 
@@ -63,8 +59,10 @@ def clean_data(df, numeric_strategy="ignore", non_numeric_strategy="ignore", log
 
     return df
 
-def strip_whitespace(df, strategy="ignore", verbose=True):
+def strip_whitespace(df, strategy="ignore", verbose=False):
     log = []
+    num_stripped = 0
+
     for col in df.columns:
         if df[col].dtype == object or df[col].dtype.name == "category":
             # Save original null mask
@@ -87,11 +85,13 @@ def strip_whitespace(df, strategy="ignore", verbose=True):
 
             if verbose:
                 log.append(f"✂️ Stripped leading/trailing whitespace from '{col}'")
+    
+    log.append(f"✂️ Stripped leading/trailing whitespace from '{num_stripped}' columns.")
 
     return df, log
 
 
-def drop_empty_rows(df, verbose=verbose):
+def drop_empty_rows(df, verbose=False):
     log = []
     original_len = len(df)
     df = df.dropna(axis=0, how='all')
@@ -104,7 +104,7 @@ def drop_empty_rows(df, verbose=verbose):
     return df, log
 
 
-def deduplicate(df, verbose=verbose):
+def deduplicate(df, verbose=False):
     log = []
     original_len = len(df)
     df = df.drop_duplicates()
@@ -118,7 +118,7 @@ def deduplicate(df, verbose=verbose):
     return df, log
 
 
-def standardize_column_names(df, verbose=verbose):
+def standardize_column_names(df, verbose=False):
     log = []
     original_columns = df.columns.tolist()
     cleaned_columns = []
@@ -235,7 +235,6 @@ def clean_currency_columns(df, numeric_strategy="ignore", verbose=False):
     return df, log
 
 
-
 def is_likely_date(val):
     if not isinstance(val, str):
         val = str(val)
@@ -332,7 +331,7 @@ def is_column_actually_numeric(series):
         return False
 
 
-def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="ignore", verbose=True):
+def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="ignore", verbose=False):
     log = []
 
     for col in df.columns:
@@ -340,16 +339,19 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
         if any(is_likely_date(val) for val in df[col].dropna().astype(str).head(10)):
             if verbose:
                 log.append(f"📆 Skipping missing value handling for likely date column '{col}'.")
+            logger(f"##DEBUG: Skipping missing value handling for likely date column '{col}'.")
             continue
 
         # Get list of currency columns to be skipped by handle_missing_values
         currency_cols = df.attrs.get("currency_columns", [])
+        logger(f"##DEBUG currency cols:", df.attrs.get("currency_columns", [])
         for col in df.columns:
             if col in currency_cols:
                 if verbose:
                     log.append(f"💵 Skipped '{col}' in missing value handler — already processed as currency.")
+            logger(f"##DEBUG: Skipping missing value handling for likely date column '{col}'.")            
             continue
-
+            
         # --- Step 1: Run heuristic ---
         sample = df[col].dropna().astype(str).head(50)
         numeric_like = pd.to_numeric(sample, errors="coerce").notna().sum()
@@ -358,9 +360,11 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
         # --- Step 2: Handle numeric-like columns ---
         if is_numeric_like:
             original_col = df[col].copy()
+            logger(f"##DE BUG original col = {original_col}")
             df[col] = pd.to_numeric(df[col], errors="coerce")
             missing_total = df[col].isna().sum()
             junk_count = (original_col.notna() & df[col].isna()).sum()
+            logger(f"##DEBUG missing total = {missing_total} and junk_count = {junk_count}")
 
         if pd.api.types.is_numeric_dtype(df[col]):
            original_non_na = df[col].notna().sum()
@@ -369,6 +373,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
            df[col] = pd.to_numeric(df[col], errors="coerce")
            coerced_na = df[col].isna().sum() - (df.shape[0] - original_non_na)
            junk_count = (original_col.notna() & df[col].isna()).sum()
+           logger(f"##DEBUG2 missing total = {missing_total} and junk_count = {junk_count}")
 
            if numeric_strategy == "unknown":
                if df[col].isna().sum() > 0:
@@ -376,6 +381,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                    log.append(
                        f"🔧 Replaced {missing_total} missing or invalid values in numeric column '{col}' with 'Unknown'."
                    )
+                   logger(f"##DEBUG junk count non num unk = Replaced {missing_total} missing or invalid values in numeric column '{col}' with 'Unknown'")
 
            elif numeric_strategy == "ignore":
                if df[col].isna().sum() > 0:
@@ -392,6 +398,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                 if junk_count > 0:
                     df[col] = df[col].mask(junk_mask, "Unknown")
                     log.append(f"🛠️ Replaced {junk_count} missing or invalid values in text column '{col}' with 'Unknown'.")
+                logger(f"##DEBUG junk count non num unk = {junk_count} for {col}")
 
             elif non_numeric_strategy == "mode":
                 try:
@@ -401,6 +408,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                     if junk_count > 0:
                         df[col] = df[col].mask(junk_mask, mode_val)
                         log.append(f"🛠️ Replaced {junk_count} missing or invalid values in text column '{col}' with mode value: '{mode_val}'.")
+                    logger(f"##DEBUG junk count non num mode = {junk_count} for {col}")
 
                 except Exception:
                     log.append(f"⚠️ Unable to compute mode for column '{col}' — no replacement applied.")
@@ -416,9 +424,11 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
                 df[col] = pd.to_numeric(df[col], errors="coerce")
                 mean_val = df[col].mean()
                 missing_count = df[col].isna().sum()
+                logger(f"##DEBUG num average missing count = {missing_count} for col {col}")
                 if missing_count > 0:
                     df[col] = df[col].fillna(mean_val)
                     log.append(f"🛠️ Replaced {missing_count} missing values in numeric column '{col}' with mean value: {mean_val:.2f}.")
+                logger(f"##DEBUG: Replaced {missing_count} missing values in numeric column '{col}' with mean value: {mean_val:.2f}.")
                     
             except Exception:
                 log.append(f"⚠️ Unable to compute mean for numeric column '{col}' — no replacement applied.")
