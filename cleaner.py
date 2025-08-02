@@ -344,7 +344,7 @@ def handle_missing_values(df, numeric_strategy="ignore", non_numeric_strategy="i
 
         # Get list of currency columns to be skipped by handle_missing_values
         currency_cols = df.attrs.get("currency_columns", [])
-        logger(f"##DEBUG currency cols:", df.attrs.get("currency_columns", [])
+        logger(f"##DEBUG currency cols:", df.attrs.get("currency_columns", []))
         for col in df.columns:
             if col in currency_cols:
                 if verbose:
