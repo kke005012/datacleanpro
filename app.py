@@ -334,7 +334,7 @@ elif page == "Clean My Data":
                     st.warning(f"⚠️ Payment verified, but failed to retrieve session info: {e}")
 
             # Check for verified payment in the sheet
-            if (was_payment_logged(st.session_state["user_email"], uploaded_file.name) or cost == 0) and st.session_state.get("user_email"):
+            if (was_payment_logged(st.session_state["user_email"], filename) or cost == 0) and st.session_state.get("user_email"):
                 success, message = send_receipt(
                     to_email=st.session_state["user_email"],
                     filename,
