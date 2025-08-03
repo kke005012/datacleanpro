@@ -292,10 +292,9 @@ elif page == "Clean My Data":
                         st.markdown(f"- {line}")
                 else:
                     st.info("No cleaning actions were logged.")
-
-
+        
             email = st.text_input("📧 Enter your email to receive a receipt *.")
-            # Basic format check
+            # Get email and perform basic format check
             if not email:
                 st.warning("⚠️ Please enter your email address to continue.")
                 st.stop()
@@ -307,7 +306,7 @@ elif page == "Clean My Data":
 
             filename=uploaded_file.name
             # Change cost to cents for Stripe payment
-            cost_cents = cost * 100
+            cost_cents = int(cost * 100)
             
             ## --- Payment stuff starts            
             if cost > 0:
