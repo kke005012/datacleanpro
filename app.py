@@ -398,17 +398,13 @@ def render_footer():
     )
     
     # Social Media bs
-    <div class="footer">
-        <a href="https://www.facebook.com/profile.php?id=61578870128114&sk=about_details" target="_blank">
-            <img src="https://img.icons8.com/ios-filled/30/000000/facebook-new.png" alt="Facebook">
-        </a>
-        <a href="https://www.linkedin.com/company/dataclean-pro" target="_blank">
-            <img src="https://img.icons8.com/ios-filled/30/000000/linkedin.png" alt="LinkedIn">
-        </a>
-        <a href="https://www.instagram.com/data.cleanpro" target="_blank">
-            <img src="https://img.icons8.com/ios-filled/30/000000/instagram-new.png" alt="Instagram">
-        </a>
-    </div>
+st.markdown("""
+<div class="footer" style="text-align: right; margin-top: 50px;">
+  <a href="https://www.facebook.com/datacleanpro" target="_blank">📘 Facebook</a> |
+  <a href="https://www.instagram.com/datacleanpro" target="_blank">📸 Instagram</a> |
+  <a href="https://www.linkedin.com/company/datacleanpro" target="_blank">💼 LinkedIn</a>
+</div>
+""", unsafe_allow_html=True)
 
 
 
