@@ -400,9 +400,9 @@ def render_footer():
     # Social Media bs
 st.markdown("""
 <div class="footer" style="text-align: right; margin-top: 50px;">
-  <a href="https://www.facebook.com/datacleanpro" target="_blank">📘 Facebook</a> |
-  <a href="https://www.instagram.com/datacleanpro" target="_blank">📸 Instagram</a> |
-  <a href="https://www.linkedin.com/company/datacleanpro" target="_blank">💼 LinkedIn</a>
+  <a href="https://www.facebook.com/search/top/?q=dataclean" target="_blank">📘 Facebook</a> |
+  <a href="https://www.instagram.com/data.cleanpro" target="_blank">📸 Instagram</a> |
+  <a href="https://www.linkedin.com/company/dataclean-pro" target="_blank">💼 LinkedIn</a>
 </div>
 """, unsafe_allow_html=True)
 
