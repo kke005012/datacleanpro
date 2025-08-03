@@ -4,3 +4,4 @@ pandas
 stripe
 gspread
 oauth2client
+matplotlib
