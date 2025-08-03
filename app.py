@@ -309,7 +309,7 @@ elif page == "Clean My Data":
             
             if cost > 0:
                 if st.button("💳 Pay Now"):
-                    checkout_url = create_checkout_session(cost, email, uploaded_file.name)
+                    checkout_url = create_checkout_session(int(cost * 100), email, uploaded_file.name)
                     if checkout_url:
                         st.markdown(f"[🔗 Click here to complete payment]({checkout_url})", unsafe_allow_html=True)
             else:
