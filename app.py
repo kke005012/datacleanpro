@@ -310,9 +310,14 @@ elif page == "Clean My Data":
             ## --- Payment stuff starts            
             if cost > 0:
                 if st.button("💳 Pay Now"):
-                    checkout_url = create_checkout_session(int(cost * 100), email, filename)
+                    checkout_url = create_checkout_session(cost_cents, email, uploaded_file.name)
                     if checkout_url:
-                        st.markdown(f"[🔗 Click here to complete payment]({checkout_url})", unsafe_allow_html=True)
+                        # JavaScript to open Stripe Checkout in a new tab
+                        st.components.v1.html(
+                            f"""<script>window.open('{checkout_url}', '_blank')</script>""",
+                            height=0,
+                        )
+                        st.info("🔁 Payment window opened. Please complete payment in the new tab.")
             else:
                 st.success("✅ No payment required — you may download your file.")
             ## --- Payment stuff ends
