@@ -20,7 +20,7 @@ def create_checkout_session(cost_cents, user_email, filename):
                 "quantity": 1,
             }],
             mode="payment",
-            success_url="https://datacleanpro.streamlit.app/?status=success&session_id={CHECKOUT_SESSION_ID}"",
+            success_url="https://datacleanpro.streamlit.app/?status=success&session_id={CHECKOUT_SESSION_ID}",
             cancel_url="https://datacleanpro.streamlit.app/?status=cancel&session_id={CHECKOUT_SESSION_ID}",
             customer_email=user_email,
             metadata={"filename": filename}
