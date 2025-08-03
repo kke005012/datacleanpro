@@ -306,6 +306,8 @@ elif page == "Clean My Data":
                 st.session_state["user_email"] = email
 
             filename=uploaded_file.name
+            # Change cost to cents for Stripe payment
+            cost_cents = cost * 100
             
             ## --- Payment stuff starts            
             if cost > 0:
