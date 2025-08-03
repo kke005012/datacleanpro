@@ -14,7 +14,8 @@ import os
 import csv
 from google_sheets import append_log_to_sheet
 from feedback import show_sidebar_feedback
-
+from checkout import create_checkout_session
+import payment
 
 from cleaner import (
     clean_data,
@@ -292,23 +293,46 @@ elif page == "Clean My Data":
                     st.info("No cleaning actions were logged.")
 
 
-            ## PUT PAYMENT STUFF HERE
-
-
-            email = st.text_input("📧 Enter your email to receive a receipt")
-            if email:
+            email = st.text_input("📧 Enter your email to receive a receipt *.")
+            # Basic format check
+            if not email:
+                st.warning("⚠️ Please enter your email address to continue.")
+                st.stop()
+            elif "@" not in email or "." not in email:
+                st.warning("⚠️ That doesn’t look like a valid email address.")
+                st.stop()
+            else:
                 st.session_state["user_email"] = email
-            
-            ## Simulated payment stuff starts
-            if cost > 0 and not st.session_state.get("payment_complete"):
-                st.warning("💳 Payment required before download. (Simulated in testing)")
-                # Simulate payment for testing
-                if st.button("💰 Simulate Payment"):
-                    st.session_state["payment_complete"] = True
-                    st.success("✅ Payment simulated. You may now download your cleaned data.")
-            ## Simulated payment stuff ends
 
-            if (st.session_state.get("payment_complete", False) or cost == 0) and st.session_state.get("user_email"):
+            
+            ## Payment stuff starts
+            session = stripe.checkout.Session.create(
+                ...
+                metadata={"filename": uploaded_file.name},
+                ...
+                )
+
+            if cost_cents > 0:
+                if st.button("💳 Pay Now"):
+                    checkout_url = create_checkout_session(cost_cents, user_email)
+                    if checkout_url:
+                        st.markdown(f"[🔗 Click here to complete payment]({checkout_url})", unsafe_allow_html=True)
+            else:
+                st.success("✅ No payment required — you may download your file.")
+
+            ## Payment stuff ends
+
+            ## Check for payment success
+            query_params = st.experimental_get_query_params()
+
+            # Show messages based on URL params
+            if query_params.get("status") == ["success"]:
+                st.success("✅ Payment complete! Checking verification...")
+            elif query_params.get("status") == ["cancel"]:
+                st.warning("⚠️ Payment was canceled.")
+
+            # Check for verified payment in the sheet
+            if (was_payment_logged(st.session_state["user_email"], uploaded_file.name) or cost == 0) and st.session_state.get("user_email"):
                 success, message = send_receipt(
                     to_email=st.session_state["user_email"],
                     filename=uploaded_file.name,
@@ -324,11 +348,21 @@ elif page == "Clean My Data":
                     smtp_user=st.secrets["smtp_user"],
                     smtp_app_password=st.secrets["smtp_app_password"]
                 )
+    
                 if success:
                     st.success("📧 Your receipt was emailed.")
                 else:
-                    st.warning(f"⚠️ {message}")
-
+                    st.warning(f"⚠️ {message or 'Receipt failed to send.'}")
+    
+                st.download_button(
+                    "📥 Download Cleaned CSV",
+                    data=cleaned_df.to_csv(index=False),
+                    file_name=download_filename,
+                    mime="text/csv"
+                )
+            else:
+                st.info("🔄 Waiting for payment confirmation... Please refresh this page in a few moments.")
+            ## --- End of payment / receipt logic
 
                 # ... after sending receipt ...
                 log_entry = {
@@ -344,15 +378,44 @@ elif page == "Clean My Data":
                 except Exception as e:
                     st.warning(f"⚠️ Failed to log usage: {e}")
 
-                st.download_button(
-                    " 📥 Download Cleaned CSV",
-                    data=cleaned_df.to_csv(index=False),
-                    file_name=download_filename,
-                    mime="text/csv"
-                )
 
     # Show feedback form in the sidebar
     show_sidebar_feedback()
+
+def render_footer():
+    st.markdown(
+        """
+        <style>
+        .footer {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            padding: 10px;
+            background-color: rgba(255,255,255,0.0);
+            z-index: 9999;
+        }
+        .footer a {
+            margin-left: 10px;
+            text-decoration: none;
+        }
+        </style>
+            """,
+        unsafe_allow_html=True
+    )
+    
+    # Social Media bs
+    <div class="footer">
+        <a href="https://www.facebook.com/profile.php?id=61578870128114&sk=about_details" target="_blank">
+            <img src="https://img.icons8.com/ios-filled/30/000000/facebook-new.png" alt="Facebook">
+        </a>
+        <a href="https://www.linkedin.com/company/dataclean-pro" target="_blank">
+            <img src="https://img.icons8.com/ios-filled/30/000000/linkedin.png" alt="LinkedIn">
+        </a>
+        <a href="https://www.instagram.com/data.cleanpro" target="_blank">
+            <img src="https://img.icons8.com/ios-filled/30/000000/instagram-new.png" alt="Instagram">
+        </a>
+    </div>
+
 
 
 ## Test email function
