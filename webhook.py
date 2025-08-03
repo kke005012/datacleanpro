@@ -22,7 +22,6 @@ def log_payment_to_sheet(email, amount, filename):
     creds = ServiceAccountCredentials.from_json_keyfile_name(CREDS_FILE, SCOPE)
     client = gspread.authorize(creds)
     sheet = client.open_by_key(SPREADSHEET_ID).sheet1
-
     now = datetime.datetime.now().isoformat()
     payment_status = "Paid via webhook"
     sheet.append_row([now, email, filename, amount / 100, payment_status])
