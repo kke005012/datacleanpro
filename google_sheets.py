@@ -20,7 +20,6 @@ def append_log_to_sheet(log_entry: dict):
             log_entry["filename"],
             log_entry["row_count"],
             log_entry["charged"],
-            log_entry["payment_status"]
         ]
 
         sheet.append_row(row)
