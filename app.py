@@ -427,11 +427,6 @@ def send_test_email():
     except Exception as e:
         st.error(f"Failed to send test email: {e}")
 
-#st.markdown("---")
-#st.subheader("📬 Email Testing")
-#if st.button("📧 Send Test Email"):
-    #send_test_email()
-
     # === Footer ===
     st.markdown("""
         <div style='text-align: center; padding-top: 2em;'>
