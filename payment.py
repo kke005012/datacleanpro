@@ -20,7 +20,7 @@ def was_payment_logged(email, filename):
             if (
                 row.get("email") == email
                 and row.get("filename") == filename
-                and row.get("Paid via webhook") == "Paid via webhook"
+                and row.get("payment_status") == "Paid via webhook"
             ):
                 return True
         return False
