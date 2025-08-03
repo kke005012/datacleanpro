@@ -15,7 +15,7 @@ import csv
 from google_sheets import append_log_to_sheet
 from feedback import show_sidebar_feedback
 from checkout import create_checkout_session
-import payment
+from payment import was_payment_logged
 
 from cleaner import (
     clean_data,
@@ -305,22 +305,16 @@ elif page == "Clean My Data":
                 st.session_state["user_email"] = email
 
             
-            ## Payment stuff starts
-            session = stripe.checkout.Session.create(
-                ...
-                metadata={"filename": uploaded_file.name},
-                ...
-                )
-
+            ## --- Payment stuff starts
+            
             if cost_cents > 0:
                 if st.button("💳 Pay Now"):
-                    checkout_url = create_checkout_session(cost_cents, user_email)
+                    checkout_url = create_checkout_session(cost_cents, user_email, uploaded_file.name)
                     if checkout_url:
                         st.markdown(f"[🔗 Click here to complete payment]({checkout_url})", unsafe_allow_html=True)
             else:
                 st.success("✅ No payment required — you may download your file.")
-
-            ## Payment stuff ends
+            ## --- Payment stuff ends
 
             ## Check for payment success
             query_params = st.experimental_get_query_params()
