@@ -337,7 +337,7 @@ elif page == "Clean My Data":
             if (was_payment_logged(st.session_state["user_email"], filename) or cost == 0) and st.session_state.get("user_email"):
                 success, message = send_receipt(
                     to_email=st.session_state["user_email"],
-                    filename,
+                    filename = filename,
                     amount=cost,
                     cleaning_strategies=[
                         f"Numeric Strategy: {numeric_strategy}",
