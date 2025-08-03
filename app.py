@@ -16,6 +16,7 @@ from google_sheets import append_log_to_sheet
 from feedback import show_sidebar_feedback
 from checkout import create_checkout_session
 from payment import was_payment_logged
+import stripe
 
 from cleaner import (
     clean_data,
@@ -304,12 +305,12 @@ elif page == "Clean My Data":
             else:
                 st.session_state["user_email"] = email
 
+            filename=uploaded_file.name
             
-            ## --- Payment stuff starts
-            
+            ## --- Payment stuff starts            
             if cost > 0:
                 if st.button("💳 Pay Now"):
-                    checkout_url = create_checkout_session(int(cost * 100), email, uploaded_file.name)
+                    checkout_url = create_checkout_session(int(cost * 100), email, filename)
                     if checkout_url:
                         st.markdown(f"[🔗 Click here to complete payment]({checkout_url})", unsafe_allow_html=True)
             else:
@@ -317,19 +318,26 @@ elif page == "Clean My Data":
             ## --- Payment stuff ends
 
             ## Check for payment success
-            query_params = st.query_params
+            stripe.api_key = st.secrets["stripe_secret_key"]
 
-            # Show messages based on URL params
-            if query_params.get("status") == ["success"]:
-                st.success("✅ Payment complete! Checking verification...")
-            elif query_params.get("status") == ["cancel"]:
-                st.warning("⚠️ Payment was canceled.")
+            query_params = st.query_params
+            session_id = query_params.get("session_id", [None])[0]
+
+            if query_params.get("status") == ["success"] and session_id:
+                try:
+                    session = stripe.checkout.Session.retrieve(session_id)
+                    st.session_state["user_email"] = session["customer_details"]["email"]
+                    st.session_state["payment_complete"] = True
+                    st.session_state["paid_filename"] = session["metadata"].get("filename", "unknown.csv")
+                    st.success(f"✅ Payment complete for {st.session_state['paid_filename']}")
+                except Exception as e:
+                    st.warning(f"⚠️ Payment verified, but failed to retrieve session info: {e}")
 
             # Check for verified payment in the sheet
             if (was_payment_logged(st.session_state["user_email"], uploaded_file.name) or cost == 0) and st.session_state.get("user_email"):
                 success, message = send_receipt(
                     to_email=st.session_state["user_email"],
-                    filename=uploaded_file.name,
+                    filename,
                     amount=cost,
                     cleaning_strategies=[
                         f"Numeric Strategy: {numeric_strategy}",

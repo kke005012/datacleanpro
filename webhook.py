@@ -23,7 +23,7 @@ def log_payment_to_sheet(email, amount, filename):
     sheet = client.open_by_key(SPREADSHEET_ID).sheet1
 
     now = datetime.datetime.now().isoformat()
-    sheet.append_row([now, email, filename, amount / 100, "Paid via webhook"])
+    sheet.append_row([now, email, filename, amount / 100, "payment_status"])
 
 @app.route("/webhook", methods=["POST"])
 def stripe_webhook():
