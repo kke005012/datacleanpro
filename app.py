@@ -317,7 +317,7 @@ elif page == "Clean My Data":
             ## --- Payment stuff ends
 
             ## Check for payment success
-            query_params = st.query_params()
+            query_params = st.query_params
 
             # Show messages based on URL params
             if query_params.get("status") == ["success"]:
