@@ -376,7 +376,7 @@ elif page == "Clean My Data":
             ## --- Payment stuff ends
 
             ## Check for payment success
-            stripe.api_key = st.secrets["stripe"]["secret_key"]
+            stripe.api_key = st.secrets["stripe_secret_key"]
 
             query_params = st.query_params
             session_id = query_params.get("session_id", [None])[0]
