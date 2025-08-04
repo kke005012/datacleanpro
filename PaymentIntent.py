@@ -10,6 +10,7 @@ def create_payment_intent_or_free(cost, currency="usd", metadata=None):
     intent = stripe.PaymentIntent.create(
         amount=int(cost * 100),
         currency=currency,
+        automatic_payment_methods={"enabled": True},
         metadata=metadata or {}
     )
     return {

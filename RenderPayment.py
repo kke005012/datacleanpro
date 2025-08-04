@@ -4,8 +4,8 @@ def render_stripe_payment(client_secret, publishable_key):
     html_code = f"""
     <script src="https://js.stripe.com/v3/"></script>
     <div id="payment-element"></div>
-    <button id="submit">Pay Now</button>
-    <div id="payment-message"></div>
+    <button id="submit" disabled>Pay Now</button>
+    <div id="payment-message" style="margin-top:10px;"></div>
 
     <script>
       const stripe = Stripe("{publishable_key}");
@@ -13,24 +13,39 @@ def render_stripe_payment(client_secret, publishable_key):
       const paymentElement = elements.create("payment");
       paymentElement.mount("#payment-element");
 
+      // Enable Pay Now button once Elements is ready
+      paymentElement.on('ready', function() {{
+        document.getElementById("submit").disabled = false;
+      }});
+
       document.getElementById("submit").addEventListener("click", async () => {{
-        const result = await stripe.confirmPayment({{
+        document.getElementById("submit").disabled = true;
+        document.getElementById("payment-message").innerText = "Processing payment...";
+
+        const {{error, paymentIntent}} = await stripe.confirmPayment({{
           elements,
           confirmParams: {{ return_url: window.location.href }},
           redirect: "if_required"
         }});
 
-        if (result.error) {{
-          document.getElementById("payment-message").innerText = result.error.message;
+        if (error) {{
+          console.error("Stripe error:", error);
+          document.getElementById("payment-message").innerText = "❌ " + error.message;
+          document.getElementById("submit").disabled = false;
           window.parent.postMessage({{type: "PAYMENT_FAILED"}}, "*");
-        }} else if (result.paymentIntent && result.paymentIntent.status === "succeeded") {{
+        }} else if (paymentIntent && paymentIntent.status === "succeeded") {{
           document.getElementById("payment-message").innerText = "✅ Payment Successful!";
           window.parent.postMessage({{type: "PAYMENT_SUCCESS"}}, "*");
+        }} else {{
+          document.getElementById("payment-message").innerText = "❌ Unexpected payment status.";
+          console.warn("Unexpected payment status:", paymentIntent);
+          document.getElementById("submit").disabled = false;
         }}
       }});
     </script>
     """
     components.html(html_code, height=400)
+
 
 
 from streamlit_javascript import st_javascript  # or custom listener
