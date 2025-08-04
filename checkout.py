@@ -5,7 +5,7 @@ import streamlit as st
 
 stripe.api_key = st.secrets["stripe"]["secret_key"]
 
-def create_checkout_session(cost_cents, user_email, filename):
+def create_checkout_session(cost_cents, user_email, filename, rows):
     try:
         session = stripe.checkout.Session.create(
             payment_method_types=["card"],
@@ -23,7 +23,7 @@ def create_checkout_session(cost_cents, user_email, filename):
             success_url="https://datacleanpro.streamlit.app/?status=success&session_id={CHECKOUT_SESSION_ID}",
             cancel_url="https://datacleanpro.streamlit.app/?status=cancel&session_id={CHECKOUT_SESSION_ID}",
             customer_email=user_email,
-            metadata={"filename": filename}
+            metadata={"filename": filename, "row_count": rows}
         )
         return session.url
     except Exception as e:

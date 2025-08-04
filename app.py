@@ -54,7 +54,7 @@ if page == "Welcome":
     
     st.markdown("""
         <span style='color:#2B78E4; font-size:1.2em; text-align: center;'>
-        &#128338; Save hours. Clean your data in less than a minute — without the dirty price tag. 
+        &#128338; Save hours. Clean your data in less than a minute. 
         </span>
     """, unsafe_allow_html=True)
 
@@ -311,7 +311,7 @@ elif page == "Clean My Data":
             ## --- Payment stuff starts            
             if cost > 0:
                 if st.button("💳 Pay Now"):
-                    checkout_url = create_checkout_session(cost_cents, email, uploaded_file.name)
+                    checkout_url = create_checkout_session(cost_cents, email, filename, rows)
                     if checkout_url:
                         # JavaScript to open Stripe Checkout in a new tab
                         st.components.v1.html(
