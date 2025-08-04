@@ -18,12 +18,11 @@ SCOPE = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/au
 CREDS_FILE = os.environ.get("GOOGLE_CREDS_FILE", "google_creds.json")
 SPREADSHEET_ID = os.environ["SPREADSHEET_ID"]
 
-def log_payment_to_sheet(email, amount, filename):
+def log_payment_to_sheet(email, amount, filename, row_count, payment_status):
     creds = ServiceAccountCredentials.from_json_keyfile_name(CREDS_FILE, SCOPE)
     client = gspread.authorize(creds)
     sheet = client.open_by_key(SPREADSHEET_ID).sheet1
     now = datetime.datetime.now().isoformat()
-    payment_status = "Paid via webhook"
     sheet.append_row([now, email, filename, row_count, amount / 100, payment_status])
 
 @app.route("/webhook", methods=["POST"])
@@ -42,8 +41,10 @@ def stripe_webhook():
         amount = session.get("amount_total")
         metadata = session.get("metadata", {})
         filename = metadata.get("filename", "unknown.csv")
+        row_count = metadata.get("row_count", "")
+        payment_status = "Paid via webhook" 
 
-        log_payment_to_sheet(email, amount, filename)
+        log_payment_to_sheet(email, amount, filename, row_count, payment_status)
         return "✅ Payment logged", 200
 
     return "Unhandled event", 200
