@@ -17,7 +17,7 @@ from feedback import show_sidebar_feedback
 from checkout import create_checkout_session
 from payment import was_payment_logged
 import stripe
-import PaymentIntent
+from PaymentIntent import create_payment_intent_or_free
 import RenderPayment
 
 from cleaner import (
