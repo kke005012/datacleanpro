@@ -340,6 +340,9 @@ elif page == "Clean My Data":
                 else:
                     st.warning(f"⚠️ {message or 'Receipt failed to send.'}")
                             # ... after sending receipt ...
+              
+            elif result == "PAYMENT_FAILED":
+                st.warning("❌ Payment failed. Please try again.")
             log_entry = {
                 "timestamp": datetime.now().isoformat(),
                 "email": st.session_state.get("user_email", "unknown"),
@@ -352,9 +355,7 @@ elif page == "Clean My Data":
                 append_log_to_sheet(log_entry)
             except Exception as e:
                 st.warning(f"⚠️ Failed to log usage: {e}")
-              
-            elif result == "PAYMENT_FAILED":
-                st.warning("❌ Payment failed. Please try again.")
+
             ## -- New payment ENDS here
 
             ## ---Old Payment stuff starts            
