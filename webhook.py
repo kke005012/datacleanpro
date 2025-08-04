@@ -23,8 +23,8 @@ def log_payment_to_sheet(email, amount, filename):
     client = gspread.authorize(creds)
     sheet = client.open_by_key(SPREADSHEET_ID).sheet1
     now = datetime.datetime.now().isoformat()
-    payment_status = "Paid via webhook"
-    sheet.append_row([now, email, filename, amount / 100, payment_status])
+    #payment_status = "Paid via webhook"
+    sheet.append_row([now, email, filename, amount / 100, "Paid by webhook"])
 
 @app.route("/webhook", methods=["POST"])
 def stripe_webhook():
