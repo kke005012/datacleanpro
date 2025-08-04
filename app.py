@@ -120,7 +120,7 @@ elif page == "Clean My Data":
     debug_mode = ""  #st.checkbox("🛠️ Enable Debug Mode")
     if debug_mode:
         #st.info("🔍 Debug Mode is ON — showing internal logs.")
-    
+        pass
     # === Add Header question in sidebar ===
     has_header = st.sidebar.checkbox("Uncheck if columns do not have titles.", value=True)
     # === End Header question in sidebar ===
