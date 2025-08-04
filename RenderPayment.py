@@ -13,10 +13,10 @@ def render_stripe_payment(client_secret, publishable_key):
       const paymentElement = elements.create("payment");
       paymentElement.mount("#payment-element");
 
-      // Enable Pay Now button once Elements is ready
-      paymentElement.on('ready', function() {{
+      // Enable Pay Now button right after mount
+      setTimeout(() => {{
         document.getElementById("submit").disabled = false;
-      }});
+      }}, 500);
 
       document.getElementById("submit").addEventListener("click", async () => {{
         document.getElementById("submit").disabled = true;
@@ -45,6 +45,7 @@ def render_stripe_payment(client_secret, publishable_key):
     </script>
     """
     components.html(html_code, height=400)
+
 
 
 
