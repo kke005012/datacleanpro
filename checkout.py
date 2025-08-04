@@ -2,7 +2,7 @@ import stripe
 import streamlit as st
 
 
-stripe.api_key = st.secrets["STRIPE_SECRET_KEY"]
+stripe.api_key = st.secrets["stripe_secret_key"]
 
 def create_checkout_session(amount, currency="usd", filename="file.csv", email=None):
     session = stripe.checkout.Session.create(
