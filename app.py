@@ -18,7 +18,7 @@ from checkout import create_checkout_session
 from payment import was_payment_logged
 import stripe
 from PaymentIntent import create_payment_intent_or_free
-import RenderPayment
+from RenderPayment import render_stripe_payment, wait_for_payment
 
 from cleaner import (
     clean_data,
