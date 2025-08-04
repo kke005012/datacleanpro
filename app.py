@@ -315,7 +315,7 @@ elif page == "Clean My Data":
             payment_info = create_payment_intent_or_free(cost, metadata={"filename": filename})
 
             if payment_info["mode"] == "STRIPE":
-                render_stripe_payment(payment_info["client_secret"], st.secrets["STRIPE_PUBLISHABLE_KEY"])
+                render_stripe_payment(payment_info["client_secret"], st.secrets["stripe_publishable_key"])
 
             result = wait_for_payment(payment_info["mode"])
 
