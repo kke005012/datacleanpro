@@ -308,7 +308,56 @@ elif page == "Clean My Data":
             # Change cost to cents for Stripe payment
             cost_cents = int(cost * 100)
             
-            ## --- Payment stuff starts            
+            # New payment execution
+            # Step 1: Create PaymentIntent
+            payment_info = create_payment_intent_or_free(cost, metadata={"filename": filename})
+
+            if payment_info["mode"] == "STRIPE":
+                render_stripe_payment(payment_info["client_secret"], st.secrets["STRIPE_PUBLISHABLE_KEY"])
+
+            result = wait_for_payment(payment_info["mode"])
+
+            if result == "PAYMENT_SUCCESS":
+                st.session_state["payment_complete"] = True
+                st.success("✅ Payment complete — download ready.")
+                success, message = send_receipt(
+                    to_email=st.session_state["user_email"],
+                    filename=filename,
+                    amount=cost,
+                    cleaning_strategies=[
+                        f"Numeric Strategy: {numeric_strategy}",
+                        f"Non-Numeric Strategy: {non_numeric_strategy}",
+                        "Currency Normalization",
+                        "Date Standardization",
+                        "Whitespace & Deduplication"
+                    ],
+                    log_lines=cleaned_df.attrs.get("log", []),
+                    smtp_user=st.secrets["smtp_user"],
+                    smtp_app_password=st.secrets["smtp_app_password"]
+                )
+                if (result == "PAYMENT_SUCCESS"):
+                    st.success("📧 Your receipt was emailed.")
+                else:
+                    st.warning(f"⚠️ {message or 'Receipt failed to send.'}")
+                            # ... after sending receipt ...
+            log_entry = {
+                "timestamp": datetime.now().isoformat(),
+                "email": st.session_state.get("user_email", "unknown"),
+                "filename": uploaded_file.name,
+                "row_count": len(cleaned_df),
+                "charged": cost,
+            }
+
+            try:
+                append_log_to_sheet(log_entry)
+            except Exception as e:
+                st.warning(f"⚠️ Failed to log usage: {e}")
+              
+            elif result == "PAYMENT_FAILED":
+                st.warning("❌ Payment failed. Please try again.")
+            ## -- New payment ENDS here
+
+            ## ---Old Payment stuff starts            
             if cost > 0:
                 if st.button("💳 Pay Now"):
                     checkout_url = create_checkout_session(cost_cents, email, filename, rows)
