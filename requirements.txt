@@ -5,3 +5,4 @@ stripe
 gspread
 oauth2client
 matplotlib
+streamlit-javascript
