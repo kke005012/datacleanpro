@@ -13,7 +13,7 @@ def create_checkout_session(cost_cents, user_email, filename, rows):
                 "price_data": {
                     "currency": "usd",
                     "product_data": {
-                        "name": "DataCleanPro File Cleaning",
+                        "name": "DataClean Pro File Cleaning",
                     },
                     "unit_amount": cost_cents,
                 },
@@ -23,7 +23,7 @@ def create_checkout_session(cost_cents, user_email, filename, rows):
             success_url="https://datacleanpro.streamlit.app/?status=success&session_id={CHECKOUT_SESSION_ID}",
             cancel_url="https://datacleanpro.streamlit.app/?status=cancel&session_id={CHECKOUT_SESSION_ID}",
             customer_email=user_email,
-            metadata={"filename": filename, "row_count": rows}
+            metadata={"filename": filename, "row_count": str(rows), "charged": str(cost_cents)}
         )
         return session.url
     except Exception as e:

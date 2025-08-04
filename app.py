@@ -372,20 +372,19 @@ elif page == "Clean My Data":
                 st.info("🔄 Waiting for payment confirmation... Please refresh this page in a few moments.")
             ## --- End of payment / receipt logic
 
-                # ... after sending receipt ...
-                log_entry = {
-                    "timestamp": datetime.now().isoformat(),
-                    "email": st.session_state.get("user_email", "unknown"),
-                    "filename": uploaded_file.name,
-                    "row_count": len(cleaned_df),
-                    "charged": cost,
-                }
+            # ... after sending receipt ...
+            log_entry = {
+                "timestamp": datetime.now().isoformat(),
+                "email": st.session_state.get("user_email", "unknown"),
+                "filename": uploaded_file.name,
+                "row_count": len(cleaned_df),
+                "charged": cost,
+            }
 
-                try:
-                    append_log_to_sheet(log_entry)
-                except Exception as e:
-                    st.warning(f"⚠️ Failed to log usage: {e}")
-
+            try:
+                append_log_to_sheet(log_entry)
+            except Exception as e:
+                st.warning(f"⚠️ Failed to log usage: {e}")
 
     # Show feedback form in the sidebar
     show_sidebar_feedback()
