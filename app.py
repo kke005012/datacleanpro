@@ -14,11 +14,12 @@ import os
 import csv
 from google_sheets import append_log_to_sheet
 from feedback import show_sidebar_feedback
-from checkout import create_checkout_session
+from checkout import create_checkout_session, render_embedded_checkout, check_payment_status
 from payment import was_payment_logged
 import stripe
 from PaymentIntent import create_payment_intent_or_free
 from RenderPayment import render_stripe_payment, wait_for_payment
+import time
 
 from cleaner import (
     clean_data,
@@ -282,10 +283,6 @@ elif page == "Clean My Data":
             if "cost" in st.session_state and "total_rows" in st.session_state:
                 st.markdown(f"**Standard Cost: ${st.session_state['cost']:.2f}**. Total Rows = {st.session_state['total_rows']}.")
 
-            if cost == 0:
-                st.info("✅ This file qualifies for free cleaning.")
-                st.session_state["payment_complete"] = True
-
             if st.checkbox("Show cleaning log"):
                 st.write("### 📋 Cleaning Log")
                 log_lines = write_log(cleaned_df)
@@ -310,61 +307,76 @@ elif page == "Clean My Data":
             # Change cost to cents for Stripe payment
             cost_cents = int(cost * 100)
             
-            # New payment execution
-            # Step 1: Create PaymentIntent
-            payment_info = create_payment_intent_or_free(cost, metadata={"filename": filename})
 
-            if payment_info["mode"] == "STRIPE":
-                render_stripe_payment(payment_info["client_secret"], st.secrets["stripe_publishable_key"])
-
-            result = wait_for_payment(payment_info["mode"])
-
-            if result == "PAYMENT_SUCCESS":
+            #BEGIN NEWEST payment execution
+            if cost == 0:
                 st.session_state["payment_complete"] = True
-                st.success("✅ Payment complete — download ready.")
-                st.download_button(
-                    "📥 Download Cleaned CSV",
-                    data=cleaned_df.to_csv(index=False),
-                    file_name=download_filename,
-                    mime="text/csv"
-                )
-                success, message = send_receipt(
-                    to_email=st.session_state["user_email"],
-                    filename=filename,
+                st.success("✅ $0 charge — file ready for download.")
+                send_receipt(filename, st.session_state.get("user_email"))
+                log_to_sheet(...)
+            else:
+                client_secret = create_checkout_session(
                     amount=cost,
-                    cleaning_strategies=[
-                        f"Numeric Strategy: {numeric_strategy}",
-                        f"Non-Numeric Strategy: {non_numeric_strategy}",
-                        "Currency Normalization",
-                        "Date Standardization",
-                        "Whitespace & Deduplication"
-                    ],
-                    log_lines=cleaned_df.attrs.get("log", []),
-                    smtp_user=st.secrets["smtp_user"],
-                    smtp_app_password=st.secrets["smtp_app_password"]
+                    filename=filename,
+                    email=st.session_state.get("user_email")
                 )
-                if (result == "PAYMENT_SUCCESS"):
-                    st.success("📧 Your receipt was emailed.")
-                else:
-                    st.warning(f"⚠️ {message or 'Receipt failed to send.'}")
-                            # ... after sending receipt ...
-              
-            elif result == "PAYMENT_FAILED":
-                st.warning("❌ Payment failed. Please try again.")
-            log_entry = {
-                "timestamp": datetime.now().isoformat(),
-                "email": st.session_state.get("user_email", "unknown"),
-                "filename": uploaded_file.name,
-                "row_count": len(cleaned_df),
-                "charged": cost,
-            }
 
-            try:
-                append_log_to_sheet(log_entry)
-            except Exception as e:
-                st.warning(f"⚠️ Failed to log usage: {e}")
+                render_embedded_checkout(
+                    client_secret=client_secret,
+                    publishable_key=st.secrets["stripe_publishable_key"]
+                )
+                # Poll for payment completion
+                payment_status = "unpaid"
+                with st.spinner("Waiting for payment confirmation..."):
+                    for _ in range(20):  # ~20 polls (~60s max wait)
+                        payment_status = check_payment_status(session_id)
+                        if payment_status == "paid":
+                            st.session_state["payment_complete"] = True
+                            st.success("✅ Payment complete — file ready for download.")
+                            success, message = send_receipt(
+                                to_email=st.session_state["user_email"],
+                                filename=filename,
+                                amount=cost,
+                                cleaning_strategies=[
+                                    f"Numeric Strategy: {numeric_strategy}",
+                                    f"Non-Numeric Strategy: {non_numeric_strategy}",
+                                    "Currency Normalization",
+                                    "Date Standardization",
+                                    "Whitespace & Deduplication"
+                                ],
+                                log_lines=cleaned_df.attrs.get("log", []),
+                                smtp_user=st.secrets["smtp_user"],
+                                smtp_app_password=st.secrets["smtp_app_password"]
+                                )
+                            st.download_button(
+                                "📥 Download Cleaned CSV",
+                                data=cleaned_df.to_csv(index=False),
+                                file_name=download_filename,
+                                mime="text/csv"
+                            )
+                            #if (payment_status == "paid"):
+                                #st.success("📧 Your receipt was emailed.")
+                            #else:
+                                #st.warning(f"⚠️ {message or 'Receipt failed to send.'}")
+                            log_entry = {
+                                "timestamp": datetime.now().isoformat(),
+                                "email": st.session_state.get("user_email", "unknown"),
+                                "filename": uploaded_file.name,
+                                "row_count": len(cleaned_df),
+                                "charged": cost,
+                            }
 
-            ## -- New payment ENDS here
+                            try:
+                                append_log_to_sheet(log_entry)
+                            except Exception as e:
+                                st.warning(f"⚠️ Failed to log usage: {e}")
+                                break
+                            time.sleep(3)
+
+                        if payment_status != "paid":
+                            st.warning("⚠️ Payment not completed yet. Please finish payment in the form above.")
+            ### END NEWEST payment execution
+
 
     # Show feedback form in the sidebar
     show_sidebar_feedback()

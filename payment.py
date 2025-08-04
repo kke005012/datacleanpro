@@ -18,9 +18,9 @@ def was_payment_logged(email, filename):
 
         for row in records:
             if (
-                row.get("email") == email
-                and row.get("filename") == filename
-                and row.get("payment_status") == "Paid via webhook"
+                row.get("email", "").strip().lower() == email.strip().lower()
+                and row.get("filename", "").strip().lower() == filename.strip().lower()
+                and row.get("payment_status", "").strip().lower() == "paid via webhook"  
             ):
                 return True
         return False
