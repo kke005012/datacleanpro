@@ -16,7 +16,7 @@ def render_stripe_payment(client_secret, publishable_key):
       // Enable Pay Now button right after mount
       setTimeout(() => {{
         document.getElementById("submit").disabled = false;
-      }}, 500);
+      }}, 1);
 
       document.getElementById("submit").addEventListener("click", async () => {{
         document.getElementById("submit").disabled = true;
