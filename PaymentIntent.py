@@ -15,3 +15,4 @@ def create_payment_intent_or_free(cost, currency="usd", metadata=None):
     return {
         "mode": "STRIPE",
         "client_secret": intent.client_secret
+    }
