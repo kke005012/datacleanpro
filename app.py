@@ -322,6 +322,12 @@ elif page == "Clean My Data":
             if result == "PAYMENT_SUCCESS":
                 st.session_state["payment_complete"] = True
                 st.success("✅ Payment complete — download ready.")
+                st.download_button(
+                    "📥 Download Cleaned CSV",
+                    data=cleaned_df.to_csv(index=False),
+                    file_name=download_filename,
+                    mime="text/csv"
+                )
                 success, message = send_receipt(
                     to_email=st.session_state["user_email"],
                     filename=filename,
