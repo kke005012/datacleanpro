@@ -117,9 +117,9 @@ elif page == "Clean My Data":
     st.title("🧹 Clean My Data")
 
     # Debug logger toggle
-    debug_mode = st.checkbox("🛠️ Enable Debug Mode")
+    debug_mode = ""  #st.checkbox("🛠️ Enable Debug Mode")
     if debug_mode:
-        st.info("🔍 Debug Mode is ON — showing internal logs.")
+        #st.info("🔍 Debug Mode is ON — showing internal logs.")
     
     # === Add Header question in sidebar ===
     has_header = st.sidebar.checkbox("Uncheck if columns do not have titles.", value=True)
@@ -304,7 +304,7 @@ elif page == "Clean My Data":
             else:
                 st.session_state["user_email"] = email
 
-            filename=uploaded_file.name
+            filename=st.session_state.get("paid_filename", uploaded_file.name)
             # Change cost to cents for Stripe payment
             cost_cents = int(cost * 100)
             
@@ -318,7 +318,7 @@ elif page == "Clean My Data":
                             f"""<script>window.open('{checkout_url}', '_blank')</script>""",
                             height=0,
                         )
-                        st.info("🔁 Payment window opened. Please complete payment in the new tab.")
+                        st.info("🔁 If you don't see the payment screen, be sure to enable pop-ups and redirects in your browser settings.")
             else:
                 st.success("✅ No payment required — you may download your file.")
             ## --- Payment stuff ends
@@ -343,7 +343,7 @@ elif page == "Clean My Data":
             if (was_payment_logged(st.session_state["user_email"], filename) or cost == 0) and st.session_state.get("user_email"):
                 success, message = send_receipt(
                     to_email=st.session_state["user_email"],
-                    filename = filename,
+                    filename=filename,
                     amount=cost,
                     cleaning_strategies=[
                         f"Numeric Strategy: {numeric_strategy}",
