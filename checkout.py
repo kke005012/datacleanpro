@@ -3,7 +3,7 @@ import streamlit as st
 
 
 
-stripe.api_key = st.secrets["stripe"]["secret_key"]
+stripe.api_key = st.secrets["stripe_secret_key"]
 
 def create_checkout_session(cost_cents, user_email, filename, rows):
     try:
