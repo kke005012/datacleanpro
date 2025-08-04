@@ -2,7 +2,7 @@ import stripe
 import streamlit as st
 import os
 
-stripe.api_key = st.secrets["STRIPE"]["SECRET_KEY"]
+stripe.api_key = st.secrets["STRIPE_SECRET_KEY"]
 
 def create_payment_intent_or_free(cost, currency="usd", metadata=None):
     if cost == 0:
