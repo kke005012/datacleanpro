@@ -376,7 +376,6 @@ elif page == "Clean My Data":
                         if status == "paid":
                             st.session_state["payment_complete"] = True
                             st.success("✅ Payment complete — file ready for download.")
-                            send_receipt(filename, st.session_state.get("user_email"))
                             success, message = send_receipt(
                                 to_email=st.session_state["user_email"],
                                 filename=filename,
@@ -403,70 +402,7 @@ elif page == "Clean My Data":
 
                 if not st.session_state.get("payment_complete"):
                     st.warning("⚠️ Payment not completed yet. Please finish payment above.")
-                client_secret, session_id = create_checkout_session(
-                    amount=cost,
-                    filename=filename,
-                    email=st.session_state.get("user_email")
-                )
-
-                render_embedded_checkout(
-                    client_secret=client_secret,
-                    publishable_key=st.secrets["stripe_publishable_key"]
-                )
-
-                # Poll for payment completion
-                payment_status = "unpaid"
-                with st.spinner("Waiting for payment confirmation..."):
-                    for _ in range(20):  # ~20 polls (~60s max wait)
-                        payment_status = check_payment_status(session_id)
-                        if payment_status == "paid":
-                            st.session_state["payment_complete"] = True
-                            st.success("✅ Payment complete — file ready for download.")
-                            success, message = send_receipt(
-                                to_email=st.session_state["user_email"],
-                                filename=filename,
-                                amount=cost,
-                                cleaning_strategies=[
-                                    f"Numeric Strategy: {numeric_strategy}",
-                                    f"Non-Numeric Strategy: {non_numeric_strategy}",
-                                    "Currency Normalization",
-                                    "Date Standardization",
-                                    "Whitespace & Deduplication"
-                                ],
-                                log_lines=cleaned_df.attrs.get("log", []),
-                                smtp_user=st.secrets["smtp_user"],
-                                smtp_app_password=st.secrets["smtp_app_password"]
-                                )
-                            st.download_button(
-                                "📥 Download Cleaned CSV",
-                                data=cleaned_df.to_csv(index=False),
-                                file_name=download_filename,
-                                mime="text/csv"
-                            )
-                            #if (payment_status == "paid"):
-                                #st.success("📧 Your receipt was emailed.")
-                            #else:
-                                #st.warning(f"⚠️ {message or 'Receipt failed to send.'}")
-                            log_entry = {
-                                "timestamp": datetime.now().isoformat(),
-                                "email": st.session_state.get("user_email", "unknown"),
-                                "filename": uploaded_file.name,
-                                "row_count": len(cleaned_df),
-                                "charged": cost,
-                            }
-
-                            try:
-                                append_log_to_sheet(log_entry)
-                            except Exception as e:
-                                st.warning(f"⚠️ Failed to log usage: {e}")
-                                break
-                            time.sleep(3)
-
-                        if payment_status != "paid":
-                            st.warning("⚠️ Payment not completed yet. Please finish payment in the form above.")
-            ### END NEWEST payment execution
-
-
+ 
     # Show feedback form in the sidebar
     show_sidebar_feedback()
 
