@@ -397,7 +397,7 @@ elif page == "Clean My Data":
                     for _ in range(20):  # ~60 seconds (20 polls every 3 sec)
                         status = check_payment_status(st.session_state["session_id"])
                         if st.session_state.get("session_id"):
-                            status = check_payment_status(if st.session_state.get("session_id"))
+                            status = check_payment_status(st.session_state.get("session_id"))
                             if status == "paid":
                                 st.session_state["payment_complete"] = True
                                 st.success("✅ Payment complete — file ready for download.")
