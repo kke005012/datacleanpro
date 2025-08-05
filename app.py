@@ -387,8 +387,10 @@ elif page == "Clean My Data":
 
                 # --- Poll Stripe ---
                 with st.spinner("Waiting for payment confirmation..."):
-                    for _ in range(20):  # ~60 seconds (20 polls every 3 sec)
+                    for attempt in range(20):  # ~60 seconds (20 polls every 3 sec)
                         status = check_payment_status(st.session_state["session_id"])
+                        
+                        
                         if status == "paid":
                             st.session_state["payment_complete"] = True
                             st.success("✅ Payment complete — file ready for download.")
@@ -428,7 +430,7 @@ elif page == "Clean My Data":
                                     
                             break
 
-                        elif status in ("unpaid", "incomplete"):
+                        elif status in ("unpaid", "incomplete") and attempt > 10:
                             st.info("ℹ️ We couldn’t complete your payment — please try again.")
                             break
           
