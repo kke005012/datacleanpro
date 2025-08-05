@@ -122,10 +122,10 @@ elif page == "Clean My Data":
     st.title("🧹 Clean My Data")
 
     # Debug logger toggle
-    debug_mode = st.checkbox("🛠️ Enable Debug Mode")
+    debug_mode = "" #st.checkbox("🛠️ Enable Debug Mode")
     if debug_mode:
-        st.info("🔍 Debug Mode is ON — showing internal logs.")
-        #pass
+        #st.info("🔍 Debug Mode is ON — showing internal logs.")
+        pass
     # === Add Header question in sidebar ===
     has_header = st.sidebar.checkbox("Uncheck if columns do not have titles.", value=True)
     # === End Header question in sidebar ===
@@ -339,8 +339,8 @@ elif page == "Clean My Data":
                 log_entry = {
                     "timestamp": datetime.now().isoformat(),
                     "email": st.session_state.get("user_email", "unknown"),
-                    "filename": uploaded_file.name,
-                    "row_count": len(cleaned_df),
+                    "filename": st.session_state.get("paid_filename", uploaded_file.name),
+                    "row_count": st.session_state["row_count"],
                     "charged": cost,
                 }
 
@@ -409,7 +409,6 @@ elif page == "Clean My Data":
                                 file_name=download_filename,
                                 mime="text/csv"
                             )
-                            break
                             log_entry = {
                                 "timestamp": datetime.now().isoformat(),
                                 "email": st.session_state.get("user_email", "unknown"),
@@ -422,6 +421,7 @@ elif page == "Clean My Data":
                                 append_log_to_sheet(log_entry)
                             except Exception as e:
                                 st.warning(f"⚠️ Failed to log usage: {e}")
+                            break
                         time.sleep(3)
 
                 if not st.session_state.get("payment_complete"):

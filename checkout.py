@@ -16,7 +16,7 @@ def create_checkout_session(amount, currency="usd", filename="file.csv", email=N
             "quantity": 1
         }],
         mode="payment",
-        success_url="https://datacleanpro.com/payment-complete",
+        success_url="https://apod.nasa.gov/apod/astropix.html",
         cancel_url="https://datacleanpro.com/payment-cancelled",
         customer_email=email
     )
