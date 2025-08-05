@@ -120,10 +120,10 @@ elif page == "Clean My Data":
     st.title("🧹 Clean My Data")
 
     # Debug logger toggle
-    debug_mode = ""  #st.checkbox("🛠️ Enable Debug Mode")
+    debug_mode = st.checkbox("🛠️ Enable Debug Mode")
     if debug_mode:
-        #st.info("🔍 Debug Mode is ON — showing internal logs.")
-        pass
+        st.info("🔍 Debug Mode is ON — showing internal logs.")
+        #pass
     # === Add Header question in sidebar ===
     has_header = st.sidebar.checkbox("Uncheck if columns do not have titles.", value=True)
     # === End Header question in sidebar ===
@@ -335,16 +335,18 @@ elif page == "Clean My Data":
                 )
 
             else:
-                client_secret = create_checkout_session(
+                client_secret, session_id = create_checkout_session(
                     amount=cost,
                     filename=filename,
                     email=st.session_state.get("user_email")
                 )
-
+                logger(f"DEBUG: Stripe client_secret = {client_secret}")
+                logger(f"DEBUG: Stripe session_id = {session_id}")
                 render_embedded_checkout(
                     client_secret=client_secret,
                     publishable_key=st.secrets["stripe_publishable_key"]
                 )
+                logger(f"DEBUG: Stripe publishable = {publishable_key}")
                 # Poll for payment completion
                 payment_status = "unpaid"
                 with st.spinner("Waiting for payment confirmation..."):
