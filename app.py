@@ -383,7 +383,7 @@ elif page == "Clean My Data":
                     </a>
                 """, unsafe_allow_html=True)
 
-                # --- QR code ---
+                # --- QR code --- REVISIT THIS CODE LATER
                 #qr = qrcode.QRCode(box_size=3, border=2)
                 #qr.add_data(checkout_url)
                 #qr_img = qr.make_image(fill_color="black", back_color="white")
@@ -391,13 +391,13 @@ elif page == "Clean My Data":
                 #qr_img.save(buf, format="PNG")
                 #st.image(buf.getvalue(), caption="Scan to pay from your phone")
 
-                # --- Poll Stripe ---
+            # --- Poll Stripe ---
             if st.session_state["session_id"]:
                 with st.spinner("Waiting for payment confirmation..."):
                     for _ in range(20):  # ~60 seconds (20 polls every 3 sec)
                         status = check_payment_status(st.session_state["session_id"
-                        if session_id:
-                            status = check_payment_status(session_id)
+                        if st.session_state.get("session_id"):
+                            status = check_payment_status(if st.session_state.get("session_id"))
                             if status == "paid":
                                 st.session_state["payment_complete"] = True
                                 st.success("✅ Payment complete — file ready for download.")
