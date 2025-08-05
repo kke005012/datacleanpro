@@ -418,7 +418,7 @@ elif page == "Clean My Data":
                                 )
                                 st.download_button(
                                     "📥 Download Cleaned CSV",
-                                    data=cleaned_df.to_csv(index=False,
+                                    data=cleaned_df.to_csv(index=False),
                                     file_name=download_filename,
                                     mime="text/csv"
                                 )
