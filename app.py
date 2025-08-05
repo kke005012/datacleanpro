@@ -374,7 +374,7 @@ elif page == "Clean My Data":
                 """, unsafe_allow_html=True)
 
                 # --- QR code ---
-                qr = qrcode.QRCode(box_size=5, border=2)
+                qr = qrcode.QRCode(box_size=3, border=2)
                 qr.add_data(checkout_url)
                 qr_img = qr.make_image(fill_color="black", back_color="white")
                 buf = io.BytesIO()
