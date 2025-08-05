@@ -335,13 +335,13 @@ elif page == "Clean My Data":
                 )
 
             else:
-                client_secret = create_checkout_session(
+                client_secret, session_id = create_checkout_session(
                     amount=cost,
                     filename=filename,
                     email=st.session_state.get("user_email")
                 )
                 logger(f"DEBUG: Stripe client_secret = {client_secret}")
-                logger(f"DEBUG: Stripe session_id = {session_id}")
+                #logger(f"DEBUG: Stripe session_id = {session_id}")
                 render_embedded_checkout(
                     client_secret=client_secret,
                     publishable_key=st.secrets["stripe_publishable_key"]

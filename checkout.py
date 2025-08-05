@@ -20,7 +20,9 @@ def create_checkout_session(amount, currency="usd", filename="file.csv", email=N
         return_url="https://datacleanpro.com/payment-complete",  # after success/fail
         customer_email=email
     )
-    return session.client_secret
+    return session.client_secret, session.id
+
+import streamlit.components.v1 as components
 
 import streamlit.components.v1 as components
 
@@ -30,9 +32,10 @@ def render_embedded_checkout(client_secret, publishable_key):
     <div id="checkout"></div>
     <script>
       const stripe = Stripe("{publishable_key}");
-      stripe.initEmbeddedCheckout({{
+      const checkout = stripe.initEmbeddedCheckout({{
         clientSecret: "{client_secret}"
-      }}).mount("#checkout");
+      }});
+      checkout.mount("#checkout");
     </script>
     """
     components.html(html_code, height=700)
