@@ -311,7 +311,7 @@ elif page == "Clean My Data":
             
 
             #BEGIN NEWEST payment execution
-            checkout_url, session_id = ""
+            checkout_url, session_id = "", ""
             #Free Flow
             if cost == 0:
                 st.session_state["payment_complete"] = True
