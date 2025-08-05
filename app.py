@@ -395,7 +395,7 @@ elif page == "Clean My Data":
             if st.session_state["session_id"]:
                 with st.spinner("Waiting for payment confirmation..."):
                     for _ in range(20):  # ~60 seconds (20 polls every 3 sec)
-                        status = check_payment_status(st.session_state["session_id"
+                        status = check_payment_status(st.session_state["session_id"])
                         if st.session_state.get("session_id"):
                             status = check_payment_status(if st.session_state.get("session_id"))
                             if status == "paid":
