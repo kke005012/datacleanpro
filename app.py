@@ -346,7 +346,7 @@ elif page == "Clean My Data":
 
                 try:
                     append_log_to_sheet(log_entry)
-                    except Exception as e:
+                except Exception as e:
                     st.warning(f"⚠️ Failed to log usage: {e}")
 
             else:
