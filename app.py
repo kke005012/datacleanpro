@@ -364,40 +364,38 @@ elif page == "Clean My Data":
                     amount=cost,
                     filename=st.session_state["paid_filename"],
                     email=st.session_state["user_email"]
-                )
+                    )
                 
-                st.session_state["session_id"] = new_session_id
-                # --- Pay Now button ---
-                st.markdown(f"""
-                    <a href="{checkout_url}" target="_blank">
-                        <button style="
-                            background-color:#635bff;
-                            color:white;
-                            padding:10px 20px;
-                            border:none;
-                            border-radius:10px;
-                            font-size:18px;
-                            cursor:pointer;">
-                            💳 Pay Now
-                        </button>
-                    </a>
-                """, unsafe_allow_html=True)
+                    st.session_state["session_id"] = new_session_id
+                    # --- Pay Now button ---
+                    st.markdown(f"""
+                        <a href="{checkout_url}" target="_blank">
+                            <button style="
+                                background-color:#635bff;
+                                color:white;
+                                padding:10px 20px;
+                                border:none;
+                                border-radius:10px;
+                                font-size:18px;
+                                cursor:pointer;">
+                                💳 Pay Now
+                            </button>
+                        </a>
+                    """, unsafe_allow_html=True)
 
-                # --- QR code --- REVISIT THIS CODE LATER
-                #qr = qrcode.QRCode(box_size=3, border=2)
-                #qr.add_data(checkout_url)
-                #qr_img = qr.make_image(fill_color="black", back_color="white")
-                #buf = io.BytesIO()
-                #qr_img.save(buf, format="PNG")
-                #st.image(buf.getvalue(), caption="Scan to pay from your phone")
+                    # --- QR code --- REVISIT THIS CODE LATER
+                    #qr = qrcode.QRCode(box_size=3, border=2)
+                    #qr.add_data(checkout_url)
+                    #qr_img = qr.make_image(fill_color="black", back_color="white")
+                    #buf = io.BytesIO()
+                    #qr_img.save(buf, format="PNG")
+                    #st.image(buf.getvalue(), caption="Scan to pay from your phone")
 
-            # --- Poll Stripe ---
-            if st.session_state["session_id"]:
-                with st.spinner("Waiting for payment confirmation..."):
-                    for _ in range(20):  # ~60 seconds (20 polls every 3 sec)
-                        status = check_payment_status(st.session_state["session_id"])
-                        if st.session_state.get("session_id"):
-                            status = check_payment_status(st.session_state.get("session_id"))
+                # --- Poll Stripe ---
+                if st.session_state["session_id"]:
+                    with st.spinner("Waiting for payment confirmation..."):
+                        for _ in range(20):  # ~60 seconds (20 polls every 3 sec)
+                            status = check_payment_status(st.session_state["session_id"])
                             if status == "paid":
                                 st.session_state["payment_complete"] = True
                                 st.success("✅ Payment complete — file ready for download.")
@@ -425,20 +423,23 @@ elif page == "Clean My Data":
                                 log_entry = {
                                     "timestamp": datetime.now().isoformat(),
                                     "email": st.session_state.get("user_email", "unknown"),
-                                     "filename": uploaded_file.name,
-                                     "row_count": len(cleaned_df),
-                                     "charged": cost,
+                                    "filename": uploaded_file.name,
+                                    "row_count": len(cleaned_df),
+                                    "charged": cost,
                                 }
 
                                 try:
                                     append_log_to_sheet(log_entry)
                                 except Exception as e:
                                     st.warning(f"⚠️ Failed to log usage: {e}")
-                        
+                                    
+                                break
+
                             elif status in ("unpaid", "incomplete"):
                                 st.info("ℹ️ We couldn’t complete your payment — please try again.")
                                 break
-                            time.sleep(2)
+          
+                            time.sleep(3)
 
     # Show feedback form in the sidebar
     show_sidebar_feedback()
