@@ -351,12 +351,19 @@ elif page == "Clean My Data":
 
             else:
                 # ✅ CREATE SESSION
-                checkout_url, session_id = create_checkout_session(
-                    amount=st.session_state["cost"],
-                    row_count=st.session_state["row_count"],
-                    filename=filename,
-                    email=st.session_state.get("user_email")
+                #checkout_url, session_id = create_checkout_session(
+                    #amount=st.session_state["cost"],
+                    #row_count=st.session_state["row_count"],
+                    #filename=filename,
+                    #email=st.session_state.get("user_email")
+                #)
+                if st.button("💳 Pay Now"):
+                    checkout_url, session_id = create_checkout_session(
+                    amount=cost,
+                    filename=st.session_state["log_filename"],
+                    email=st.session_state["user_email"]
                 )
+                
 
                 # --- Pay Now button ---
                 st.markdown(f"""
@@ -364,7 +371,7 @@ elif page == "Clean My Data":
                     <button style="
                     background-color:#635bff;
                     color:white;
-                    padding:15px 25px;
+                    padding:10px 20px;
                     border:none;
                     border-radius:10px;
                     font-size:18px;
@@ -426,7 +433,7 @@ elif page == "Clean My Data":
                         elif status in ("unpaid", "incomplete"):
                             st.info("ℹ️ We couldn’t complete your payment — please try again.")
                             break
-                        time.sleep(3)
+                        time.sleep(2)
 
     # Show feedback form in the sidebar
     show_sidebar_feedback()
