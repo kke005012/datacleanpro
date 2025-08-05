@@ -311,7 +311,7 @@ elif page == "Clean My Data":
             
 
             #BEGIN NEWEST payment execution
-            checkout_url, session_id = "", ""
+            
             #Free Flow
             if cost == 0:
                 st.session_state["payment_complete"] = True
@@ -367,20 +367,20 @@ elif page == "Clean My Data":
                 
 
                 # --- Pay Now button ---
-                st.markdown(f"""
-                    <a href="{checkout_url}" target="_blank">
-                    <button style="
-                    background-color:#635bff;
-                    color:white;
-                    padding:10px 20px;
-                    border:none;
-                    border-radius:10px;
-                    font-size:18px;
-                    cursor:pointer;">
-                    💳 Pay Now
-                    </button>
-                    </a>
-                """, unsafe_allow_html=True)
+                #st.markdown(f"""
+                    #<a href="{checkout_url}" target="_blank">
+                    #<button style="
+                    #background-color:#635bff;
+                    #color:white;
+                    #padding:10px 20px;
+                    #border:none;
+                    #border-radius:10px;
+                    #font-size:18px;
+                    #cursor:pointer;">
+                    #💳 Pay Now
+                    #</button>
+                    #</a>
+                #""", unsafe_allow_html=True)
 
                 # --- QR code ---
                 #qr = qrcode.QRCode(box_size=3, border=2)
