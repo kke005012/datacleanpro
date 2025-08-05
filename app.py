@@ -392,9 +392,10 @@ elif page == "Clean My Data":
                 #st.image(buf.getvalue(), caption="Scan to pay from your phone")
 
                 # --- Poll Stripe ---
+            if st.session_state["session_id"]:
                 with st.spinner("Waiting for payment confirmation..."):
                     for _ in range(20):  # ~60 seconds (20 polls every 3 sec)
-                        session_id = st.session_state.get("session_id")
+                        status = check_payment_status(st.session_state["session_id"
                         if session_id:
                             status = check_payment_status(session_id)
                             if status == "paid":
@@ -403,7 +404,7 @@ elif page == "Clean My Data":
                                 success, message = send_receipt(
                                     to_email=st.session_state["user_email"],
                                     filename=filename,
-                                    amount=cost,
+                                    amount=cost
                                     cleaning_strategies=[
                                         f"Numeric Strategy: {numeric_strategy}",
                                         f"Non-Numeric Strategy: {non_numeric_strategy}",
@@ -417,16 +418,16 @@ elif page == "Clean My Data":
                                 )
                                 st.download_button(
                                     "📥 Download Cleaned CSV",
-                                    data=cleaned_df.to_csv(index=False),
+                                    data=cleaned_df.to_csv(index=False
                                     file_name=download_filename,
                                     mime="text/csv"
                                 )
                                 log_entry = {
                                     "timestamp": datetime.now().isoformat(),
                                     "email": st.session_state.get("user_email", "unknown"),
-                                    "filename": uploaded_file.name,
-                                    "row_count": len(cleaned_df),
-                                    "charged": cost,
+                                     "filename": uploaded_file.name,
+                                     "row_count": len(cleaned_df),
+                                     "charged": cost,
                                 }
 
                                 try:
