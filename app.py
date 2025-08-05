@@ -364,10 +364,10 @@ elif page == "Clean My Data":
                     <button style="
                     background-color:#635bff;
                     color:white;
-                    padding:10px 20px;
+                    padding:15px 25px;
                     border:none;
-                    border-radius:5px;
-                    font-size:16px;
+                    border-radius:10px;
+                    font-size:18px;
                     cursor:pointer;">
                     💳 Pay Now
                     </button>
@@ -375,12 +375,12 @@ elif page == "Clean My Data":
                 """, unsafe_allow_html=True)
 
                 # --- QR code ---
-                qr = qrcode.QRCode(box_size=3, border=2)
-                qr.add_data(checkout_url)
-                qr_img = qr.make_image(fill_color="black", back_color="white")
-                buf = io.BytesIO()
-                qr_img.save(buf, format="PNG")
-                st.image(buf.getvalue(), caption="Scan to pay from your phone")
+                #qr = qrcode.QRCode(box_size=3, border=2)
+                #qr.add_data(checkout_url)
+                #qr_img = qr.make_image(fill_color="black", back_color="white")
+                #buf = io.BytesIO()
+                #qr_img.save(buf, format="PNG")
+                #st.image(buf.getvalue(), caption="Scan to pay from your phone")
 
                 # --- Poll Stripe ---
                 with st.spinner("Waiting for payment confirmation..."):
@@ -422,12 +422,12 @@ elif page == "Clean My Data":
                                 append_log_to_sheet(log_entry)
                             except Exception as e:
                                 st.warning(f"⚠️ Failed to log usage: {e}")
+                        
+                        elif status in ("unpaid", "incomplete"):
+                            st.info("ℹ️ We couldn’t complete your payment — please try again.")
                             break
                         time.sleep(3)
 
-                if not st.session_state.get("payment_complete"):
-                    st.warning("⚠️ Payment not completed yet. Please finish payment above.")
- 
     # Show feedback form in the sidebar
     show_sidebar_feedback()
 
