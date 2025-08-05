@@ -386,6 +386,8 @@ elif page == "Clean My Data":
                 #st.image(buf.getvalue(), caption="Scan to pay from your phone")
 
                 # --- Poll Stripe ---
+                # Only start spinner after a short delay
+                time.sleep(5)
                 with st.spinner("Waiting for payment confirmation..."):
                     for attempt in range(20):  # ~60 seconds (20 polls every 3 sec)
                         status = check_payment_status(st.session_state["session_id"])
