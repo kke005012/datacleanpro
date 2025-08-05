@@ -361,7 +361,7 @@ elif page == "Clean My Data":
                 if st.button("💳 Pay Now"):
                     checkout_url, session_id = create_checkout_session(
                     amount=cost,
-                    filename=st.session_state["log_filename"],
+                    filename=st.session_state["paid_filename"],
                     email=st.session_state["user_email"]
                 )
                 
