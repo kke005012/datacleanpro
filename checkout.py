@@ -3,7 +3,7 @@ import streamlit as st
 
 stripe.api_key = st.secrets["stripe_secret_key"]
 
-def create_checkout_session(amount, currency="usd", filename="file.csv", email=None):
+def create_checkout_session(amount, currency="usd", filename="file.csv", row_count=0, email=None):
     """Create a dynamic Stripe Checkout Session and return payment URL + session ID."""
     session = stripe.checkout.Session.create(
         payment_method_types=["card"],
@@ -19,6 +19,10 @@ def create_checkout_session(amount, currency="usd", filename="file.csv", email=N
         success_url="https://apod.nasa.gov/apod/astropix.html",
         cancel_url="https://datacleanpro.com/payment-cancelled",
         customer_email=email
+        metadata={
+            "filename": filename,
+            "row_count": row_count
+        }
     )
     return session.url, session.id
 
