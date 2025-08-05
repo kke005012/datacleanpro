@@ -336,6 +336,18 @@ elif page == "Clean My Data":
                     file_name=download_filename,
                     mime="text/csv"
                 )
+                log_entry = {
+                    "timestamp": datetime.now().isoformat(),
+                    "email": st.session_state.get("user_email", "unknown"),
+                    "filename": uploaded_file.name,
+                    "row_count": len(cleaned_df),
+                    "charged": cost,
+                }
+
+                try:
+                    append_log_to_sheet(log_entry)
+                    except Exception as e:
+                    st.warning(f"⚠️ Failed to log usage: {e}")
 
             else:
                 # ✅ CREATE SESSION
@@ -362,7 +374,7 @@ elif page == "Clean My Data":
                 """, unsafe_allow_html=True)
 
                 # --- QR code ---
-                qr = qrcode.QRCode(box_size=10, border=4)
+                qr = qrcode.QRCode(box_size=5, border=2)
                 qr.add_data(checkout_url)
                 qr_img = qr.make_image(fill_color="black", back_color="white")
                 buf = io.BytesIO()
@@ -398,6 +410,18 @@ elif page == "Clean My Data":
                                 mime="text/csv"
                             )
                             break
+                            log_entry = {
+                                "timestamp": datetime.now().isoformat(),
+                                "email": st.session_state.get("user_email", "unknown"),
+                                "filename": uploaded_file.name,
+                                "row_count": len(cleaned_df),
+                                "charged": cost,
+                            }
+
+                            try:
+                                append_log_to_sheet(log_entry)
+                            except Exception as e:
+                                st.warning(f"⚠️ Failed to log usage: {e}")
                         time.sleep(3)
 
                 if not st.session_state.get("payment_complete"):
