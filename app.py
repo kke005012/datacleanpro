@@ -393,48 +393,50 @@ elif page == "Clean My Data":
                 # --- Poll Stripe ---
                 with st.spinner("Waiting for payment confirmation..."):
                     for _ in range(20):  # ~60 seconds (20 polls every 3 sec)
-                        status = check_payment_status(session_id)
-                        if status == "paid":
-                            st.session_state["payment_complete"] = True
-                            st.success("✅ Payment complete — file ready for download.")
-                            success, message = send_receipt(
-                                to_email=st.session_state["user_email"],
-                                filename=filename,
-                                amount=cost,
-                                cleaning_strategies=[
-                                    f"Numeric Strategy: {numeric_strategy}",
-                                    f"Non-Numeric Strategy: {non_numeric_strategy}",
-                                    "Currency Normalization",
-                                    "Date Standardization",
-                                    "Whitespace & Deduplication"
-                                ],
-                                log_lines=cleaned_df.attrs.get("log", []),
-                                smtp_user=st.secrets["smtp_user"],
-                                smtp_app_password=st.secrets["smtp_app_password"]
-                            )
-                            st.download_button(
-                                "📥 Download Cleaned CSV",
-                                data=cleaned_df.to_csv(index=False),
-                                file_name=download_filename,
-                                mime="text/csv"
-                            )
-                            log_entry = {
-                                "timestamp": datetime.now().isoformat(),
-                                "email": st.session_state.get("user_email", "unknown"),
-                                "filename": uploaded_file.name,
-                                "row_count": len(cleaned_df),
-                                "charged": cost,
-                            }
+                        session_id = st.session_state.get("session_id")
+                        if session_id:
+                            status = check_payment_status(session_id)
+                            if status == "paid":
+                                st.session_state["payment_complete"] = True
+                                st.success("✅ Payment complete — file ready for download.")
+                                success, message = send_receipt(
+                                    to_email=st.session_state["user_email"],
+                                    filename=filename,
+                                    amount=cost,
+                                    cleaning_strategies=[
+                                        f"Numeric Strategy: {numeric_strategy}",
+                                        f"Non-Numeric Strategy: {non_numeric_strategy}",
+                                        "Currency Normalization",
+                                        "Date Standardization",
+                                        "Whitespace & Deduplication"
+                                    ],
+                                    log_lines=cleaned_df.attrs.get("log", []),
+                                    smtp_user=st.secrets["smtp_user"],
+                                    smtp_app_password=st.secrets["smtp_app_password"]
+                                )
+                                st.download_button(
+                                    "📥 Download Cleaned CSV",
+                                    data=cleaned_df.to_csv(index=False),
+                                    file_name=download_filename,
+                                    mime="text/csv"
+                                )
+                                log_entry = {
+                                    "timestamp": datetime.now().isoformat(),
+                                    "email": st.session_state.get("user_email", "unknown"),
+                                    "filename": uploaded_file.name,
+                                    "row_count": len(cleaned_df),
+                                    "charged": cost,
+                                }
 
-                            try:
-                                append_log_to_sheet(log_entry)
-                            except Exception as e:
-                                st.warning(f"⚠️ Failed to log usage: {e}")
+                                try:
+                                    append_log_to_sheet(log_entry)
+                                except Exception as e:
+                                    st.warning(f"⚠️ Failed to log usage: {e}")
                         
-                        elif status in ("unpaid", "incomplete"):
-                            st.info("ℹ️ We couldn’t complete your payment — please try again.")
-                            break
-                        time.sleep(2)
+                            elif status in ("unpaid", "incomplete"):
+                                st.info("ℹ️ We couldn’t complete your payment — please try again.")
+                                break
+                            time.sleep(2)
 
     # Show feedback form in the sidebar
     show_sidebar_feedback()
