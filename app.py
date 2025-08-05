@@ -428,10 +428,9 @@ elif page == "Clean My Data":
                             except Exception as e:
                                 st.warning(f"⚠️ Failed to log usage: {e}")
                                     
-                            break
-
-                        elif status in ("unpaid", "incomplete") and attempt > 10:
-                            st.info("ℹ️ We couldn’t complete your payment — please try again.")
+                            # If we finish the loop without success
+                            if not st.session_state.get("payment_complete"):
+                                st.info("ℹ️ We couldn’t complete your payment — please try again.")
                             break
           
                         time.sleep(3)
