@@ -335,7 +335,7 @@ elif page == "Clean My Data":
                 )
 
             else:
-                client_secret, session_id = create_checkout_session(
+                client_secret = create_checkout_session(
                     amount=cost,
                     filename=filename,
                     email=st.session_state.get("user_email")
