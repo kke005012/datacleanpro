@@ -311,7 +311,8 @@ elif page == "Clean My Data":
             
 
             #BEGIN NEWEST payment execution
-            
+            if "session_id" not in st.session_state:
+                st.session_state["session_id"] = None
             #Free Flow
             if cost == 0:
                 st.session_state["payment_complete"] = True
@@ -359,13 +360,13 @@ elif page == "Clean My Data":
                     #email=st.session_state.get("user_email")
                 #)
                 if st.button("💳 Pay Now"):
-                    checkout_url, session_id = create_checkout_session(
+                    checkout_url, new_session_id = create_checkout_session(
                     amount=cost,
                     filename=st.session_state["paid_filename"],
                     email=st.session_state["user_email"]
                 )
                 
-                st.session_state["session_id"] = session_id
+                st.session_state["session_id"] = new_session_id
                 # --- Pay Now button ---
                 st.markdown(f"""
                     <a href="{checkout_url}" target="_blank">
