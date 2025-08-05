@@ -353,8 +353,8 @@ elif page == "Clean My Data":
                 # ✅ CREATE SESSION
                 checkout_url, session_id = create_checkout_session(
                     amount=st.session_state["cost"],
-                    filename=filename,
                     row_count=st.session_state["row_count"],
+                    filename=filename,
                     email=st.session_state.get("user_email")
                 )
 
