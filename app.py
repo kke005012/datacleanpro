@@ -359,7 +359,7 @@ elif page == "Clean My Data":
                     filename=filename,
                     email=st.session_state.get("user_email")
                 )
-                st.session_state["session_id"] = new_session_id
+                st.session_state["session_id"] = session_id
                 # --- Pay Now button ---
                 # Pay Now button as HTML link
                 st.markdown(f"""
