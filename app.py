@@ -353,81 +353,86 @@ elif page == "Clean My Data":
 
             else:
                 # ✅ CREATE SESSION
-                #checkout_url, session_id = create_checkout_session(
-                    #amount=st.session_state["cost"],
-                    #row_count=st.session_state["row_count"],
-                    #filename=filename,
-                    #email=st.session_state.get("user_email")
-                #)
-                if st.button("💳 Pay Now"):
-                    checkout_url, new_session_id = create_checkout_session(
-                    amount=cost,
+                checkout_url, session_id = create_checkout_session(
+                    amount=st.session_state["cost"],
                     row_count=st.session_state["row_count"],
-                    filename=st.session_state.get("paid_filename"),
-                    email=st.session_state["user_email"]
-                    )
-                
-                    st.session_state["session_id"] = new_session_id
-                    # --- Pay Now button ---
-                    st.markdown(f"[Click here to complete your payment]({checkout_url})", unsafe_allow_html=True)
+                    filename=filename,
+                    email=st.session_state.get("user_email")
+                )
+                st.session_state["session_id"] = new_session_id
+                # --- Pay Now button ---
+                # Pay Now button as HTML link
+                st.markdown(f"""
+                    <a href="{checkout_url}" target="_blank">
+                        <button style="
+                            background-color:#28a745;
+                            color:white;
+                            padding:10px 20px;
+                            border:none;
+                            border-radius:10px;
+                            font-size:18px;
+                            cursor:pointer;">
+                            💳 Pay Now
+                        </button>
+                    </a>
+                """, unsafe_allow_html=True)
 
-                    # --- QR code --- REVISIT THIS CODE LATER
-                    #qr = qrcode.QRCode(box_size=3, border=2)
-                    #qr.add_data(checkout_url)
-                    #qr_img = qr.make_image(fill_color="black", back_color="white")
-                    #buf = io.BytesIO()
-                    #qr_img.save(buf, format="PNG")
-                    #st.image(buf.getvalue(), caption="Scan to pay from your phone")
+                # --- QR code --- REVISIT THIS CODE LATER
+                #qr = qrcode.QRCode(box_size=3, border=2)
+                #qr.add_data(checkout_url)
+                #qr_img = qr.make_image(fill_color="black", back_color="white")
+                #buf = io.BytesIO()
+                #qr_img.save(buf, format="PNG")
+                #st.image(buf.getvalue(), caption="Scan to pay from your phone")
 
                 # --- Poll Stripe ---
-                if st.session_state["session_id"]:
-                    with st.spinner("Waiting for payment confirmation..."):
-                        for _ in range(20):  # ~60 seconds (20 polls every 3 sec)
-                            status = check_payment_status(st.session_state["session_id"])
-                            if status == "paid":
-                                st.session_state["payment_complete"] = True
-                                st.success("✅ Payment complete — file ready for download.")
-                                success, message = send_receipt(
-                                    to_email=st.session_state["user_email"],
-                                    filename=filename,
-                                    amount=cost,
-                                    cleaning_strategies=[
-                                        f"Numeric Strategy: {numeric_strategy}",
-                                        f"Non-Numeric Strategy: {non_numeric_strategy}",
-                                        "Currency Normalization",
-                                        "Date Standardization",
-                                        "Whitespace & Deduplication"
-                                    ],
-                                    log_lines=cleaned_df.attrs.get("log", []),
-                                    smtp_user=st.secrets["smtp_user"],
-                                    smtp_app_password=st.secrets["smtp_app_password"]
-                                )
-                                st.download_button(
-                                    "📥 Download Cleaned CSV",
-                                    data=cleaned_df.to_csv(index=False),
-                                    file_name=download_filename,
-                                    mime="text/csv"
-                                )
-                                log_entry = {
-                                    "timestamp": datetime.now().isoformat(),
-                                    "email": st.session_state.get("user_email", "unknown"),
-                                    "filename": uploaded_file.name,
-                                    "row_count": len(cleaned_df),
-                                    "charged": cost,
-                                }
+                with st.spinner("Waiting for payment confirmation..."):
+                    for _ in range(20):  # ~60 seconds (20 polls every 3 sec)
+                        status = check_payment_status(st.session_state["session_id"])
+                        if status == "paid":
+                            st.session_state["payment_complete"] = True
+                            st.success("✅ Payment complete — file ready for download.")
+                            success, message = send_receipt(
+                                to_email=st.session_state["user_email"],
+                                filename=filename,
+                                amount=cost,
+                                cleaning_strategies=[
+                                    f"Numeric Strategy: {numeric_strategy}",
+                                    f"Non-Numeric Strategy: {non_numeric_strategy}",
+                                    "Currency Normalization",
+                                    "Date Standardization",
+                                    "Whitespace & Deduplication"
+                                ],
+                                log_lines=cleaned_df.attrs.get("log", []),
+                                smtp_user=st.secrets["smtp_user"],
+                                smtp_app_password=st.secrets["smtp_app_password"]
+                            )
+                            st.download_button(
+                                "📥 Download Cleaned CSV",
+                                data=cleaned_df.to_csv(index=False),
+                                file_name=download_filename,
+                                mime="text/csv"
+                            )
+                            log_entry = {
+                                "timestamp": datetime.now().isoformat(),
+                                "email": st.session_state.get("user_email", "unknown"),
+                                "filename": uploaded_file.name,
+                                "row_count": len(cleaned_df),
+                                "charged": cost,
+                            }
 
-                                try:
-                                    append_log_to_sheet(log_entry)
-                                except Exception as e:
-                                    st.warning(f"⚠️ Failed to log usage: {e}")
+                            try:
+                                append_log_to_sheet(log_entry)
+                            except Exception as e:
+                                st.warning(f"⚠️ Failed to log usage: {e}")
                                     
-                                break
+                            break
 
-                            elif status in ("unpaid", "incomplete"):
-                                st.info("ℹ️ We couldn’t complete your payment — please try again.")
-                                break
+                        elif status in ("unpaid", "incomplete"):
+                            st.info("ℹ️ We couldn’t complete your payment — please try again.")
+                            break
           
-                            time.sleep(3)
+                        time.sleep(3)
 
     # Show feedback form in the sidebar
     show_sidebar_feedback()
