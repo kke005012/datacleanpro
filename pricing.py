@@ -1,7 +1,7 @@
 # pricing.py
 
 def calculate_price(row_count):
-    FREE_ROW_ALLOWANCE = 0
+    FREE_ROW_ALLOWANCE = 100
 
     PRICING_TIERS = [
         (500, 0.02),
@@ -28,7 +28,6 @@ def calculate_price(row_count):
         return 0.00, row_count
     else:
         total_cost = billable_rows * price_per_row
-        #return round(total_cost, 2), row_count
-        return .50, row_count
+        return round(total_cost, 2), row_count
+       
 
-# change free row allowance and remove return .50
