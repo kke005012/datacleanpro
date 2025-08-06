@@ -36,6 +36,10 @@ from cleaner import (
 )
 from pricing import calculate_price
 
+
+# ✅ Always set Stripe API key from Streamlit secrets
+stripe.api_key = st.secrets["stripe_secret_key"]
+
 def logger(*args):
     st.write(*args)
 
