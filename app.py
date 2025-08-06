@@ -395,6 +395,8 @@ elif page == "Clean My Data":
                         
                         if status == "paid":
                             st.session_state["payment_complete"] = True
+                            st.session_state["cleaned_csv"] = cleaned_df.to_csv(index=False)
+                            st.session_state["download_filename"] = download_filename
                             st.success("✅ Payment complete — file ready for download.")
                             success, message = send_receipt(
                                 to_email=st.session_state["user_email"],
@@ -436,6 +438,15 @@ elif page == "Clean My Data":
                             break
           
                         time.sleep(3)
+                # Outside polling loop
+                if st.session_state.get("payment_complete"):
+                    st.success("✅ Payment complete — file ready for download.")
+                    st.download_button(
+                        "📥 Download Cleaned CSV",
+                        data=st.session_state["cleaned_csv"],
+                        file_name=st.session_state["download_filename"],
+                        mime="text/csv"
+                    )
 
     # Show feedback form in the sidebar
     show_sidebar_feedback()
