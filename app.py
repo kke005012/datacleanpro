@@ -411,7 +411,7 @@ elif page == "Clean My Data":
                                         st.session_state["payment_complete"] = True
                                         st.session_state["cleaned_csv"] = cleaned_df.to_csv(index=False)
                                         st.session_state["download_filename"] = download_filename
-                                        st.success("✅ Payment complete — file ready for download.")
+                                        #st.success("✅ Payment complete — file ready for download.")
                                         success, message = send_receipt(
                                             to_email=st.session_state["user_email"],
                                             filename=filename,
@@ -453,6 +453,11 @@ elif page == "Clean My Data":
                                         break
           
                                     time.sleep(3)
+                    
+                                # This runs after the loop if no success
+                                if not st.session_state.get("payment_complete"):
+                                    st.info("ℹ️ We couldn’t complete your payment — please try again.")                                     
+
                     # Outside polling loop
                     if st.session_state.get("payment_complete"):
                         st.success("✅ Payment complete — file ready for download.")
