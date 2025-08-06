@@ -336,7 +336,7 @@ elif page == "Clean My Data":
                     "📥 Download Cleaned CSV",
                     data=cleaned_df.to_csv(index=False),
                     file_name=download_filename,
-                    key=download_free,
+                    key="download_free",
                     mime="text/csv"
                 )
                 log_entry = {
@@ -418,7 +418,7 @@ elif page == "Clean My Data":
                                 "📥 Download Cleaned CSV",
                                 data=cleaned_df.to_csv(index=False),
                                 file_name=download_filename,
-                                key=download_paid,
+                                key="download_paid",
                                 mime="text/csv"
                             )
                             log_entry = {
@@ -447,7 +447,7 @@ elif page == "Clean My Data":
                         "📥 Download Cleaned CSV",
                         data=st.session_state["cleaned_csv"],
                         file_name=st.session_state["download_filename"],
-                        key=download_on_reset,
+                        key="download_on_reset",
                         mime="text/csv"
                     )
 
