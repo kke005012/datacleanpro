@@ -388,68 +388,69 @@ elif page == "Clean My Data":
 
                 # --- Poll Stripe ---
                 # Only start spinner after a short delay
-                time.sleep(5)
-                with st.spinner("Waiting for payment confirmation..."):
-                    for attempt in range(20):  # ~60 seconds (20 polls every 3 sec)
-                        status = check_payment_status(st.session_state["session_id"])
+                if not st.session_state.get("payment_complete"):
+                    time.sleep(5)
+                    with st.spinner("Waiting for payment confirmation..."):
+                        for attempt in range(20):  # ~60 seconds (20 polls every 3 sec)
+                            status = check_payment_status(st.session_state["session_id"])
                         
                         
-                        if status == "paid":
-                            st.session_state["payment_complete"] = True
-                            st.session_state["cleaned_csv"] = cleaned_df.to_csv(index=False)
-                            st.session_state["download_filename"] = download_filename
-                            st.success("✅ Payment complete — file ready for download.")
-                            success, message = send_receipt(
-                                to_email=st.session_state["user_email"],
-                                filename=filename,
-                                amount=cost,
-                                cleaning_strategies=[
-                                    f"Numeric Strategy: {numeric_strategy}",
-                                    f"Non-Numeric Strategy: {non_numeric_strategy}",
-                                    "Currency Normalization",
-                                    "Date Standardization",
-                                    "Whitespace & Deduplication"
-                                ],
-                                log_lines=cleaned_df.attrs.get("log", []),
-                                smtp_user=st.secrets["smtp_user"],
-                                smtp_app_password=st.secrets["smtp_app_password"]
-                            )
-                            st.download_button(
-                                "📥 Download Cleaned CSV",
-                                data=cleaned_df.to_csv(index=False),
-                                file_name=download_filename,
-                                key="download_paid",
-                                mime="text/csv"
-                            )
-                            log_entry = {
-                                "timestamp": datetime.now().isoformat(),
-                                "email": st.session_state.get("user_email", "unknown"),
-                                "filename": uploaded_file.name,
-                                "row_count": len(cleaned_df),
-                                "charged": cost,
-                            }
+                            if status == "paid":
+                                st.session_state["payment_complete"] = True
+                                st.session_state["cleaned_csv"] = cleaned_df.to_csv(index=False)
+                                st.session_state["download_filename"] = download_filename
+                                st.success("✅ Payment complete — file ready for download.")
+                                success, message = send_receipt(
+                                    to_email=st.session_state["user_email"],
+                                    filename=filename,
+                                    amount=cost,
+                                    cleaning_strategies=[
+                                        f"Numeric Strategy: {numeric_strategy}",
+                                        f"Non-Numeric Strategy: {non_numeric_strategy}",
+                                        "Currency Normalization",
+                                        "Date Standardization",
+                                        "Whitespace & Deduplication"
+                                    ],
+                                    log_lines=cleaned_df.attrs.get("log", []),
+                                    smtp_user=st.secrets["smtp_user"],
+                                    smtp_app_password=st.secrets["smtp_app_password"]
+                                )
+                                st.download_button(
+                                    "📥 Download Cleaned CSV",
+                                    data=cleaned_df.to_csv(index=False),
+                                    file_name=download_filename,
+                                    key="download_paid",
+                                    mime="text/csv"
+                                )
+                                log_entry = {
+                                    "timestamp": datetime.now().isoformat(),
+                                    "email": st.session_state.get("user_email", "unknown"),
+                                    "filename": uploaded_file.name,
+                                    "row_count": len(cleaned_df),
+                                    "charged": cost,
+                                }
 
-                            try:
-                                append_log_to_sheet(log_entry)
-                            except Exception as e:
-                                st.warning(f"⚠️ Failed to log usage: {e}")
+                                try:
+                                    append_log_to_sheet(log_entry)
+                                except Exception as e:
+                                    st.warning(f"⚠️ Failed to log usage: {e}")
                                     
-                            # If we finish the loop without success
-                            if not st.session_state.get("payment_complete"):
-                                st.info("ℹ️ We couldn’t complete your payment — please try again.")
-                            break
+                                # If we finish the loop without success
+                                if not st.session_state.get("payment_complete"):
+                                    st.info("ℹ️ We couldn’t complete your payment — please try again.")
+                                break
           
-                        time.sleep(3)
-                # Outside polling loop
-                if st.session_state.get("payment_complete"):
-                    st.success("✅ Payment complete — file ready for download.")
-                    st.download_button(
-                        "📥 Download Cleaned CSV",
-                        data=st.session_state["cleaned_csv"],
-                        file_name=st.session_state["download_filename"],
-                        key="download_on_reset",
-                        mime="text/csv"
-                    )
+                            time.sleep(3)
+                    # Outside polling loop
+                    if st.session_state.get("payment_complete"):
+                        st.success("✅ Payment complete — file ready for download.")
+                        st.download_button(
+                            "📥 Download Cleaned CSV",
+                            data=st.session_state["cleaned_csv"],
+                            file_name=st.session_state["download_filename"],
+                            key="download_on_reset",
+                            mime="text/csv"
+                        )
 
     # Show feedback form in the sidebar
     show_sidebar_feedback()
