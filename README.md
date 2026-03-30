@@ -55,7 +55,7 @@ flowchart LR
     API --> MetaDB[(PostgreSQL Metadata DB)]
     API --> Queue["Job Queue (Future)"]
 
-    Queue --> Processor[Processing Engine (Pandas / Spark)]
+    Queue --> Processor["Processing Engine (Pandas / Spark)"]
 
     Processor --> Cleaned[Cleaned Data Storage]
     Processor --> Logs[Logs / Audit Trail]
