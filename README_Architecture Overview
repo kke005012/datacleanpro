@@ -1,0 +1,111 @@
+# 🏗️ Architecture Overview – DataCleanPro
+
+## 📌 Overview
+
+DataCleanPro is a scalable, user-driven data cleaning platform designed to transform raw, inconsistent datasets into standardized, analytics-ready outputs. The system is built with a modular architecture that supports flexibility, traceability, and future scalability.
+
+---
+
+## 🧱 System Architecture
+
+The platform follows a layered architecture with clear separation of concerns:
+
+* **Presentation Layer**
+
+  * Streamlit-based UI for file upload and configuration
+* **Application Layer**
+
+  * Python backend handling orchestration, validation, and processing logic
+* **Data Processing Layer**
+
+  * Rule-based data cleaning pipeline (Pandas; extensible to Spark)
+* **Storage Layer**
+
+  * Raw and cleaned datasets stored in cloud object storage
+* **Metadata Layer**
+
+  * Relational database for tracking files, jobs, rules, and logs
+* **External Services**
+
+  * Payment processing (Stripe)
+  * Email notifications for receipts and job completion
+
+---
+
+## 🔁 Data Flow
+
+1. User uploads a dataset via the UI
+2. File is stored in cloud object storage
+3. Metadata (file size, schema, user info) is recorded
+4. A processing job is triggered
+5. Data cleaning pipeline executes:
+
+   * Missing value handling
+   * Format normalization
+   * Validation and error handling
+6. Cleaned dataset is stored
+7. A report and download link are generated
+8. User receives notification and access to results
+
+---
+
+## 🧠 Key Design Principles
+
+### 1. Modularity
+
+Each stage of the pipeline (ingestion, validation, transformation, output) is decoupled, allowing independent updates and extensibility.
+
+### 2. Scalability
+
+The system is designed to evolve from single-node processing (Pandas) to distributed processing (e.g., Spark) with minimal architectural changes.
+
+### 3. Traceability
+
+All operations are logged and tracked through metadata tables, enabling full data lineage from raw input to cleaned output.
+
+### 4. Configurability
+
+Cleaning logic is rule-based and user-configurable, allowing flexibility across diverse datasets.
+
+### 5. Cost Efficiency
+
+Processing is optimized for small-to-medium datasets, with the ability to scale compute resources only when necessary.
+
+---
+
+## 🛠️ Technology Stack
+
+| Layer         | Technology                             |
+| ------------- | -------------------------------------- |
+| UI            | Streamlit                              |
+| Backend       | Python                                 |
+| Processing    | Pandas (future: Spark)                 |
+| Storage       | Cloud Object Storage (S3 / Azure Blob) |
+| Database      | PostgreSQL (metadata)                  |
+| Payments      | Stripe                                 |
+| Notifications | Email (SMTP)                           |
+
+---
+
+## 📊 Data Components
+
+* **Raw Data Storage** – Original uploaded files
+* **Processed Data Storage** – Cleaned datasets
+* **Metadata Database** – Tracks users, files, jobs, and rules
+* **Logs & Audit Trail** – Captures processing steps and errors
+
+---
+
+## 🚀 Future Enhancements
+
+* Distributed processing with Spark or Databricks
+* Job orchestration using Airflow or Prefect
+* Machine learning-based rule recommendations
+* Feature store integration for AI-driven cleaning
+* Real-time processing capabilities
+
+---
+
+## 🎯 Summary
+
+This architecture enables DataCleanPro to deliver a reliable, extensible, and scalable data cleaning solution. By separating concerns across layers and incorporating metadata-driven processing, the system is positioned to evolve into a more advanced data platform supporting analytics and machine learning workflows.
