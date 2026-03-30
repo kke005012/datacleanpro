@@ -53,7 +53,7 @@ flowchart LR
 
     API --> Storage[Cloud Storage]
     API --> MetaDB[(PostgreSQL Metadata DB)]
-    API --> Queue[Job Queue (Future)]
+    API --> Queue["Job Queue (Future)"]
 
     Queue --> Processor[Processing Engine (Pandas / Spark)]
 
