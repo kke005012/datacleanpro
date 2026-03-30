@@ -1,0 +1,165 @@
+# 📘 Case Study – DataCleanPro
+
+## 🎯 Problem Statement
+
+Many users—especially analysts and small teams—struggle with inconsistent, messy datasets that require significant manual effort to clean before analysis. Common issues include missing values, inconsistent formats, and invalid data entries.
+
+Existing solutions are either:
+
+* Too manual (spreadsheet-based cleaning), or
+* Too complex and costly (enterprise-grade data platforms)
+
+**Goal:**
+Design a scalable, user-friendly platform that automates data cleaning while remaining flexible, cost-efficient, and extensible.
+
+---
+
+## ⚙️ Key Challenges
+
+* **Schema Variability**
+  Input datasets vary widely in structure and quality
+
+* **Data Quality Issues**
+  Missing values, inconsistent formats, invalid entries
+
+* **Scalability vs Simplicity**
+  Supporting both small and large datasets without overengineering
+
+* **Cost Constraints**
+  Avoiding unnecessary compute costs for small workloads
+
+* **Traceability Requirements**
+  Providing visibility into how data was transformed
+
+---
+
+## 🧠 Design Approach
+
+The system was designed using a modular, pipeline-based architecture with a focus on flexibility and observability.
+
+### Core Decisions
+
+* **Rule-Based Processing**
+
+  * Implemented configurable cleaning rules to handle diverse datasets
+  * Allows extensibility without modifying core logic
+
+* **Metadata-Driven Design**
+
+  * Captured file, job, and processing details in a relational database
+  * Enables auditability and lineage tracking
+
+* **Layered Architecture**
+
+  * Separated UI, processing, and storage layers for maintainability
+
+* **Incremental Scalability**
+
+  * Started with Pandas for simplicity
+  * Designed for future migration to distributed processing (Spark)
+
+---
+
+## 🏗️ Architecture Decisions & Trade-offs
+
+### 1. Pandas vs Distributed Processing
+
+* **Decision:** Start with Pandas
+* **Trade-off:** Limited scalability vs faster development
+* **Mitigation:** Designed pipeline to be Spark-compatible
+
+---
+
+### 2. Rule-Based vs ML-Based Cleaning
+
+* **Decision:** Rule-based system
+* **Trade-off:** Less automation vs higher transparency and control
+* **Future Direction:** Introduce ML-driven recommendations
+
+---
+
+### 3. Synchronous vs Asynchronous Processing
+
+* **Decision:** Initially synchronous
+* **Trade-off:** Simpler implementation vs limited scalability
+* **Future Direction:** Queue-based asynchronous jobs
+
+---
+
+### 4. Flexible Schema Handling
+
+* **Decision:** Minimal schema enforcement
+* **Trade-off:** Increased complexity in validation vs broader usability
+
+---
+
+## 🧱 Framework Alignment
+
+### TOGAF
+
+* Structured system into business, application, data, and technology layers
+* Ensured alignment between user needs and technical implementation
+
+---
+
+### DAMA-DMBOK
+
+* Applied data quality management principles
+* Implemented metadata tracking and data lineage
+* Designed for governance and auditability
+
+---
+
+### Azure Well-Architected Framework
+
+* **Cost Optimization:** Avoid unnecessary compute usage
+* **Reliability:** Logging and recoverability
+* **Performance:** Future scalability via distributed processing
+* **Security:** User data isolation and controlled access
+* **Operational Excellence:** Monitoring and traceability
+
+---
+
+### Zachman Framework
+
+* Ensured completeness across:
+
+  * Data (What)
+  * Processes (How)
+  * Users (Who)
+  * Timing (When)
+  * Motivation (Why)
+
+---
+
+## 📈 Outcomes
+
+* Reduced manual data cleaning effort through automation
+* Enabled consistent, repeatable data transformation workflows
+* Provided full traceability from raw input to cleaned output
+* Established a scalable foundation for future enhancements
+
+---
+
+## 🚀 Future Enhancements
+
+* Machine learning-based cleaning recommendations
+* Distributed processing with Spark or Databricks
+* Workflow orchestration (Airflow/Prefect)
+* Enhanced analytics and usage insights
+* Integration with feature stores for ML pipelines
+
+---
+
+## 💡 Key Takeaways
+
+* Designing for **flexibility and scalability early** reduces future rework
+* **Metadata and logging** are critical for trust and traceability
+* Trade-offs between simplicity and scalability must be intentional
+* Applying architecture frameworks improves decision clarity and system design
+
+---
+
+## 🧠 Reflection
+
+This project demonstrates the transition from implementing data pipelines to designing **scalable, governed data systems**. By incorporating architecture frameworks and focusing on trade-offs, the solution goes beyond functionality to address long-term maintainability, performance, and usability.
